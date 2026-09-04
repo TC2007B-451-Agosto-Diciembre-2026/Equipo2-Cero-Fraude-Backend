@@ -1,12 +1,26 @@
+CREATE DATABASE IF NOT EXISTS cero_fraude;
 CREATE DATABASE cero_fraude;
 USE cero_fraude;
+
+DROP TABLE IF EXISTS rol;
+DROP TABLE IF EXISTS estado;
+DROP TABLE IF EXISTS reaccion;
+DROP TABLE IF EXISTS categoria;
+DROP TABLE IF EXISTS tipo;
+DROP TABLE IF EXISTS usuario;
+DROP TABLE IF EXISTS publicacion;
+DROP TABLE IF EXISTS reporte;
+DROP TABLE IF EXISTS evidencia;
+DROP TABLE IF EXISTS comentario;
+DROP TABLE IF EXISTS reaccion_publicacion;
+DROP TABLE IF EXISTS suscripcion;
+DROP TABLE IF EXISTS publicacion_tipo;
 
 CREATE TABLE rol  (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR (20) NOT NULL UNIQUE,
     acronimo VARCHAR (10) NOT NULL UNIQUE
 );
-
 
 CREATE TABLE estado (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -23,7 +37,6 @@ CREATE TABLE categoria (
    nombre VARCHAR (20) UNIQUE NOT NULL,
    acronimo VARCHAR (10) UNIQUE NOT NULL
 );
-
 
 CREATE TABLE tipo (
    id INT AUTO_INCREMENT PRIMARY KEY,
@@ -97,7 +110,6 @@ CREATE TABLE comentario (
 	FOREIGN KEY (publicacion_id) REFERENCES publicacion(id)
 );
 
-
 CREATE TABLE reaccion_publicacion (
     usuario_id INT NOT NULL,
     publicacion_id INT NOT NULL,
@@ -108,7 +120,7 @@ CREATE TABLE reaccion_publicacion (
     FOREIGN KEY (reaccion_id) REFERENCES reaccion(id)
 );
 
-CREATE TABLE  suscripcion (
+CREATE TABLE suscripcion (
     usuario_id INT NOT NULL,
     tipo_id INT NOT NULL,
     fecha_suscripcion TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -120,8 +132,9 @@ CREATE TABLE  suscripcion (
 CREATE TABLE publicacion_tipo (
     publicacion_id INT NOT NULL,
     tipo_id INT NOT NULL,
-    FOREIGN KEY (publicacion_id) REFERENCES tipo(id),
-    FOREIGN KEY (tipo_id) REFERENCES tipo(id)
+    FOREIGN KEY (publicacion_id) REFERENCES publicacion(id),
+    FOREIGN KEY (tipo_id) REFERENCES tipo(id),
+    PRIMARY KEY (publicacion_id, tipo_id)
 );
 
 INSERT INTO rol (nombre, acronimo) VALUES
