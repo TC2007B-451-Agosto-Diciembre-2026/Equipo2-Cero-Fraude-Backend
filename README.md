@@ -36,11 +36,11 @@ Renombrar el archivo .env.example a .env.
 
 Configurar las credenciales y parámetros de conexión a la base de datos:
 
-DB_USER=[usuario]
-DB_PASSWORD=[contraseña]
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=cero_fraude
+DB_USER=[usuario]<br>
+DB_PASSWORD=[contraseña]<br>
+DB_HOST=localhost<br>
+DB_PORT=3306<br>
+DB_NAME=cero_fraude<br>
 
 DB_USER y DB_PASSWORD deben corresponder a un usuario de MySQL con permisos sobre la base de datos cero_fraude.
 
