@@ -9,12 +9,11 @@ API backend para el sistema Cero Fraude, una plataforma para el registro y consu
 - Hugo Rodríguez
 - Mariana González
 
-## Descripción
-
 ## Requisitos
 
 * Node.js
 * npm
+* MySQL
 
 ## Instalación
 
@@ -24,18 +23,26 @@ $ cd cero-fraude-api
 $ npm install
 ```
 
-## Configuración de .env
-Crear archivo .env
+## Iniciar base de datos
 
-Pegar el siguiente contenido en el archivo:
+entrar al entorno de MySQL.
+```bash
+source [path_to_database.sql]
+```
+
+## Configuración de .env
+
+Renombrar el archivo .env.example a .env.
+
+Configurar las credenciales y parámetros de conexión a la base de datos:
+
 DB_USER=[usuario]
 DB_PASSWORD=[contraseña]
 DB_HOST=localhost
 DB_PORT=3306
 DB_NAME=cero_fraude
-SECRET_KEY=[secreto]
 
-Remplazar usuario, contraseña y secreto.
+DB_USER y DB_PASSWORD deben corresponder a un usuario de MySQL con permisos sobre la base de datos cero_fraude.
 
 ## Ejecución
 
