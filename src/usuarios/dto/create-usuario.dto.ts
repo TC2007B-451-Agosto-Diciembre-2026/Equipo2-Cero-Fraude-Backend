@@ -10,5 +10,5 @@ export class CreateUsuarioDto {
     nombre: string | undefined;
 
     @IsEmail()
-    email: string | undefined;
+    correo: string | undefined;
 }

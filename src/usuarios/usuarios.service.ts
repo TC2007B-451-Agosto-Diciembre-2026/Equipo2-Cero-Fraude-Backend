@@ -2,40 +2,48 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsuariosRepository } from './usuarios.repository';
 import { UsuarioResponseDto } from './dto/usuario-response.dto';
 import { Usuario } from './entities/usuario.entity';
+import { randomBytes } from 'crypto';
+import { generate } from 'rxjs';
 
 @Injectable()
 export class UsuariosService {
     constructor(private readonly repository : UsuariosRepository) {}
 
-    create(data: any): UsuarioResponseDto {
+    async create(data: any): Promise<UsuarioResponseDto> {
         try{
             this.checkUsuario(data)
         } catch(e) {}
         const usuario = new Usuario();
-        usuario.id = this.repository.nextId();
         usuario.nombre = data.nombre;
-        usuario.email = data.email;
-        usuario.fechaCreacion = new Date();
+        usuario.hash = "temp";
+        usuario.sal = this.generateSalt();
+        usuario.email = data.correo;
+        usuario.estado = true;
+        usuario.rol_id = 1;
         this.repository.save(usuario);
 
         return UsuarioResponseDto.fromEntity(usuario);
     }
 
-    findAll(): UsuarioResponseDto [] {
-        return this.repository
-        .findAll()
-        .map((u) => UsuarioResponseDto.fromEntity(u));
+    async findAll(): Promise<UsuarioResponseDto []> {
+        const usuarios = await this.repository.findAll();
+        return usuarios.map((u) => UsuarioResponseDto.fromEntity(u));
     }
 
-    findOne(id: string): UsuarioResponseDto {
-        const usuario = this.repository.findAll().find((c) => c.id == id);
+    async findOne(id: string): Promise<UsuarioResponseDto> {
+        const usuario = (await this.repository.findAll()).find((u) => u.id == id);
         if (!usuario) {
         throw new NotFoundException("Usuario " + id + " no encontrado");
         }
         return UsuarioResponseDto.fromEntity(usuario);
     }
 
-    checkUsuario(data: any): boolean {
+    private generateSalt(): string {
+        const salt = randomBytes(8).toString('hex');
+        return salt;
+    }
+
+    private checkUsuario(data: any): boolean {
         if(!data){
             throw new Error("sin datos");
         }

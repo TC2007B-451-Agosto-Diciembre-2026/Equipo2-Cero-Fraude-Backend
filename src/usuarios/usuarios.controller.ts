@@ -17,17 +17,17 @@ export class UsuariosController {
     constructor(private readonly service: UsuariosService) {}
 
     @Post()
-    create(@Body() dto: CreateUsuarioDto): UsuarioResponseDto {
+    create(@Body() dto: CreateUsuarioDto): Promise<UsuarioResponseDto> {
         return this.service.create(dto);
     }
 
     @Get()
-    findAll(): UsuarioResponseDto [] {
+    findAll(): Promise<UsuarioResponseDto []> {
         return this.service.findAll();
     }
 
     @Get(":id")
-    findOne(@Param("id") id: string): UsuarioResponseDto {
+    findOne(@Param("id") id: string): Promise<UsuarioResponseDto> {
         return this.service.findOne(id);
     }
 }
