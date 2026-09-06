@@ -7,19 +7,18 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+
 import { UsuariosService } from './usuarios.service';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { RegisterUsuarioDto } from '../autenticacion/dto/register.dto';
 import { UsuarioResponseDto } from './dto/usuario-response.dto';
+import { AutenticacionGuard } from '../autenticacion/autenticacion.guard';
 
 @Controller("usuarios")
+@UseGuards(AutenticacionGuard)
 export class UsuariosController {
     constructor(private readonly service: UsuariosService) {}
-
-    @Post()
-    create(@Body() dto: CreateUsuarioDto): Promise<UsuarioResponseDto> {
-        return this.service.create(dto);
-    }
 
     @Get()
     findAll(): Promise<UsuarioResponseDto []> {

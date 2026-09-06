@@ -3,7 +3,7 @@ import { Usuario } from "./entities/usuario.entity";
 import type { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { DB_POOL } from "../database/database.module";
 
-const COLUMNS = 'id, nombre, correo, fecha_creacion, estado';
+const COLUMNS = 'id, nombre, correo, hash_contrasena, sal, fecha_creacion, estado';
 
 @Injectable()
 export class UsuariosRepository {
@@ -22,7 +22,7 @@ export class UsuariosRepository {
             [id],
         );
 
-        return toEntity(rows[0]);
+        return rows.length > 0 ? toEntity(rows[0]) : undefined;
     }
 
     async findByEmail(email: string): Promise<Usuario | undefined> {
@@ -31,7 +31,7 @@ export class UsuariosRepository {
             ,[email],
         );
 
-        return toEntity(rows[0]);
+        return rows.length > 0 ? toEntity(rows[0]) : undefined;
     }
 
     async save(usuario: Omit<Usuario, "id" | "fechaCreacion">): Promise<Usuario> {
@@ -50,6 +50,8 @@ function toEntity(row: any): Usuario {
     usuario.id = row.id;
     usuario.nombre = row.nombre;
     usuario.email = row.correo;
+    usuario.hash = row.hash_contrasena;
+    usuario.sal = row.sal;
     usuario.fechaCreacion = row.fecha_creacion;
     usuario.estado = row.estado;
     return usuario;
