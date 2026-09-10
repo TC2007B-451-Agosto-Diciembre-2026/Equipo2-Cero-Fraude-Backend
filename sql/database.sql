@@ -2,159 +2,208 @@ DROP DATABASE IF EXISTS cero_fraude;
 CREATE DATABASE cero_fraude;
 USE cero_fraude;
 
-DROP TABLE IF EXISTS rol;
-DROP TABLE IF EXISTS estado;
-DROP TABLE IF EXISTS reaccion;
-DROP TABLE IF EXISTS categoria;
-DROP TABLE IF EXISTS tipo;
-DROP TABLE IF EXISTS usuario;
-DROP TABLE IF EXISTS publicacion;
-DROP TABLE IF EXISTS reporte;
-DROP TABLE IF EXISTS evidencia;
-DROP TABLE IF EXISTS comentario;
-DROP TABLE IF EXISTS reaccion_publicacion;
-DROP TABLE IF EXISTS suscripcion;
-DROP TABLE IF EXISTS publicacion_tipo;
+DROP TABLE IF EXISTS audit_log;
+DROP TABLE IF EXISTS post_fraud_type;
+DROP TABLE IF EXISTS fraud_type_subscription;
+DROP TABLE IF EXISTS post_reaction;
+DROP TABLE IF EXISTS post_comment;
+DROP TABLE IF EXISTS post_evidence;
+DROP TABLE IF EXISTS post_report;
+DROP TABLE IF EXISTS fraud_post;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS modified_field;
+DROP TABLE IF EXISTS evidence_type;
+DROP TABLE IF EXISTS report_reason;
+DROP TABLE IF EXISTS audit_action;
+DROP TABLE IF EXISTS fraud_type;
+DROP TABLE IF EXISTS fraud_category;
+DROP TABLE IF EXISTS reaction_type;
+DROP TABLE IF EXISTS post_status;
+DROP TABLE IF EXISTS user_role;
 
-CREATE TABLE rol  (
+CREATE TABLE user_role (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR (20) NOT NULL UNIQUE,
-    acronimo VARCHAR (10) NOT NULL UNIQUE
+    name VARCHAR (20) NOT NULL UNIQUE,
+    code VARCHAR (10) NOT NULL UNIQUE
 );
 
-CREATE TABLE estado (
+CREATE TABLE post_status (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR (20)
+    name VARCHAR (20) NOT NULL UNIQUE,
+    code VARCHAR(10) NOT NULL UNIQUE
 );
 
-CREATE TABLE reaccion (
+CREATE TABLE reaction_type (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    simbolo VARCHAR(50) NOT NULL UNIQUE
+    name VARCHAR(30) NOT NULL UNIQUE,
+    code VARCHAR(10) NOT NULL UNIQUE
 );
 
-CREATE TABLE categoria (
+CREATE TABLE fraud_category (
    id INT AUTO_INCREMENT PRIMARY KEY,
-   nombre VARCHAR (20) UNIQUE NOT NULL,
-   acronimo VARCHAR (10) UNIQUE NOT NULL
+   name VARCHAR (20) UNIQUE NOT NULL,
+   code VARCHAR (10) UNIQUE NOT NULL
 );
 
-CREATE TABLE tipo (
+CREATE TABLE fraud_type (
    id INT AUTO_INCREMENT PRIMARY KEY,
-   nombre varchar (35) UNIQUE NOT NULL,
-   acronimo varchar (10) UNIQUE NOT NULL
+   name VARCHAR (50) UNIQUE NOT NULL,
+   code VARCHAR (10) UNIQUE NOT NULL
 );
 
-CREATE TABLE usuario (
+CREATE TABLE audit_action (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR (100) NOT NULL,
-    correo VARCHAR (320) NOT NULL UNIQUE,
-    hash_contrasena VARCHAR (64) NOT NULL,
-    sal VARCHAR (16) NOT NULL UNIQUE,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    estado BOOLEAN NOT NULL DEFAULT TRUE,
-    rol_id INT NOT NULL,
-    CONSTRAINT FK_rol_usuario
-    FOREIGN KEY (rol_id) REFERENCES rol(id)
+    name VARCHAR(50) NOT NULL UNIQUE,
+    code VARCHAR(10) NOT NULL UNIQUE
 );
 
-CREATE TABLE publicacion (
+CREATE TABLE report_reason (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR (100) NOT NULL,
-    descripcion TEXT NOT NULL,
-    vendedor VARCHAR (100),
-    producto VARCHAR (100),
-    telefono VARCHAR (25),
-    url VARCHAR (255),
-    plataforma VARCHAR (100),
-    correo VARCHAR (255),
-    estado_id INT NOT NULL,
-    es_fraude BOOLEAN NOT NULL,
-    anonimo BOOLEAN NOT NULL,
-    fecha_publicacion TIMESTAMP DEFAULT NULL,
-    fecha_validacion TIMESTAMP DEFAULT NULL,
-    usuario_id INT NOT NULL,
-    categoria_id INT NOT NULL,
-    CONSTRAINT fk_estado_publicacion
-    FOREIGN KEY (estado_id) REFERENCES estado(id),
-    CONSTRAINT FK_usuario_publicacion
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-    CONSTRAINT fk_categoria_publicacion
-    FOREIGN KEY (categoria_id) REFERENCES categoria(id)
+    name VARCHAR(100) NOT NULL UNIQUE,
+    code VARCHAR(10) NOT NULL UNIQUE
 );
 
-CREATE TABLE reporte (
+CREATE TABLE evidence_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(10) NOT NULL UNIQUE
+);
+
+CREATE TABLE modified_field (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    code VARCHAR(10)
+);
+
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR (100) NOT NULL UNIQUE,
+    email VARCHAR (320) NOT NULL UNIQUE,
+    password_hash VARCHAR (255) NOT NULL,
+    salt VARCHAR (16) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    role_id INT NOT NULL,
+    CONSTRAINT fk_user_role_id
+    FOREIGN KEY (role_id) REFERENCES user_role(id)
+);
+
+CREATE TABLE fraud_post (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR (100) NOT NULL,
+    description TEXT NOT NULL,
+    seller_name VARCHAR (100) DEFAULT NULL,
+    product VARCHAR (100) DEFAULT NULL,
+    phone_number VARCHAR (25) DEFAULT NULL,
+    url VARCHAR (255) DEFAULT NULL,
+    platform VARCHAR (100) DEFAULT NULL,
+    fraudulent_email VARCHAR (255) DEFAULT NULL,
+    status_id INT NOT NULL,
+    is_fraud BOOLEAN DEFAULT NULL,
+    is_anonymous BOOLEAN NOT NULL DEFAULT FALSE,
+    published_at TIMESTAMP DEFAULT NULL,
+    validated_at TIMESTAMP DEFAULT NULL,
+    author_id INT NOT NULL,
+    category_id INT NOT NULL,
+    CONSTRAINT fk_fraud_post_status_id
+    FOREIGN KEY (status_id) REFERENCES post_status(id),
+    CONSTRAINT fk_fraud_post_author_id
+    FOREIGN KEY (author_id) REFERENCES user(id),
+    CONSTRAINT fk_fraud_post_category_id
+    FOREIGN KEY (category_id) REFERENCES fraud_category(id)
+);
+
+CREATE TABLE post_report (
 	id INT AUTO_INCREMENT PRIMARY KEY,
-	informacion TEXT NOT NULL,
-	tipo VARCHAR(50),
-	usuario_id INTEGER NOT NULL,
-	publicacion_id INTEGER NOT NULL,
-	FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-	FOREIGN KEY (publicacion_id) REFERENCES publicacion(id)
+	details TEXT DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	report_reason_id INT NOT NULL,
+	reporter_id INT NOT NULL,
+	post_id INT NOT NULL,
+    CONSTRAINT fk_post_report_report_reason_id
+    FOREIGN KEY (report_reason_id) REFERENCES report_reason(id),
+	CONSTRAINT fk_post_report_reporter_id
+    FOREIGN KEY (reporter_id) REFERENCES user(id),
+    CONSTRAINT fk_post_report_post_id
+	FOREIGN KEY (post_id) REFERENCES fraud_post(id)
 );
 
-CREATE TABLE evidencia (
+CREATE TABLE post_evidence (
 	id INT AUTO_INCREMENT PRIMARY KEY,
-	url VARCHAR(100),
-	tipo VARCHAR(50),
-	publicacion_id INT NOT NULL,
-	FOREIGN KEY (publicacion_id) REFERENCES publicacion(id)
+	is_visible BOOLEAN NOT NULL DEFAULT TRUE,
+    url VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	evidence_type_id INT NOT NULL,
+	post_id INT NOT NULL,
+    CONSTRAINT fk_post_evidence_evidence_type_id
+    FOREIGN KEY (evidence_type_id) REFERENCES evidence_type(id),
+    CONSTRAINT fk_post_evidence_post_id
+	FOREIGN KEY (post_id) REFERENCES fraud_post(id)
 );
 
-CREATE TABLE comentario (
+CREATE TABLE post_comment (
 	id INT AUTO_INCREMENT PRIMARY KEY,
-	texto TEXT NOT NULL,
-	fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	usuario_id INT NOT NULL,
-	publicacion_id INT NOT NULL,
-	FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-	FOREIGN KEY (publicacion_id) REFERENCES publicacion(id)
+	content TEXT NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	author_id INT NOT NULL,
+	post_id INT NOT NULL,
+    CONSTRAINT fk_post_comment_author_id
+	FOREIGN KEY (author_id) REFERENCES user(id),
+    CONSTRAINT fk_post_comment_post_id
+	FOREIGN KEY (post_id) REFERENCES fraud_post(id)
 );
 
-CREATE TABLE reaccion_publicacion (
-    usuario_id INT NOT NULL,
-    publicacion_id INT NOT NULL,
-    reaccion_id INT NOT NULL,
-    PRIMARY KEY (usuario_id, publicacion_id),
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-    FOREIGN KEY (publicacion_id) REFERENCES publicacion(id),
-    FOREIGN KEY (reaccion_id) REFERENCES reaccion(id)
+CREATE TABLE post_reaction (
+    user_id INT NOT NULL,
+    post_id INT NOT NULL,
+    reaction_type_id INT NOT NULL,
+    PRIMARY KEY (user_id, post_id),
+    CONSTRAINT fk_post_reaction_user_id
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    CONSTRAINT fk_post_reaction_post_id
+    FOREIGN KEY (post_id) REFERENCES fraud_post(id),
+    CONSTRAINT fk_post_reaction_reaction_type_id
+    FOREIGN KEY (reaction_type_id) REFERENCES reaction_type(id)
 );
 
-CREATE TABLE suscripcion (
-    usuario_id INT NOT NULL,
-    tipo_id INT NOT NULL,
-    fecha_suscripcion TIMESTAMP NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (usuario_id, tipo_id),
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-    FOREIGN KEY (tipo_id) REFERENCES tipo(id)
+CREATE TABLE fraud_type_subscription (
+    user_id INT NOT NULL,
+    fraud_type_id INT NOT NULL,
+    subscribed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, fraud_type_id),
+    CONSTRAINT fk_fraud_type_subscription_user_id
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    CONSTRAINT fk_fraud_type_subscription_fraud_type_id
+    FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id)
 );
 
-CREATE TABLE publicacion_tipo (
-    publicacion_id INT NOT NULL,
-    tipo_id INT NOT NULL,
-    FOREIGN KEY (publicacion_id) REFERENCES publicacion(id),
-    FOREIGN KEY (tipo_id) REFERENCES tipo(id),
-    PRIMARY KEY (publicacion_id, tipo_id)
+CREATE TABLE post_fraud_type (
+    post_id INT NOT NULL,
+    fraud_type_id INT NOT NULL,
+    PRIMARY KEY (post_id, fraud_type_id),
+    CONSTRAINT fk_post_fraud_type_post_id
+    FOREIGN KEY (post_id) REFERENCES fraud_post(id),
+    CONSTRAINT fk_post_fraud_type_fraud_type_id
+    FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id)
 );
 
-INSERT INTO rol (nombre, acronimo) VALUES
-("usuario", "us"),
-("admin", "ad");
-
-INSERT INTO estado (nombre) VALUES
-("BORRADOR"),
-("SUBIDO"),
-("PUBLICADO"),
-("VALIDADO");
-
-INSERT INTO categoria (nombre, acronimo) VALUES
-("Correo", "co"),
-("Redes Sociales", "rs"),
-("Mensaje", "me"),
-("Otros", "ot"),
-("Anuncios", "an");
-
-INSERT INTO tipo (nombre, acronimo) VALUES
-("Oferta engañosa", "oe"),
-("Producto falso", "pf"),
-("Anuncio falso", "af");
+CREATE TABLE audit_log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    audit_action_id INT NOT NULL,
+    modified_field_id INT DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    old_value TEXT NULL,
+    new_value TEXT NULL,
+    performed_by_id INT NOT NULL, 
+    post_id INT DEFAULT NULL,
+    evidence_id INT NULL,
+    CONSTRAINT fk_audit_log_audit_action_id
+    FOREIGN KEY (audit_action_id) REFERENCES audit_action(id),
+    CONSTRAINT fk_audit_log_modified_field_id
+    FOREIGN KEY (modified_field_id) REFERENCES modified_field(id),
+    CONSTRAINT fk_audit_log_performed_by_id
+    FOREIGN KEY (performed_by_id) REFERENCES user(id),
+    CONSTRAINT fk_audit_log_post_id
+    FOREIGN KEY (post_id) REFERENCES fraud_post(id),
+    CONSTRAINT fk_audit_log_evidence_id
+    FOREIGN KEY (evidence_id) REFERENCES post_evidence(id)
+);
