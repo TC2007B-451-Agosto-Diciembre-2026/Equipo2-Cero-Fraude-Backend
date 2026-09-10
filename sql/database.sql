@@ -133,7 +133,7 @@ CREATE TABLE post_evidence (
     url VARCHAR(100) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	evidence_type_id INT NOT NULL,
-	post_id INT NOT NULL,
+	post_id INT DEFAULT NULL,
     CONSTRAINT fk_post_evidence_evidence_type_id
     FOREIGN KEY (evidence_type_id) REFERENCES evidence_type(id),
     CONSTRAINT fk_post_evidence_post_id
