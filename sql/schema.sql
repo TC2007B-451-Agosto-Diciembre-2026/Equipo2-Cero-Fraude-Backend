@@ -2,24 +2,10 @@ DROP DATABASE IF EXISTS cero_fraude;
 CREATE DATABASE cero_fraude;
 USE cero_fraude;
 
-DROP TABLE IF EXISTS audit_log;
-DROP TABLE IF EXISTS post_fraud_type;
-DROP TABLE IF EXISTS fraud_type_subscription;
-DROP TABLE IF EXISTS post_reaction;
-DROP TABLE IF EXISTS post_comment;
-DROP TABLE IF EXISTS post_evidence;
-DROP TABLE IF EXISTS post_report;
-DROP TABLE IF EXISTS fraud_post;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS modified_field;
-DROP TABLE IF EXISTS evidence_type;
-DROP TABLE IF EXISTS report_reason;
-DROP TABLE IF EXISTS audit_action;
-DROP TABLE IF EXISTS fraud_type;
-DROP TABLE IF EXISTS fraud_category;
-DROP TABLE IF EXISTS reaction_type;
-DROP TABLE IF EXISTS post_status;
-DROP TABLE IF EXISTS user_role;
+
+-- ===================================
+--  CATALOGS
+-- ===================================
 
 CREATE TABLE user_role (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -81,6 +67,11 @@ CREATE TABLE authority (
     description VARCHAR(255) NOT NULL
 );
 
+
+-- ===================================
+--  USERS
+-- ===================================
+
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR (100) NOT NULL UNIQUE,
@@ -93,6 +84,11 @@ CREATE TABLE user (
     CONSTRAINT fk_user_role_id
     FOREIGN KEY (role_id) REFERENCES user_role(id)
 );
+
+
+-- ===================================
+--  FRAUD POSTS
+-- ===================================
 
 CREATE TABLE fraud_post (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -118,6 +114,11 @@ CREATE TABLE fraud_post (
     CONSTRAINT fk_fraud_post_category_id
     FOREIGN KEY (category_id) REFERENCES fraud_category(id)
 );
+
+
+-- ===================================
+--  POST CONTENT / INTERACTIONS
+-- ===================================
 
 CREATE TABLE post_report (
 	id INT AUTO_INCREMENT PRIMARY KEY,
@@ -172,6 +173,11 @@ CREATE TABLE post_reaction (
     FOREIGN KEY (reaction_type_id) REFERENCES reaction_type(id)
 );
 
+
+-- ===================================
+--  FRAUD TYPE RELATIONSHIPS
+-- ===================================
+
 CREATE TABLE fraud_type_subscription (
     user_id INT NOT NULL,
     fraud_type_id INT NOT NULL,
@@ -181,17 +187,6 @@ CREATE TABLE fraud_type_subscription (
     FOREIGN KEY (user_id) REFERENCES user(id),
     CONSTRAINT fk_fraud_type_subscription_fraud_type_id
     FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id)
-);
-
-CREATE TABLE fraud_type_authority (
-    priority INT NOT NULL,
-    fraud_type_id INT NOT NULL,
-    authority_id INT NOT NULL,
-    PRIMARY KEY (fraud_type_id, authority_id),
-    CONSTRAINT fk_fta_fraud_type_id
-    FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id),
-    CONSTRAINT fk_fta_authority_id
-    FOREIGN KEY (authority_id) REFERENCES authority(id)
 );
 
 CREATE TABLE post_fraud_type (
@@ -204,6 +199,22 @@ CREATE TABLE post_fraud_type (
     FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id)
 );
 
+
+-- ===================================
+--  AUTHORITY REFERRALS
+-- ===================================
+
+CREATE TABLE fraud_type_authority (
+    priority INT NOT NULL,
+    fraud_type_id INT NOT NULL,
+    authority_id INT NOT NULL,
+    PRIMARY KEY (fraud_type_id, authority_id),
+    CONSTRAINT fk_fta_fraud_type_id
+    FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id),
+    CONSTRAINT fk_fta_authority_id
+    FOREIGN KEY (authority_id) REFERENCES authority(id)
+);
+
 CREATE TABLE post_authority (
     priority INT NOT NULL,
     post_id INT NOT NULL,
@@ -214,6 +225,11 @@ CREATE TABLE post_authority (
     CONSTRAINT fk_post_authority_authority_id
     FOREIGN KEY (authority_id) REFERENCES authority(id)
 );
+
+
+-- ===================================
+--  AUDIT
+-- ===================================
 
 CREATE TABLE audit_log (
     id INT AUTO_INCREMENT PRIMARY KEY,

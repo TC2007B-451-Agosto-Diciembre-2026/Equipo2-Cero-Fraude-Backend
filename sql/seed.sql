@@ -1,10 +1,16 @@
--- USER ROLE
+-- ===================================
+--  USER ROLES
+-- ===================================
+
 INSERT INTO user_role (name, code) VALUES
 ('Usuario', 'USER'),
 ('Administrador', 'ADMIN');
 
 
--- POST STATUS
+-- ===================================
+--  POST STATUSES
+-- ===================================
+
 INSERT INTO post_status (name, code) VALUES
 ('Borrador', 'DRAFT'),
 ('Subido', 'UPLOADED'),
@@ -12,14 +18,19 @@ INSERT INTO post_status (name, code) VALUES
 ('Validado', 'VALIDATED');
 
 
--- REACTION TYPE
+-- ===================================
+--  REACTION TYPES
+-- ===================================
+
 INSERT INTO reaction_type (name, code) VALUES
 ('Like', 'LIKE'),
 ('Dislike', 'DISLIKE');
 
 
--- FRAUD CATEGORY
--- De dónde provino o apareció la oferta
+-- ===================================
+--  FRAUD CATEGORIES
+-- ===================================
+
 INSERT INTO fraud_category (name, code) VALUES
 ('Correo', 'EMAIL'),
 ('Redes sociales', 'SOCIAL'),
@@ -28,8 +39,10 @@ INSERT INTO fraud_category (name, code) VALUES
 ('Otros', 'OTHER');
 
 
--- FRAUD TYPE
--- Qué tipo de oferta o engaño se reporta
+-- ===================================
+--  FRAUD TYPES
+-- ===================================
+
 INSERT INTO fraud_type (name, code) VALUES
 ('Producto falso', 'FAKE_PROD'),
 ('Precio engañoso', 'BAD_PRICE'),
@@ -38,8 +51,10 @@ INSERT INTO fraud_type (name, code) VALUES
 ('Otro', 'OTHER');
 
 
--- AUDIT ACTION
--- Acciones registradas en audit_log
+-- ===================================
+--  AUDIT ACTIONS
+-- ===================================
+
 INSERT INTO audit_action (name, code) VALUES
 ('Crear', 'CREATE'),
 ('Editar', 'UPDATE'),
@@ -50,8 +65,10 @@ INSERT INTO audit_action (name, code) VALUES
 ('Mostrar evidencia', 'SHOW_EVID');
 
 
--- REPORT REASON
--- Motivos por los que un usuario reporta una publicación
+-- ===================================
+--  REPORT REASONS
+-- ===================================
+
 INSERT INTO report_reason (name, code) VALUES
 ('Información falsa o engañosa', 'FALSE_INFO'),
 ('Contenido duplicado', 'DUPLICATE'),
@@ -61,16 +78,20 @@ INSERT INTO report_reason (name, code) VALUES
 ('Otro', 'OTHER');
 
 
--- EVIDENCE TYPE
--- Tipo de archivo de la evidencia
+-- ===================================
+--  EVIDENCE TYPES
+-- ===================================
+
 INSERT INTO evidence_type (name) VALUES
 ('Imagen'),
 ('PDF'),
 ('Otro');
 
 
--- MODIFIED FIELD
--- Campos cuya modificación puede registrarse
+-- ===================================
+--  MODIFIED FIELDS
+-- ===================================
+
 INSERT INTO modified_field (name, code) VALUES
 ('Título', 'TITLE'),
 ('Descripción', 'DESC'),
@@ -86,6 +107,11 @@ INSERT INTO modified_field (name, code) VALUES
 ('Categoría', 'CATEGORY'),
 ('Tipo de fraude', 'FRAUD_TYPE'),
 ('Visibilidad de evidencia', 'EVID_VIS');
+
+
+-- ===================================
+--  AUTHORITIES
+-- ===================================
 
 INSERT INTO authority (name, code, description) VALUES
 ('Procuraduría Federal del Consumidor', 'PROFECO',

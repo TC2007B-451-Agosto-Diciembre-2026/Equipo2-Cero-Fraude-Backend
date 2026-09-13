@@ -25,9 +25,11 @@ $ npm install
 
 ## Iniciar base de datos
 
-entrar al entorno de MySQL.
-```bash
-source [path_to_database.sql]
+Entrar al entorno de MySQL y ejecutar los siguientes archivos en orden:
+```sql
+SOURCE [path_to_schema.sql];
+
+SOURCE [path_to_seed.sql];
 ```
 
 ## Configuración de .env
@@ -67,15 +69,29 @@ $ npm run test:cov
 
 ## Estructura del proyecto
 
-src/
-├── database/
-├── users/
-├── users/
-├── users/
-├── users/
-
-
-
-├── config/
-├── app.service.ts
-└── main.ts
+```text
+.
+├── sql/
+│   ├── database.sql
+│   └── seed.sql
+│
+├── src/
+│   ├── autenticacion/
+│   │   ├── dto/
+│   │   ├── autenticacion.controller.ts
+│   │   ├── autenticacion.service.ts
+│   │   └── ...
+│   │
+│   ├── categorias/
+│   ├── comentarios/
+│   ├── database/
+│   ├── evidencias/
+│   ├── publicaciones/
+│   ├── reportes/
+│   ├── usuarios/
+│   │
+│   ├── app.module.ts
+│   └── main.ts
+│
+└── ...
+```
