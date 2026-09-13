@@ -325,3 +325,13 @@ INSERT INTO modified_field (name, code) VALUES
 ('Categoría', 'CATEGORY'),
 ('Tipo de fraude', 'FRAUD_TYPE'),
 ('Visibilidad de evidencia', 'EVID_VIS');
+
+INSERT INTO authority (name, code, description) VALUES
+('Procuraduría Federal del Consumidor', 'PROFECO',
+ 'Orienta y atiende problemas relacionados con compras, proveedores, promociones y derechos del consumidor.'),
+
+('Policía Cibernética', 'POL_CIB',
+ 'Brinda orientación y atención ante incidentes, engaños y posibles delitos realizados mediante medios digitales.'),
+ 
+('Fiscalía', 'FISCALIA',
+ 'Recibe denuncias cuando los hechos pueden constituir un delito y requieren investigación por parte de la autoridad competente.');
