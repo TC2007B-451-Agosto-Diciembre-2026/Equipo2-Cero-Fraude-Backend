@@ -74,6 +74,13 @@ CREATE TABLE modified_field (
     code VARCHAR(10)
 );
 
+CREATE TABLE authority (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    code VARCHAR(10) NOT NULL UNIQUE,
+    description VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR (100) NOT NULL UNIQUE,
@@ -176,6 +183,17 @@ CREATE TABLE fraud_type_subscription (
     FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id)
 );
 
+CREATE TABLE fraud_type_authority (
+    priority INT NOT NULL,
+    fraud_type_id INT NOT NULL,
+    authority_id INT NOT NULL,
+    PRIMARY KEY (fraud_type_id, authority_id),
+    CONSTRAINT fk_fta_fraud_type_id
+    FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id),
+    CONSTRAINT fk_fta_authority_id
+    FOREIGN KEY (authority_id) REFERENCES authority(id)
+);
+
 CREATE TABLE post_fraud_type (
     post_id INT NOT NULL,
     fraud_type_id INT NOT NULL,
@@ -184,6 +202,17 @@ CREATE TABLE post_fraud_type (
     FOREIGN KEY (post_id) REFERENCES fraud_post(id),
     CONSTRAINT fk_post_fraud_type_fraud_type_id
     FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id)
+);
+
+CREATE TABLE post_authority (
+    priority INT NOT NULL,
+    post_id INT NOT NULL,
+    authority_id INT NOT NULL,
+    PRIMARY KEY (post_id, authority_id),
+    CONSTRAINT fk_post_authority_post_id
+    FOREIGN KEY (post_id) REFERENCES fraud_post(id),
+    CONSTRAINT fk_post_authority_authority_id
+    FOREIGN KEY (authority_id) REFERENCES authority(id)
 );
 
 CREATE TABLE audit_log (
