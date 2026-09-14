@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 -- ===================================
 --  USER ROLES
 -- ===================================
@@ -32,11 +34,12 @@ INSERT INTO reaction_type (name, code) VALUES
 -- ===================================
 
 INSERT INTO fraud_category (name, code) VALUES
-('Correo', 'EMAIL'),
 ('Redes sociales', 'SOCIAL'),
-('Mensaje', 'MESSAGE'),
-('Anuncios', 'ADS'),
-('Otros', 'OTHER');
+('Marketplace', 'MARKET'),
+('Mensajería', 'MESSAGE'),
+('Correo electrónico', 'EMAIL'),
+('Sitio web', 'WEBSITE'),
+('Otro', 'OTHER');
 
 
 -- ===================================
@@ -47,7 +50,9 @@ INSERT INTO fraud_type (name, code) VALUES
 ('Producto falso', 'FAKE_PROD'),
 ('Precio engañoso', 'BAD_PRICE'),
 ('Promoción falsa', 'FAKE_PROMO'),
-('Oferta falsa', 'FAKE_OFFER'),
+('Vendedor falso', 'FAKE_SELL'),
+('Tienda falsa', 'FAKE_STORE'),
+('Suplantación de marca', 'BRAND_IMP'),
 ('Otro', 'OTHER');
 
 
@@ -60,9 +65,10 @@ INSERT INTO audit_action (name, code) VALUES
 ('Editar', 'UPDATE'),
 ('Eliminar', 'DELETE'),
 ('Validar', 'VALIDATE'),
-('Rechazar', 'REJECT'),
 ('Ocultar evidencia', 'HIDE_EVID'),
-('Mostrar evidencia', 'SHOW_EVID');
+('Mostrar evidencia', 'SHOW_EVID'),
+('Desactivar usuario', 'DEACT_USER'),
+('Activar usuario', 'ACT_USER');
 
 
 -- ===================================
@@ -70,7 +76,7 @@ INSERT INTO audit_action (name, code) VALUES
 -- ===================================
 
 INSERT INTO report_reason (name, code) VALUES
-('Información falsa o engañosa', 'FALSE_INFO'),
+('Información incorrecta', 'FALSE_INFO'),
 ('Contenido duplicado', 'DUPLICATE'),
 ('Información personal', 'PERS_INFO'),
 ('Contenido inapropiado', 'INAPPROP'),
@@ -120,5 +126,5 @@ INSERT INTO authority (name, code, description) VALUES
 ('Policía Cibernética', 'POL_CIB',
  'Brinda orientación y atención ante incidentes, engaños y posibles delitos realizados mediante medios digitales.'),
  
-('Fiscalía', 'FISCALIA',
- 'Recibe denuncias cuando los hechos pueden constituir un delito y requieren investigación por parte de la autoridad competente.');
+('CONDUSEF', 'CONDUSEF',
+ 'Brinda orientación y apoyo en asuntos relacionados con productos, servicios e instituciones financieras.');

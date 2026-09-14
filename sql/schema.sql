@@ -104,7 +104,6 @@ CREATE TABLE fraud_post (
     is_fraud BOOLEAN DEFAULT NULL,
     is_anonymous BOOLEAN NOT NULL DEFAULT FALSE,
     published_at TIMESTAMP DEFAULT NULL,
-    validated_at TIMESTAMP DEFAULT NULL,
     author_id INT NOT NULL,
     category_id INT NOT NULL,
     CONSTRAINT fk_fraud_post_status_id
@@ -239,6 +238,7 @@ CREATE TABLE audit_log (
     old_value TEXT NULL,
     new_value TEXT NULL,
     performed_by_id INT NOT NULL, 
+    affected_user_id INT DEFAULT NULL,
     post_id INT DEFAULT NULL,
     evidence_id INT NULL,
     CONSTRAINT fk_audit_log_audit_action_id
@@ -247,6 +247,8 @@ CREATE TABLE audit_log (
     FOREIGN KEY (modified_field_id) REFERENCES modified_field(id),
     CONSTRAINT fk_audit_log_performed_by_id
     FOREIGN KEY (performed_by_id) REFERENCES user(id),
+    CONSTRAINT fk_audit_log_affected_user_id
+    FOREIGN KEY (affected_user_id) REFERENCES user(id),
     CONSTRAINT fk_audit_log_post_id
     FOREIGN KEY (post_id) REFERENCES fraud_post(id),
     CONSTRAINT fk_audit_log_evidence_id
