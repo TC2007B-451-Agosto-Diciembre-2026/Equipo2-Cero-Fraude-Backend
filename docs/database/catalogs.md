@@ -1,6 +1,6 @@
 # Catálogos de la base de datos
 
-En esta documento se describen los catálogos utilizados por Cero Fraude y el significade de los valores definidos para cada uno.
+En esta documento se describen los catálogos utilizados por Cero Fraude y el significado de los valores definidos para cada uno.
 
 
 ## `user_role`
@@ -107,7 +107,7 @@ Indica el formato en el que se encuentra una evidencia.
 
 ## `modified_field`
 
-Indica el formato en el que se encuentra una evidencia.
+Indica un campo que ha sido modificado.
 
 | **Código** | **Nombre**               | **Descripción**                                                                |
 | :--------: | :----------------------- | :----------------------------------------------------------------------------- |
