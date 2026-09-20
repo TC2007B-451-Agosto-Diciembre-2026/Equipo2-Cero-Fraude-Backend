@@ -1,6 +1,6 @@
 # Catálogos de la base de datos
 
-En esta documento se describen los catálogos utilizados por Cero Fraude y el significado de los valores definidos para cada uno.
+En este documento se describen los catálogos utilizados por Cero Fraude y el significado de los valores definidos para cada uno.
 
 
 ## `user_role`
@@ -17,12 +17,13 @@ Indica el rol al que está asociado un usuario dentro del sistema.
 
 Indica el estado en el que se encuentra actualmente una publicación dentro del sistema.
 
-| **Código** | **Nombre** | **Descripción**                                                                                        |
-| :--------: | :--------- | :----------------------------------------------------------------------------------------------------- |
-| DRAFT      | Borrador   | Indica que la publicación aún está siendo elaborada y no ha sido enviada                               |
-| UPLOADED   | Subido     | Indica que la publicación fue enviada al sistema y está pendiente de publicación                       |
-| PUBLISHED  | Publicado  | Indica que la publicación se encuentra disponible para los usuarios                                    |
-| VALIDATED  | Validado   | Indica que la publicación fue revisada por un administrador y determinó si correspone o no a un fraude |
+| **Código** | **Nombre** | **Descripción**                                                                                                    |
+| :--------: | :--------- | :----------------------------------------------------------------------------------------------------------------- |
+| DRAFT      | Borrador   | Indica que la publicación aún está siendo elaborada y no ha sido enviada                                           |
+| UPLOADED   | Subido     | Indica que la publicación fue enviada al sistema y se encuentra pendiente de moderación                            |
+| REJECTED   | Rechazado  | Indica que la publicación no es apta para publicarse en el sistema                                                 |
+| PUBLISHED  | Publicado  | Indica que la publicación se encuentra disponible para los usuarios                                                |
+| VALIDATED  | Validado   | Indica que la publicación pasó por un proceso de validación en el que se determinó si corresponde o no a un fraude |
 
 
 ## `reaction_type`
@@ -41,7 +42,7 @@ Indica el medio o contexto del que provino o en el que apareció la oferta repor
 
 | **Código** | **Nombre**         | **Descripción**                                                                                     |
 | :--------: | :----------------- | :-------------------------------------------------------------------------------------------------- |
-| SOCIAL     | Redes Sociales     | La oferta fue encontrada o recibida a través de una red social                                      |
+| SOCIAL     | Redes sociales     | La oferta fue encontrada o recibida a través de una red social                                      |
 | MARKET     | Marketplace        | La oferta fue encontrada en una plataforma de compraventa entre usuarios                            |
 | MESSAGE    | Mensajería         | La oferta fue recibida a través de una aplicación o servicio de mensajería                          |
 | EMAIL      | Correo electrónico | La oferta fue recibida a través de correo electrónico                                               |
@@ -68,16 +69,15 @@ Indica el tipo de fraude al que pertenece la situación que el usuario quiere re
 
 Indica la acción registrada sobre un determinado elemento del sistema.
 
-| **Código** | **Nombre**        | **Descripción**                                                                                   |
-| :--------: | :---------------- | :------------------------------------------------------------------------------------------------ |
-| CREATE     | Crear             | Indica la creación de un elemento relevante                                                       |
-| UPDATE     | Editar            | Indica la modificación de un elemento relevante en el sistema                                     |
-| DELETE     | Eliminar          | Indica la eliminación de un elemento en el sistema                                                |
-| VALIDATE   | Validar           | Indica la validación de una publicación                                                           |
-| HIDE_EVID  | Ocultar evidencia | Indica que un administrador decidió ocultar una evidencia de una publicación determinada          |
-| SHOW_EVID  | Mostrar evidencia | Indica que un administrador decidió volver a mostrar una evidencia de una publicación determinada |
-| DEACT_USER | Desactivar usuario | Indica que un administrador decidió desactivar la cuenta de un usuario |
-| ACT_USER | Activar usuario | Indica que un administrador decidió volver a activar la cuenta de un usuario |
+| **Código**  | **Nombre**         | **Descripción**                                                                      |
+| :---------: | :----------------- | :----------------------------------------------------------------------------------- |
+| UPDATE      | Editar             | Indica la modificación de información de una publicación o de una evidencia asociada |
+| DELETE      | Eliminar           | Indica la eliminación de una publicación                                             |
+| VALIDATE    | Validar            | Indica que se realizó una validación de una publicación                              |
+| ADD_EVID    | Agregar evidencia  | Indica que un administrador agregó una nueva evidencia a una publicación             |
+| DELETE_EVID | Eliminar evidencia | Indica que un administrador eliminó una evidencia asociada a una publicación         |
+| DEACT_USER  | Desactivar usuario | Indica que un administrador desactivó la cuenta de un usuario                        |
+| ACT_USER    | Activar usuario    | Indica que un administrador volvió a activar la cuenta de un usuario                 |
 
 
 ## `report_reason`
@@ -109,27 +109,26 @@ Indica el formato en el que se encuentra una evidencia.
 
 Indica un campo que ha sido modificado.
 
-| **Código** | **Nombre**               | **Descripción**                                                                |
-| :--------: | :----------------------- | :----------------------------------------------------------------------------- |
-| TITLE      | Título                   | Indica que el título de una publicación ha sido modificado                     |
-| DESC       | Descripción              | Indica que la descripción de una publicación ha sido modificada                |
-| SELLER     | Vendedor                 | Indica que el vendedor asociado a una publicación ha sido modificado           |
-| PRODUCT    | Producto                 | Indica que el producto asociado a una publicación ha sido modificado           |
-| PHONE      | Teléfono                 | Indica que el número de teléfono asociado a una publicación ha sido modificado |
-| URL        | URL                      | Indica que la URL asociada a una publicación ha sido modificada                |
-| PLATFORM   | Plataforma               | Indica que la plataforma asociada a una publicación ha sido modificada         |
-| FRAUD_MAIL | Correo fraudulento       | Indica que el correo fraudulento asociado a una publicación ha sido modificado |
-| STATUS     | Estado                   | Indica que el estado de la publicación ha sido modificado                      |
-| IS_FRAUD   | Validación de fraude     | Indica que la validación del fraude en una publicación ha sido modificada      |
-| ANONYMOUS  | Publicación anónima      | Indica que se modificó si la publicación se muestra de forma anónima o no      |
-| CATEGORY   | Categoría                | Indica que la categoría asociada a una publicación cambió                      |
-| FRAUD_TYPE | Tipo de fraude           | Indica que el tipo de fraude asociado a una publicación cambió                 |
-| EVID_VIS   | Visibilidad de evidencia | Indica que la visibilidad de las evidencias de una publicación cambió          |
+| **Código** | **Nombre**               | **Descripción**                                                                 |
+| :--------: | :----------------------- | :------------------------------------------------------------------------------ |
+| TITLE      | Título                   | Indica que el título de una publicación ha sido modificado                      |
+| DESC       | Descripción              | Indica que la descripción de una publicación ha sido modificada                 |
+| SELLER     | Vendedor                 | Indica que el vendedor asociado a una publicación ha sido modificado            |
+| PRODUCT    | Producto                 | Indica que el producto asociado a una publicación ha sido modificado            |
+| PHONE      | Teléfono                 | Indica que el número de teléfono asociado a una publicación ha sido modificado  |
+| URL        | URL                      | Indica que la URL asociada a una publicación ha sido modificada                 |
+| PLATFORM   | Plataforma               | Indica que la plataforma asociada a una publicación ha sido modificada          |
+| FRAUD_MAIL | Correo fraudulento       | Indica que el correo fraudulento asociado a una publicación ha sido modificado  |
+| STATUS     | Estado                   | Indica que el estado de la publicación ha sido modificado                       |
+| IS_FRAUD   | Validación de fraude     | Indica que la validación del fraude en una publicación ha sido modificada       |
+| ANONYMOUS  | Publicación anónima      | Indica que se modificó si la publicación se muestra de forma anónima o no       |
+| CATEGORY   | Categoría                | Indica que se cambió la categoría asignada a una publicación                    |
+| EVID_VIS   | Visibilidad de evidencia | Indica que se cambió la visibilidad de una evidencia asociada a una publicación |
 
 
 ## `authority`
 
-Indica las autoridades a las que se puede recurrir dependiendo del tipo de fraude asociado a una publicación o del criterio del evaluador.
+Indica las autoridades a las que se puede recurrir ante distintos tipos o casos de fraude.
 
 | **Código** | **Nombre**          |
 | :--------: | :------------------ |

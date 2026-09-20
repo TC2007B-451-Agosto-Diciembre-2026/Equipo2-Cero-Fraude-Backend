@@ -16,6 +16,7 @@ INSERT INTO user_role (name, code) VALUES
 INSERT INTO post_status (name, code) VALUES
 ('Borrador', 'DRAFT'),
 ('Subido', 'UPLOADED'),
+('Rechazado', 'REJECTED'),
 ('Publicado', 'PUBLISHED'),
 ('Validado', 'VALIDATED');
 
@@ -61,12 +62,11 @@ INSERT INTO fraud_type (name, code) VALUES
 -- ===================================
 
 INSERT INTO audit_action (name, code) VALUES
-('Crear', 'CREATE'),
 ('Editar', 'UPDATE'),
 ('Eliminar', 'DELETE'),
 ('Validar', 'VALIDATE'),
-('Ocultar evidencia', 'HIDE_EVID'),
-('Mostrar evidencia', 'SHOW_EVID'),
+('Agregar evidencia', 'ADD_EVID'),
+('Eliminar evidencia', 'DELETE_EVID'),
 ('Desactivar usuario', 'DEACT_USER'),
 ('Activar usuario', 'ACT_USER');
 
@@ -111,7 +111,6 @@ INSERT INTO modified_field (name, code) VALUES
 ('Validación de fraude', 'IS_FRAUD'),
 ('Publicación anónima', 'ANONYMOUS'),
 ('Categoría', 'CATEGORY'),
-('Tipo de fraude', 'FRAUD_TYPE'),
 ('Visibilidad de evidencia', 'EVID_VIS');
 
 
@@ -120,7 +119,7 @@ INSERT INTO modified_field (name, code) VALUES
 -- ===================================
 
 INSERT INTO authority (name, code, description) VALUES
-('Procuraduría Federal del Consumidor', 'PROFECO',
+('PROFECO', 'PROFECO',
  'Orienta y atiende problemas relacionados con compras, proveedores, promociones y derechos del consumidor.'),
 
 ('Policía Cibernética', 'POL_CIB',
