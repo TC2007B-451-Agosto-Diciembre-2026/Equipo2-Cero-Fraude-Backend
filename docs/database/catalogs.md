@@ -21,10 +21,9 @@ Indica el estado en el que se encuentra actualmente una publicación dentro del 
 | :--------: | :--------- | :----------------------------------------------------------------------------------------------------------------- |
 | DRAFT      | Borrador   | Indica que la publicación aún está siendo elaborada y no ha sido enviada                                           |
 | UPLOADED   | Subido     | Indica que la publicación fue enviada al sistema y se encuentra pendiente de moderación                            |
-| REJECTED   | Rechazado  | Indica que la publicación no es apta para publicarse en el sistema                                                 |
 | PUBLISHED  | Publicado  | Indica que la publicación se encuentra disponible para los usuarios                                                |
 | VALIDATED  | Validado   | Indica que la publicación pasó por un proceso de validación en el que se determinó si corresponde o no a un fraude |
-
+| REJECTED   | Rechazado  | Indica que la publicación no es apta para publicarse en el sistema                                                 |
 
 ## `reaction_type`
 
