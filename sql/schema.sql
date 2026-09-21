@@ -2,24 +2,10 @@ DROP DATABASE IF EXISTS cero_fraude;
 CREATE DATABASE cero_fraude;
 USE cero_fraude;
 
-DROP TABLE IF EXISTS audit_log;
-DROP TABLE IF EXISTS post_fraud_type;
-DROP TABLE IF EXISTS fraud_type_subscription;
-DROP TABLE IF EXISTS post_reaction;
-DROP TABLE IF EXISTS post_comment;
-DROP TABLE IF EXISTS post_evidence;
-DROP TABLE IF EXISTS post_report;
-DROP TABLE IF EXISTS fraud_post;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS modified_field;
-DROP TABLE IF EXISTS evidence_type;
-DROP TABLE IF EXISTS report_reason;
-DROP TABLE IF EXISTS audit_action;
-DROP TABLE IF EXISTS fraud_type;
-DROP TABLE IF EXISTS fraud_category;
-DROP TABLE IF EXISTS reaction_type;
-DROP TABLE IF EXISTS post_status;
-DROP TABLE IF EXISTS user_role;
+
+-- ===================================
+--  CATALOGS
+-- ===================================
 
 CREATE TABLE user_role (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,6 +60,18 @@ CREATE TABLE modified_field (
     code VARCHAR(10)
 );
 
+CREATE TABLE authority (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    code VARCHAR(10) NOT NULL UNIQUE,
+    description VARCHAR(255) NOT NULL
+);
+
+
+-- ===================================
+--  USERS
+-- ===================================
+
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR (100) NOT NULL UNIQUE,
@@ -87,10 +85,15 @@ CREATE TABLE user (
     FOREIGN KEY (role_id) REFERENCES user_role(id)
 );
 
+
+-- ===================================
+--  FRAUD POSTS
+-- ===================================
+
 CREATE TABLE fraud_post (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR (100) NOT NULL,
-    description TEXT NOT NULL,
+    title VARCHAR (100) DEFAULT NULL,
+    description TEXT DEFAULT NULL,
     seller_name VARCHAR (100) DEFAULT NULL,
     product VARCHAR (100) DEFAULT NULL,
     phone_number VARCHAR (25) DEFAULT NULL,
@@ -101,9 +104,9 @@ CREATE TABLE fraud_post (
     is_fraud BOOLEAN DEFAULT NULL,
     is_anonymous BOOLEAN NOT NULL DEFAULT FALSE,
     published_at TIMESTAMP DEFAULT NULL,
-    validated_at TIMESTAMP DEFAULT NULL,
+    deleted_at TIMESTAMP DEFAULT NULL,
     author_id INT NOT NULL,
-    category_id INT NOT NULL,
+    category_id INT DEFAULT NULL,
     CONSTRAINT fk_fraud_post_status_id
     FOREIGN KEY (status_id) REFERENCES post_status(id),
     CONSTRAINT fk_fraud_post_author_id
@@ -112,6 +115,11 @@ CREATE TABLE fraud_post (
     FOREIGN KEY (category_id) REFERENCES fraud_category(id)
 );
 
+
+-- ===================================
+--  POST CONTENT / INTERACTIONS
+-- ===================================
+
 CREATE TABLE post_report (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	details TEXT DEFAULT NULL,
@@ -119,6 +127,8 @@ CREATE TABLE post_report (
 	report_reason_id INT NOT NULL,
 	reporter_id INT NOT NULL,
 	post_id INT NOT NULL,
+    CONSTRAINT uq_post_report_reporter_post
+    UNIQUE (reporter_id, post_id),
     CONSTRAINT fk_post_report_report_reason_id
     FOREIGN KEY (report_reason_id) REFERENCES report_reason(id),
 	CONSTRAINT fk_post_report_reporter_id
@@ -132,8 +142,9 @@ CREATE TABLE post_evidence (
 	is_visible BOOLEAN NOT NULL DEFAULT TRUE,
     url VARCHAR(100) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL,
 	evidence_type_id INT NOT NULL,
-	post_id INT DEFAULT NULL,
+	post_id INT NOT NULL,
     CONSTRAINT fk_post_evidence_evidence_type_id
     FOREIGN KEY (evidence_type_id) REFERENCES evidence_type(id),
     CONSTRAINT fk_post_evidence_post_id
@@ -142,8 +153,10 @@ CREATE TABLE post_evidence (
 
 CREATE TABLE post_comment (
 	id INT AUTO_INCREMENT PRIMARY KEY,
+    is_visible BOOLEAN NOT NULL DEFAULT TRUE,
 	content TEXT NOT NULL,
 	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL,
 	author_id INT NOT NULL,
 	post_id INT NOT NULL,
     CONSTRAINT fk_post_comment_author_id
@@ -164,6 +177,11 @@ CREATE TABLE post_reaction (
     CONSTRAINT fk_post_reaction_reaction_type_id
     FOREIGN KEY (reaction_type_id) REFERENCES reaction_type(id)
 );
+
+
+-- ===================================
+--  FRAUD TYPE RELATIONSHIPS
+-- ===================================
 
 CREATE TABLE fraud_type_subscription (
     user_id INT NOT NULL,
@@ -186,113 +204,65 @@ CREATE TABLE post_fraud_type (
     FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id)
 );
 
+
+-- ===================================
+--  AUTHORITY REFERRALS
+-- ===================================
+
+CREATE TABLE fraud_type_authority (
+    fraud_type_id INT NOT NULL,
+    authority_id INT NOT NULL,
+    PRIMARY KEY (fraud_type_id, authority_id),
+    CONSTRAINT fk_fta_fraud_type_id
+    FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id),
+    CONSTRAINT fk_fta_authority_id
+    FOREIGN KEY (authority_id) REFERENCES authority(id)
+);
+
+CREATE TABLE post_authority (
+    priority INT NOT NULL,
+    post_id INT NOT NULL,
+    authority_id INT NOT NULL,
+    PRIMARY KEY (post_id, authority_id),
+    CONSTRAINT fk_post_authority_post_id
+    FOREIGN KEY (post_id) REFERENCES fraud_post(id),
+    CONSTRAINT fk_post_authority_authority_id
+    FOREIGN KEY (authority_id) REFERENCES authority(id)
+);
+
+
+-- ===================================
+--  AUDIT
+-- ===================================
+
 CREATE TABLE audit_log (
     id INT AUTO_INCREMENT PRIMARY KEY,
     audit_action_id INT NOT NULL,
-    modified_field_id INT DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    old_value TEXT NULL,
-    new_value TEXT NULL,
     performed_by_id INT NOT NULL, 
+    affected_user_id INT DEFAULT NULL,
     post_id INT DEFAULT NULL,
     evidence_id INT NULL,
     CONSTRAINT fk_audit_log_audit_action_id
     FOREIGN KEY (audit_action_id) REFERENCES audit_action(id),
-    CONSTRAINT fk_audit_log_modified_field_id
-    FOREIGN KEY (modified_field_id) REFERENCES modified_field(id),
     CONSTRAINT fk_audit_log_performed_by_id
     FOREIGN KEY (performed_by_id) REFERENCES user(id),
+    CONSTRAINT fk_audit_log_affected_user_id
+    FOREIGN KEY (affected_user_id) REFERENCES user(id),
     CONSTRAINT fk_audit_log_post_id
     FOREIGN KEY (post_id) REFERENCES fraud_post(id),
     CONSTRAINT fk_audit_log_evidence_id
     FOREIGN KEY (evidence_id) REFERENCES post_evidence(id)
 );
 
--- USER ROLE
-INSERT INTO user_role (name, code) VALUES
-('Usuario', 'USER'),
-('Administrador', 'ADMIN');
-
-
--- POST STATUS
-INSERT INTO post_status (name, code) VALUES
-('Borrador', 'DRAFT'),
-('Subido', 'UPLOADED'),
-('Publicado', 'PUBLISHED'),
-('Validado', 'VALIDATED');
-
-
--- REACTION TYPE
-INSERT INTO reaction_type (name, code) VALUES
-('Like', 'LIKE'),
-('Dislike', 'DISLIKE');
-
-
--- FRAUD CATEGORY
--- De dónde provino o apareció la oferta
-INSERT INTO fraud_category (name, code) VALUES
-('Correo', 'EMAIL'),
-('Redes sociales', 'SOCIAL'),
-('Mensaje', 'MESSAGE'),
-('Anuncios', 'ADS'),
-('Otros', 'OTHER');
-
-
--- FRAUD TYPE
--- Qué tipo de oferta o engaño se reporta
-INSERT INTO fraud_type (name, code) VALUES
-('Producto falso', 'FAKE_PROD'),
-('Precio engañoso', 'BAD_PRICE'),
-('Promoción falsa', 'FAKE_PROMO'),
-('Oferta falsa', 'FAKE_OFFER'),
-('Otro', 'OTHER');
-
-
--- AUDIT ACTION
--- Acciones registradas en audit_log
-INSERT INTO audit_action (name, code) VALUES
-('Crear', 'CREATE'),
-('Editar', 'UPDATE'),
-('Eliminar', 'DELETE'),
-('Validar', 'VALIDATE'),
-('Rechazar', 'REJECT'),
-('Ocultar evidencia', 'HIDE_EVID'),
-('Mostrar evidencia', 'SHOW_EVID');
-
-
--- REPORT REASON
--- Motivos por los que un usuario reporta una publicación
-INSERT INTO report_reason (name, code) VALUES
-('Información falsa o engañosa', 'FALSE_INFO'),
-('Contenido duplicado', 'DUPLICATE'),
-('Información personal', 'PERS_INFO'),
-('Contenido inapropiado', 'INAPPROP'),
-('No está relacionado con fraude', 'NOT_FRAUD'),
-('Otro', 'OTHER');
-
-
--- EVIDENCE TYPE
--- Tipo de archivo de la evidencia
-INSERT INTO evidence_type (name) VALUES
-('Imagen'),
-('PDF'),
-('Otro');
-
-
--- MODIFIED FIELD
--- Campos cuya modificación puede registrarse
-INSERT INTO modified_field (name, code) VALUES
-('Título', 'TITLE'),
-('Descripción', 'DESC'),
-('Vendedor', 'SELLER'),
-('Producto', 'PRODUCT'),
-('Teléfono', 'PHONE'),
-('URL', 'URL'),
-('Plataforma', 'PLATFORM'),
-('Correo fraudulento', 'FRAUD_MAIL'),
-('Estado', 'STATUS'),
-('Validación de fraude', 'IS_FRAUD'),
-('Publicación anónima', 'ANONYMOUS'),
-('Categoría', 'CATEGORY'),
-('Tipo de fraude', 'FRAUD_TYPE'),
-('Visibilidad de evidencia', 'EVID_VIS');
+CREATE TABLE audit_field_change (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    audit_log_id INT NOT NULL,
+    modified_field_id INT NOT NULL,
+    old_value TEXT DEFAULT NULL,
+    new_value TEXT DEFAULT NULL,
+    CONSTRAINT fk_audit_field_change_audit_log_id
+    FOREIGN KEY (audit_log_id) REFERENCES audit_log(id),
+    CONSTRAINT fk_audit_field_change_modified_field_id
+    FOREIGN KEY (modified_field_id) REFERENCES modified_field(id)
+);
