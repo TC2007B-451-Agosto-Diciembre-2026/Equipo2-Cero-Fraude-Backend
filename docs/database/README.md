@@ -180,7 +180,7 @@ El anonimato se aplica únicamente a la información mostrada públicamente. Cua
 Los administradores pueden identificar al autor cuando sea necesario para realizar tareas de administración o moderación. Asimismo, el autor puede reconocer la publicación como propia y conservar las acciones disponibles sobre sus publicaciones, independientemente de que haya sido publicada de forma anónima.
 
 ### 6.4 Gestión y visibilidad de las evidencias
-Se decidió mantener separada la existencia de una evidencia de su visibilidad mediante el campo `is_visible`. Una evidencia puede conetner información relevante par la revisión y comprensión del caso, pero al mismo tiempo incluir información sensible del usuario que no sea apropiado mostrar públicamente.
+Se decidió mantener separada la existencia de una evidencia de su visibilidad mediante el campo `is_visible`. Una evidencia puede contener información relevante para la revisión y comprensión del caso, pero al mismo tiempo incluir información sensible del usuario que no sea apropiado mostrar públicamente.
 
 Mientras una publicación se encuentra en estado `DRAFT` o `UPLOADED`, el autor puede agregar o eliminar sus evidencias. Una vez que la publicación pasa a `PUBLISHED` o `VALIDATED`, el autor deja de poder modificarlas.
 
