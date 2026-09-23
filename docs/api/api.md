@@ -1,5 +1,85 @@
 # Documentación API Cero Fraude
 
+# Índice
+
+1. [Introducción](#1-introducción)
+* 1.1. [Propósito](#11-propósito)
+* 1.2. [Tipos de Acceso](#12-tipos-de-acceso)
+* 1.3. [Manejo de errores](#13-manejo-de-errores)
+* 1.4. [Códigos de respuesta](#14-códigos-de-respuesta)
+
+2. [Resumen de Endpoints](#2-resumen-de-endpoints)
+
+3. [Autenticación](#3-autenticación)
+* 3.1. [Registro de usuario](#31-registro-de-usuario)
+- 3.2. [Inicio de sesión](#32-inicio-de-sesión)
+- 3.3. [Renovación del token de acceso](#33-renovación-del-token-de-acceso)
+- 3.4. [Cierre de sesión](#34-cierre-de-sesión)
+
+4. [Catálogos](#4-catálogos)
+- 4.1. [Roles](#41-roles)
+- 4.2. [Reacciones](#42-reacciones)
+- 4.3. [Estados](#43-estados)
+- 4.4. [Categorías](#44-categorías)
+- 4.5. [Acciones de auditoría](#45-acciones-de-auditoría)
+- 4.6. [Razones de reporte](#46-razones-de-reporte)
+- 4.7. [Tipos de fraude](#47-tipos-de-fraude)
+- 4.8. [Campos modificados](#48-campos-modificados)
+- 4.9. [Tipos de evidencia](#49-tipos-de-evidencia)
+- 4.10. [Autoridades](#410-autoridades)
+
+5. [Usuarios](#5-usuarios)
+- 5.1. [Obtener usuarios](#51-obtener-usuarios)
+- 5.2. [Obtener un usuario](#52-obtener-un-usuario)
+- 5.3. [Modificar un usuario](#53-modificar-un-usuario)
+
+6. [Publicaciones de fraude](#6-publicaciones-de-fraude)
+- 6.1. [Obtener publicaciones](#61-obtener-publicaciones)
+- 6.2. [Obtener una publicación](#62-obtener-una-publicación)
+- 6.3. [Crear una publicación](#63-crear-una-publicación)
+- 6.4. [Actualizar una publicación](#64-actualizar-una-publicación)
+- 6.5. [Eliminar una publicación](#65-eliminar-una-publicación)
+
+7. [Reportes](#7-reportes)
+- 7.1. [Obtener reportes](#71-obtener-reportes)
+- 7.2. [Obtener reportes de una publicación](#72-obtener-reportes-de-una-publicación)
+- 7.3. [Crear un reporte](#73-crear-un-reporte)
+- 7.4. [Eliminar un reporte](#74-eliminar-un-reporte)
+
+8. [Evidencias](#8-evidencias)
+- 8.1. [Obtener evidencias](#81-obtener-evidencias)
+- 8.2. [Obtener evidencias de una publicación](#82-obtener-evidencias-de-una-publicación)
+- 8.3. [Crear una evidencia](#83-crear-una-evidencia)
+- 8.4. [Eliminar una evidencia](#84-eliminar-una-evidencia)
+
+9. [Comentarios](#9-comentarios)
+- 9.1. [Obtener comentarios](#91-obtener-comentarios)
+- 9.2. [Crear un comentario](#92-crear-un-comentario)
+- 9.3. [Obtener comentarios de una publicación](#93-obtener-comentarios-de-una-publicación)
+
+10. [Reacciones](#10-reacciones)
+- 10.1. [Obtener reacciones](#101-obtener-reacciones)
+- 10.2. [Crear o cambiar una reacción](#102-crear-o-cambiar-una-reacción)
+- 10.3. [Eliminar una reacción](#103-eliminar-una-reacción)
+
+11. [Suscripciones](#11-suscripciones)
+- 11.1. [Obtener suscripciones](#111-obtener-suscripciones)
+- 11.2. [Obtener suscripciones de un usuario](#112-obtener-suscripciones-de-un-usuario)
+- 11.3. [Crear una suscripción](#113-crear-una-suscripción)
+- 11.4. [Eliminar una suscripción](#114-eliminar-una-suscripción)
+
+12. [Autoridades](#12-autoridades)
+- 12.1. [Obtener autoridades de un tipo de fraude](#121-obtener-autoridades-de-un-tipo-de-fraude)
+- 12.2. [Asociar autoridad a tipo](#122-asociar-autoridad-a-tipo)
+- 12.3. [Desasociar autoridad de tipo](#123-desasociar-autoridad-de-tipo)
+- 12.4. [Obtener autoridad de una publicación](#124-obtener-autoridad-de-una-publicación)
+- 12.5. [Asociar autoridad a una publicación](#125-asociar-autoridad-a-una-publicación)
+- 12.6. [Cambiar autoridad de una publicación](#126-cambiar-autoridad-de-una-publicación)
+- 12.7. [Quitar autoridad de una publicación](#127-quitar-autoridad-de-una-publicación)
+
+13. [Auditoría](#13-auditoría)
+- 13.1. [Obtener registros de auditoría](#131-obtener-registros-de-auditoría)
+
 ## 1. Introducción
 
 ### 1.1. Propósito
@@ -1051,6 +1131,7 @@ Si la página solicitada no contiene resultados, se devuelve una lista vacía:
 * 401 Unauthorized
 * 403 Forbidden
 
+### 5.2. Obtener usuario
 #### GET /users/:userId
 
 Obtener la información de un usuario.
@@ -1082,6 +1163,7 @@ Obtener la información de un usuario.
 * 403 Forbidden
 * 404 Not Found
 
+### 5.3. Modificar un usuario
 #### PATCH /users/:userId
 
 Modificar los datos de un usuario. El propietario puede modificar su nombre de usuario y contraseña. El administrador puede modificar el estado de la cuenta y el rol.
