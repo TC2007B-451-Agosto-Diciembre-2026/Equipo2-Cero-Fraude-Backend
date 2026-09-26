@@ -9,8 +9,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { RegisterUsuarioDto } from './dto/register.dto';
-import { UsuarioResponseDto } from '../usuarios/dto/usuario-response.dto';
-import { AutenticacionService } from './autenticacion.service';
+import { UsuarioResponseDto } from '../users/dto/user-response.dto';
+import { AutenticacionService } from './auth.service';
 import { LoginUsuarioDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 

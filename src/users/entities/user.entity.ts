@@ -1,4 +1,4 @@
-export class Usuario {
+export class User {
   id: string | undefined;
   nombre: string | undefined;
   email: string | undefined;

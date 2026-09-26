@@ -69,29 +69,3 @@ $ npm run test:cov
 
 ## Estructura del proyecto
 
-```text
-.
-├── sql/
-│   ├── database.sql
-│   └── seed.sql
-│
-├── src/
-│   ├── autenticacion/
-│   │   ├── dto/
-│   │   ├── autenticacion.controller.ts
-│   │   ├── autenticacion.service.ts
-│   │   └── ...
-│   │
-│   ├── categorias/
-│   ├── comentarios/
-│   ├── database/
-│   ├── evidencias/
-│   ├── publicaciones/
-│   ├── reportes/
-│   ├── usuarios/
-│   │
-│   ├── app.module.ts
-│   └── main.ts
-│
-└── ...
-```

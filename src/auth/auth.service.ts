@@ -4,13 +4,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { createHash, randomBytes } from 'node:crypto';
-import { UsuariosRepository } from '../usuarios/usuarios.repository';
+import { UsuariosRepository } from '../users/user.repository';
 import { RegisterUsuarioDto } from './dto/register.dto';
 import { LoginUsuarioDto } from './dto/login.dto';
 import { sign, verify } from './jwt';
 import { RefreshDto } from './dto/refresh.dto';
-import { Usuario } from '../usuarios/entities/usuario.entity';
-import { UsuarioResponseDto } from '../usuarios/dto/usuario-response.dto';
+import { Usuario } from '../users/entities/user.entity';
+import { UsuarioResponseDto } from '../users/dto/user-response.dto';
 
 const ACCESS_TTL = 15 * 60; // 15 minutos
 const REFRESH_TTL = 7 * 24 * 60 * 60; // 7 dias

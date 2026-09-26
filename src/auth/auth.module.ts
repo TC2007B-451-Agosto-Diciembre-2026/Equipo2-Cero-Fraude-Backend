@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
-import { UsuariosRepository } from "../usuarios/usuarios.repository";
-import { AutenticacionController } from "./autenticacion.controller";
-import { AutenticacionService } from "./autenticacion.service";
-import { AutenticacionGuard } from "./autenticacion.guard";
+import { UsuariosRepository } from "../users/user.repository";
+import { AutenticacionController } from "./auth.controller";
+import { AutenticacionService } from "./auth.service";
+import { AutenticacionGuard } from "./auth.guard";
 import { DatabaseModule } from "../database/database.module";
 
 @Module({
