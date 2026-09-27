@@ -18,7 +18,6 @@
 * 3.1. [Registro de usuario](#31-registro-de-usuario)
 * 3.2. [Inicio de sesión](#32-inicio-de-sesión)
 * 3.3. [Renovación del token de acceso](#33-renovación-del-token-de-acceso)
-* 3.4. [Cierre de sesión](#34-cierre-de-sesión)
 
 4. [Catálogos](#4-catálogos)
 
@@ -143,7 +142,6 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | POST   | `/auth/register`                          | Público                              |
 | POST   | `/auth/login`                             | Público                              |
 | POST   | `/auth/refresh`                           | Público                              |
-| POST   | `/auth/logout`                            | Usuario                              |
 | GET    | `/roles`                                  | Administrador                        |
 | GET    | `/reactions`                              | Usuario                              |
 | POST   | `/reactions`                              | Administrador                        |
@@ -314,20 +312,6 @@ El endpoint se considera público porque no requiere un `access_token` previo.
 }
 ```
 
-* 400 Bad Request
-* 401 Unauthorized
-
-### 3.4. Cierre de sesión
-
-#### POST /auth/logout
-
-Finaliza la sesión del usuario e invalida los tokens asociados a ella.
-
-**Acceso:** Usuario
-
-##### Respuestas
-
-* 204 No Content
 * 400 Bad Request
 * 401 Unauthorized
 
