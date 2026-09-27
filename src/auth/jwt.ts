@@ -1,6 +1,10 @@
 import { createHmac } from 'node:crypto';
 
-const SECRET = "superSecreto";
+const SECRET = process.env.JWT_SECRET;
+
+if (!SECRET) {
+    throw new Error("JWT_SECRET is not configured");
+}
 
 export interface JwtPayload {
     sub: string;
@@ -19,7 +23,7 @@ function b64url(json: object): string {
 }
 
 function hmac(data: string): string {
-    return createHmac("sha256", SECRET).update(data).digest("base64url");
+    return createHmac("sha256", SECRET!).update(data).digest("base64url");
 }
 
 export function sign(

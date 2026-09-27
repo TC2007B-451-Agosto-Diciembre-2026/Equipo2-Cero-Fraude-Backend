@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { verify } from "./jwt";
 
 @Injectable()
-export class AutenticacionGuard implements CanActivate {
+export class AuthGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean {
         const req = context.switchToHttp().getRequest();
         const header: string = req.headers.authorization ?? "";

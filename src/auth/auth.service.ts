@@ -3,55 +3,71 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { createHash, randomBytes } from 'node:crypto';
-import { UsuariosRepository } from '../users/user.repository';
-import { RegisterUsuarioDto } from './dto/register.dto';
-import { LoginUsuarioDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 import { sign, verify } from './jwt';
 import { RefreshDto } from './dto/refresh.dto';
-import { Usuario } from '../users/entities/user.entity';
-import { UsuarioResponseDto } from '../users/dto/user-response.dto';
+import { ValidAccessDto } from './dto/valid-access.dto';
+import { AuthRepository } from './auth.repository';
+import { AuthUserEntity } from './entities/auth-user.entity';
 
 const ACCESS_TTL = 15 * 60; // 15 minutos
 const REFRESH_TTL = 7 * 24 * 60 * 60; // 7 dias
 
-@Injectable()
-export class AutenticacionService {
-    constructor(private readonly repository: UsuariosRepository) {}
+const bcrypt = require('bcrypt');
 
-    async register(dto: RegisterUsuarioDto): Promise<UsuarioResponseDto> {
+@Injectable()
+export class AuthService {
+    constructor(private readonly repository: AuthRepository) {}
+
+    async register(dto: RegisterDto): Promise<ValidAccessDto> {
         if(await this.repository.findByEmail(dto.email!)){
             throw new ConflictException("El email ya está registrado!");
         }
-        const usuario = new Usuario();
-        usuario.nombre = dto.name;
-        usuario.email = dto.email;
-        usuario.sal = this.generateSalt();
+        if(await this.repository.findByUsername(dto.username!)){
+            throw new ConflictException("El usuario ya está registrado!");
+        }
+        const user = new AuthUserEntity();
+        user.username = dto.username;
+        user.email = dto.email;
+        user.password_hash = await bcrypt.hash(dto.password!, 10);
+        user.role_id = 1;
+        await this.repository.save(user);
 
-        usuario.hash = this.hash(dto.password + usuario.sal);
-        usuario.estado = true;
-        usuario.rol_id = 1;
-        const usuario_guardado = await this.repository.save(usuario);
-        return UsuarioResponseDto.fromEntity(usuario_guardado);
+        const claims = { sub: user.id!, email: user.email! };
+        const access_token = sign({ ...claims, type: "access" }, ACCESS_TTL);
+        const refresh_token = sign({ ...claims, type: "refresh" }, REFRESH_TTL);
+        return ValidAccessDto.create(access_token, refresh_token);
     }
 
-    async login(dto: LoginUsuarioDto): Promise<{accessToken: string, refreshToken: string}>{
-        const usuario = await this.repository.findByEmail(dto.email!);
-        if(!usuario) {
-            throw new UnauthorizedException("Credenciales inválidas!");
+    async login(dto: LoginDto):Promise<ValidAccessDto> {
+
+        let user;
+
+        if(this.isValidEmail(dto.identifier!)){
+            user = await this.repository.findByEmail(dto.identifier!);
+
+        } else{
+            user = await this.repository.findByUsername(dto.identifier!);
         }
-        if(usuario.hash != this.hash(dto.password + usuario.sal!)) {
+        if(!user) {
             throw new UnauthorizedException("Credenciales inválidas!");
         }
 
-        const claims = { sub: usuario.id!, email: usuario.email! };
-        const accessToken = sign({ ...claims, type: "access" }, ACCESS_TTL);
-        const refreshToken = sign({ ...claims, type: "refresh" }, REFRESH_TTL);
-        return { accessToken, refreshToken };
+        const valid_password = await bcrypt.compare(dto.password, user.password_hash);
+
+        if (!valid_password || !user.is_active) {
+            throw new UnauthorizedException("Credenciales inválidas!");
+        }
+
+        const claims = { sub: user.id!, email: user.email! };
+        const access_token = sign({ ...claims, type: "access" }, ACCESS_TTL);
+        const refresh_token = sign({ ...claims, type: "refresh" }, REFRESH_TTL);
+        return ValidAccessDto.create(access_token, refresh_token);
     }
 
     refresh(dto: RefreshDto ): { accessToken: string }{
-        const payload = verify(dto.refreshToken!);
+        const payload = verify(dto.refresh_token!);
         if(!payload || payload.type !== "refresh") {
             throw new UnauthorizedException("Refresh token inválido!");
         }
@@ -62,12 +78,8 @@ export class AutenticacionService {
         return { accessToken };
     }
 
-    private generateSalt(): string {
-        const salt = randomBytes(8).toString('hex');
-        return salt;
-    }
-
-    private hash(password_salt: string): string {
-        return createHash("sha256").update(password_salt).digest("hex");
+    isValidEmail(email : string): boolean {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
     }
 }

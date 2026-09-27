@@ -8,29 +8,44 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { RegisterUsuarioDto } from './dto/register.dto';
-import { UsuarioResponseDto } from '../users/dto/user-response.dto';
-import { AutenticacionService } from './auth.service';
-import { LoginUsuarioDto } from './dto/login.dto';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { RegisterDto } from './dto/register.dto';
+import { ValidAccessDto } from './dto/valid-access.dto';
+import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 
-@Controller("autentication")
-export class AutenticacionController {
-    constructor(private readonly service: AutenticacionService) {}
+@ApiTags("auth")
+@Controller("auth")
+export class AuthController {
+    constructor(private readonly service: AuthService) {}
 
     @Post("register")
-    register(@Body() dto: RegisterUsuarioDto): Promise<UsuarioResponseDto> {
+    @HttpCode(201)
+    @ApiResponse({ status: 201, type: ValidAccessDto })
+    @ApiResponse({ status: 400, description: "" })
+    @ApiResponse({ status: 409, description: "" })
+    register(@Body() dto: RegisterDto): Promise<ValidAccessDto> {
         return this.service.register(dto);
     }
 
     @Post("login")
     @HttpCode(200)
-    login(@Body() dto: LoginUsuarioDto) {
+    @ApiResponse({ status: 400, description: "" })
+    @ApiResponse({ status: 401, description: "" })
+    login(@Body() dto: LoginDto) {
         return this.service.login(dto);
     }
 
     @Post("refresh")
     @HttpCode(200)
+    @ApiResponse({ status: 400, description: "" })
+    @ApiResponse({ status: 401, description: "" })
     refresh(@Body() dto: RefreshDto) {
         return this.service.refresh(dto);
     }
