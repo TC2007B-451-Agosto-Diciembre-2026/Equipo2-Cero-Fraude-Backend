@@ -35,8 +35,9 @@
 5. [Usuarios](#5-usuarios)
 
 * 5.1. [Obtener usuarios](#51-obtener-usuarios)
-* 5.2. [Obtener usuario](#52-obtener-usuario)
-* 5.3. [Modificar un usuario](#53-modificar-un-usuario)
+* 5.2. [Obtener mi usuario](#52-obtener-mi-usuario)
+* 5.3. [Obtener usuario](#53-obtener-usuario)
+* 5.4. [Modificar un usuario](#54-modificar-un-usuario)
 
 6. [Publicaciones de fraude](#6-publicaciones-de-fraude)
 
@@ -968,7 +969,32 @@ Obtener una página de usuarios.
 * 401 Unauthorized
 * 403 Forbidden
 
-### 5.2. Obtener usuario
+### 5.2. Obtener mi usuario
+
+#### GET /users/me
+
+Obtener la información del usuario.
+
+**Acceso:** Usuario
+
+##### Respuestas
+
+* 200 OK
+
+```json
+{
+  "id": 1,
+  "username": "andres123",
+  "email": "andres123@correo.com",
+  "created_at": "2026-09-22T09:58:43.123Z",
+  "is_active": true,
+  "role_id": 1
+}
+```
+
+* 401 Unauthorized
+
+### 5.3. Obtener usuario
 
 #### GET /users/:userId
 
@@ -1001,7 +1027,7 @@ Obtener la información de un usuario.
 * 403 Forbidden
 * 404 Not Found
 
-### 5.3. Modificar un usuario
+### 5.4. Modificar un usuario
 
 #### PATCH /users/:userId
 
