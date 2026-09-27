@@ -34,7 +34,7 @@ export class AuthService {
         user.role_id = 1;
         await this.repository.save(user);
 
-        const claims = { sub: user.id!, email: user.email! };
+        const claims = { sub: user.id!, email: user.email!, role_id: user.role_id! };
         const access_token = sign({ ...claims, type: "access" }, ACCESS_TTL);
         const refresh_token = sign({ ...claims, type: "refresh" }, REFRESH_TTL);
         return ValidAccessDto.create(access_token, refresh_token);
@@ -61,8 +61,8 @@ export class AuthService {
         }
 
         const claims = { sub: user.id!, email: user.email! };
-        const access_token = sign({ ...claims, type: "access" }, ACCESS_TTL);
-        const refresh_token = sign({ ...claims, type: "refresh" }, REFRESH_TTL);
+        const access_token = sign({ ...claims, role_id: user.role_id, type: "access" }, ACCESS_TTL);
+        const refresh_token = sign({ ...claims, role_id: user.role_id, type: "refresh" }, REFRESH_TTL);
         return ValidAccessDto.create(access_token, refresh_token);
     }
 
@@ -72,7 +72,7 @@ export class AuthService {
             throw new UnauthorizedException("Refresh token inválido!");
         }
         const accessToken = sign(
-            { sub: payload.sub, email: payload.email, type: "access" },
+            { sub: payload.sub, email: payload.email, role_id: payload.role_id, type: "access" },
             ACCESS_TTL,
         );
         return { accessToken };

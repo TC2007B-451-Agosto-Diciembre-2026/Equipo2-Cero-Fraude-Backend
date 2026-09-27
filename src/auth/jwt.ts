@@ -9,6 +9,7 @@ if (!SECRET) {
 export interface JwtPayload {
     sub: string;
     email: string;
+    role_id: number;
     type: "access" | "refresh";
     iat: number;
     exp: number;
