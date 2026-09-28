@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import type { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { DB_POOL } from "../database/database.module";
 import { AuthUserEntity } from "./entities/auth-user.entity";
 

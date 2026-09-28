@@ -2,19 +2,19 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
-import { sign, verify } from './jwt';
-import { RefreshDto } from './dto/refresh.dto';
-import { ValidAccessDto } from './dto/valid-access.dto';
-import { AuthRepository } from './auth.repository';
-import { AuthUserEntity } from './entities/auth-user.entity';
+} from "@nestjs/common";
+import { RegisterDto } from "./dto/register.dto";
+import { LoginDto } from "./dto/login.dto";
+import { sign, verify } from "./jwt";
+import { RefreshDto } from "./dto/refresh.dto";
+import { ValidAccessDto } from "./dto/valid-access.dto";
+import { AuthRepository } from "./auth.repository";
+import { AuthUserEntity } from "./entities/auth-user.entity";
 
 const ACCESS_TTL = 15 * 60; // 15 minutos
 const REFRESH_TTL = 7 * 24 * 60 * 60; // 7 dias
 
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 @Injectable()
 export class AuthService {
