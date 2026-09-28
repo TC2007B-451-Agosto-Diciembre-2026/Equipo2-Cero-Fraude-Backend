@@ -50,7 +50,7 @@ export function verify(token: string): JwtPayload | null{
         const payload = JSON.parse(
             Buffer.from(body, "base64url").toString(),
         ) as JwtPayload;
-        if(payload.exp < now()) {
+        if(payload.exp > now()) {
             return payload;
         }
     } catch {

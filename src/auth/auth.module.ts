@@ -11,4 +11,4 @@ import { AuthRepository } from "./auth.repository";
     providers: [AuthService, AuthRepository, AuthGuard],
     exports: [AuthGuard]
 })
-export class AutenticacionModule {}
+export class AuthModule {}

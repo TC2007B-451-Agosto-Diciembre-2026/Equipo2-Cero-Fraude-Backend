@@ -35,8 +35,8 @@ import { ResponseEvidenceTypeDto } from './dto/responses/response-evidence-type.
 import { ResponseAuthorityDto } from './dto/responses/response-authority.dto';
 
 @ApiTags("catalogues")
-@ApiBearerAuth()
 @Controller("")
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 export class CataloguesController {
     constructor(private readonly service: CataloguesService) {}

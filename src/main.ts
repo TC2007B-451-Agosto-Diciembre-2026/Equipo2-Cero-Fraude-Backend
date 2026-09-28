@@ -24,7 +24,13 @@ async function bootstrap() {
       "API REST de la aplicación Cero Fraude",
     )
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT"
+      }
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   if (process.env.NODE_ENV !== 'production') {
