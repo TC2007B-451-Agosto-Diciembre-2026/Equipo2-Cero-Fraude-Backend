@@ -1,10 +1,16 @@
+import { ApiProperty } from "@nestjs/swagger";
+
 export class User {
-  id: string | undefined;
-  nombre: string | undefined;
-  email: string | undefined;
-  hash: string | undefined;
-  sal: string | undefined;
-  fechaCreacion: Date | undefined;
-  estado: Boolean | undefined;
-  rol_id: Number | undefined;
+  @ApiProperty()
+  id: string;
+  @ApiProperty()
+  username: string;
+  @ApiProperty()
+  email: string;
+  @ApiProperty()
+  created_at: Date;
+  @ApiProperty()
+  is_active: boolean;
+  @ApiProperty()
+  role_id: number;
 }

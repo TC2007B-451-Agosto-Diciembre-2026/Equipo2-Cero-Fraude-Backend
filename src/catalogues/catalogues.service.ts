@@ -3,28 +3,28 @@ import {
     ConflictException,
     Injectable,
     NotFoundException,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
-import { CatalogueRepository } from './catalogues.repository';
+import { CatalogueRepository } from "./catalogues.repository";
 
-import { CreateReactionTypeDto } from './dto/requests/create-reaction-type.dto';
-import { CreateFraudCategoryDto } from './dto/requests/create-fraud-category.dto';
-import { CreateReportReasonDto } from './dto/requests/create-report-reason.dto';
-import { CreateFraudTypeDto } from './dto/requests/create-fraud-type.dto';
-import { CreateEvidenceTypeDto } from './dto/requests/create-evidence-type.dto';
-import { CreateAuthorityDto } from './dto/requests/create-authority.dto';
-import { UpdateAuthorityDto } from './dto/requests/update-authority.dto';
+import { CreateReactionTypeDto } from "./dto/requests/create-reaction-type.dto";
+import { CreateFraudCategoryDto } from "./dto/requests/create-fraud-category.dto";
+import { CreateReportReasonDto } from "./dto/requests/create-report-reason.dto";
+import { CreateFraudTypeDto } from "./dto/requests/create-fraud-type.dto";
+import { CreateEvidenceTypeDto } from "./dto/requests/create-evidence-type.dto";
+import { CreateAuthorityDto } from "./dto/requests/create-authority.dto";
+import { UpdateAuthorityDto } from "./dto/requests/update-authority.dto";
 
-import { ResponseUserRoleDto } from './dto/responses/response-user-role.dto';
-import { ResponseReactionTypeDto } from './dto/responses/response-reaction-type.dto';
-import { ResponsePostStatusDto } from './dto/responses/response-post-status.dto';
-import { ResponseFraudCategoryDto } from './dto/responses/response-fraud-category.dto';
-import { ResponseAuditActionDto } from './dto/responses/response-audit-action.dto';
-import { ResponseReportReasonDto } from './dto/responses/response-report-reason.dto';
-import { ResponseFraudTypeDto } from './dto/responses/response-fraud-type.dto';
-import { ResponseModifiedFieldDto } from './dto/responses/response-modified-field.dto';
-import { ResponseEvidenceTypeDto } from './dto/responses/response-evidence-type.dto';
-import { ResponseAuthorityDto } from './dto/responses/response-authority.dto';
+import { ResponseUserRoleDto } from "./dto/responses/response-user-role.dto";
+import { ResponseReactionTypeDto } from "./dto/responses/response-reaction-type.dto";
+import { ResponsePostStatusDto } from "./dto/responses/response-post-status.dto";
+import { ResponseFraudCategoryDto } from "./dto/responses/response-fraud-category.dto";
+import { ResponseAuditActionDto } from "./dto/responses/response-audit-action.dto";
+import { ResponseReportReasonDto } from "./dto/responses/response-report-reason.dto";
+import { ResponseFraudTypeDto } from "./dto/responses/response-fraud-type.dto";
+import { ResponseModifiedFieldDto } from "./dto/responses/response-modified-field.dto";
+import { ResponseEvidenceTypeDto } from "./dto/responses/response-evidence-type.dto";
+import { ResponseAuthorityDto } from "./dto/responses/response-authority.dto";
 
 @Injectable()
 export class CataloguesService {
@@ -158,7 +158,7 @@ export class CataloguesService {
     ): Promise<ResponseAuthorityDto> {
         if(dto.name === undefined && dto.description === undefined){
             throw new BadRequestException(
-                'At least one parameter required',
+                "At least one parameter required",
             );
         }
 
@@ -166,7 +166,7 @@ export class CataloguesService {
             const authority = await this.repository.updateAuthority(id, dto);
 
             if (!authority) {
-                throw new NotFoundException('Authority not found');
+                throw new NotFoundException("Authority not found");
             }
 
             return ResponseAuthorityDto.fromEntity(authority);
@@ -179,11 +179,11 @@ export class CataloguesService {
     private handleDuplicateError(error: unknown): void {
         if (
             error instanceof Error &&
-            'code' in error &&
-            error.code === 'ER_DUP_ENTRY'
+            "code" in error &&
+            error.code === "ER_DUP_ENTRY"
         ) {
             throw new ConflictException(
-                'A record with the same unique value already exists.',
+                "A record with the same unique value already exists.",
             );
         }
     }

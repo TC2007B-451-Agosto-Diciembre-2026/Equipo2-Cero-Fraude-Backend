@@ -1,5 +1,5 @@
 import { Module, OnModuleDestroy, Inject } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { createPool } from 'mysql2/promise';
 import type { Pool } from 'mysql2/promise';
 

@@ -14,7 +14,9 @@ async function bootstrap() {
   app.enableCors({
     origin: "http://localhost:5173",
   })
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true}));
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true, whitelist: true
+  }));
 
   const config = new DocumentBuilder()
     .setTitle('Cero Fraude')
@@ -22,7 +24,13 @@ async function bootstrap() {
       "API REST de la aplicación Cero Fraude",
     )
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT"
+      }
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   if (process.env.NODE_ENV !== 'production') {

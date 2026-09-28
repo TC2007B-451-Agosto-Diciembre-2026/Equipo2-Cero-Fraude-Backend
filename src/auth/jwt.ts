@@ -46,12 +46,15 @@ export function verify(token: string): JwtPayload | null{
     if(hmac(`${header}.${body}`) !== signature) {
         return null;
     }
-    const payload = JSON.parse(
-        Buffer.from(body, "base64url").toString(),
-    ) as JwtPayload;
-    if(payload.exp < now()) {
+    try{
+        const payload = JSON.parse(
+            Buffer.from(body, "base64url").toString(),
+        ) as JwtPayload;
+        if(payload.exp > now()) {
+            return payload;
+        }
+    } catch {
         return null;
     }
-
-    return payload;
+    return null;
 }

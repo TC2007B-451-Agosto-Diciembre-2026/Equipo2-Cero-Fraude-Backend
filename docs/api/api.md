@@ -18,8 +18,9 @@
 * 3.1. [Registro de usuario](#31-registro-de-usuario)
 * 3.2. [Inicio de sesión](#32-inicio-de-sesión)
 * 3.3. [Renovación del token de acceso](#33-renovación-del-token-de-acceso)
+* 3.4. [Cambiar contraseña](#34-cambiar-contraseña)
 
-4. [Catálogos](#4-catálogos)
+1. [Catálogos](#4-catálogos)
 
 * 4.1. [Roles](#41-roles)
 * 4.2. [Reacciones](#42-reacciones)
@@ -37,7 +38,8 @@
 * 5.1. [Obtener usuarios](#51-obtener-usuarios)
 * 5.2. [Obtener mi usuario](#52-obtener-mi-usuario)
 * 5.3. [Obtener usuario](#53-obtener-usuario)
-* 5.4. [Modificar un usuario](#54-modificar-un-usuario)
+* 5.4. [Modificar mi usuario](#54-modificar-mi-usuario)
+* 5.5. [Modificar un usuario](#55-modificar-un-usuario)
 
 6. [Publicaciones de fraude](#6-publicaciones-de-fraude)
 
@@ -143,6 +145,7 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | POST   | `/auth/register`                          | Público                              |
 | POST   | `/auth/login`                             | Público                              |
 | POST   | `/auth/refresh`                           | Público                              |
+| PATCH  | `/auth/password`                          | Usuario                              |
 | GET    | `/roles`                                  | Administrador                        |
 | GET    | `/reactions`                              | Usuario                              |
 | POST   | `/reactions`                              | Administrador                        |
@@ -161,8 +164,10 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | POST   | `/authorities`                            | Administrador                        |
 | PATCH  | `/authorities/:authorityId`               | Administrador                        |
 | GET    | `/users`                                  | Administrador                        |
-| GET    | `/users/:userId`                          | Propietario o administrador          |
-| PATCH  | `/users/:userId`                          | Propietario o administrador          |
+| GET    | `/users/me`                               | Usuario                              |
+| GET    | `/users/:userId`                          | Administrador                        |
+| PATCH  | `/users/me`                               | Usuario                              |
+| PATCH  | `/users/:userId`                          | Administrador                        |
 | GET    | `/posts`                                  | Usuario, propietario o administrador |
 | GET    | `/posts/me`                               | Usuario                              |
 | GET    | `/posts/:postId`                          | Usuario, propietario o administrador |
@@ -313,6 +318,34 @@ El endpoint se considera público porque no requiere un `access_token` previo.
 }
 ```
 
+* 400 Bad Request
+* 401 Unauthorized
+
+### 3.4. Cambiar contraseña
+
+#### PATCH /auth/password
+
+Cambiar la contraseña de usuario
+
+**Acceso:** Público
+
+##### Body
+
+| Campo    | Tipo   | Obligatorio | Descripción                 |
+| -------- | ------ | ----------- | --------------------------- |
+| password | string | Sí          | Nueva contraseña de usuario |
+
+##### Ejemplo de solicitud
+
+```json
+{
+  "password": "my_new_password_super_secret"
+}
+```
+
+##### Respuestas
+
+* 204 No Content
 * 400 Bad Request
 * 401 Unauthorized
 
@@ -942,9 +975,9 @@ Obtener una página de usuarios.
 | ------------ | ------- | ----------- | -------------------------------------------------------------------------- |
 | page         | Integer | No          | Página de resultados a obtener. Comienza en 1.                             |
 | is_active    | Boolean | No          | Si la cuenta de usuario está activa o no.                                  |
-| role         | Integer | No          | Rol del usuario.                                                           |
-| initial-date | String  | No          | Fecha inicial de la creación de la cuenta de usuario, en formato ISO 8601. |
-| final-date   | String  | No          | Fecha final de la creación de la cuenta de usuario, en formato ISO 8601.   |
+| role_id      | Integer | No          | Rol del usuario.                                                           |
+| initial_date | String  | No          | Fecha inicial de la creación de la cuenta de usuario, en formato ISO 8601. |
+| final_date   | String  | No          | Fecha final de la creación de la cuenta de usuario, en formato ISO 8601.   |
 
 ##### Respuestas
 
@@ -961,7 +994,10 @@ Obtener una página de usuarios.
       "is_active": true,
       "role_id": 1
     }
-  ]
+  ],
+  "page": 1,
+  "total_pages": 3,
+  "total": 47
 }
 ```
 
@@ -1000,7 +1036,7 @@ Obtener la información del usuario.
 
 Obtener la información de un usuario.
 
-**Acceso:** Propietario o administrador
+**Acceso:** Administrador
 
 ##### Parámetros de ruta
 
@@ -1027,13 +1063,53 @@ Obtener la información de un usuario.
 * 403 Forbidden
 * 404 Not Found
 
-### 5.4. Modificar un usuario
+### 5.4. Modificar mi usuario
+
+#### PATCH /users/me
+
+Modificar el nombre de usuario.
+
+**Acceso:** Usuario
+
+##### Body
+
+| Campo    | Tipo   | Obligatorio | Descripción        |
+| -------- | ------ | ----------- | ------------------ |
+| username | String | No          | Nombre del usuario |
+
+##### Ejemplo de solicitud
+
+```json
+{
+  "username": "Andres1234",
+}
+```
+
+##### Respuestas
+
+* 200 OK
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "username": "Andres1234",
+  "email": "andres123@correo.com",
+  "created_at": "2026-09-22T09:58:43.123Z",
+  "is_active": true,
+  "role_id": 1
+}
+```
+
+* 400 Bad Request
+* 401 Unauthorized
+
+### 5.5. Modificar un usuario
 
 #### PATCH /users/:userId
 
-Modificar los datos de un usuario. El propietario puede modificar su nombre de usuario y contraseña. El administrador puede modificar el estado de la cuenta y el rol.
+Modificar los datos de un usuario.
 
-**Acceso:** Propietario o administrador
+**Acceso:** Administrador
 
 ##### Parámetros de ruta
 
@@ -1045,19 +1121,14 @@ Modificar los datos de un usuario. El propietario puede modificar su nombre de u
 
 | Campo     | Tipo    | Obligatorio | Descripción                     |
 | --------- | ------- | ----------- | ------------------------------- |
-| username  | String  | Condicional | Nombre del usuario              |
-| password  | String  | Condicional | Contraseña a cambiar            |
-| is_active | Boolean | Condicional | Estado de la cuenta del usuario |
-| role_id   | Integer | Condicional | Rol del usuario                 |
-
-Los campos `username` y `password` pueden ser modificados por el propietario. Los campos `is_active` y `role_id` pueden ser modificados por un administrador.
+| is_active | Boolean | No          | Estado de la cuenta del usuario |
+| role_id   | Integer | No          | Rol del usuario                 |
 
 ##### Ejemplo de solicitud
 
 ```json
 {
-  "username": "Andres1234",
-  "password": "superSecret"
+  "role_id": 2
 }
 ```
 
@@ -1072,7 +1143,7 @@ Los campos `username` y `password` pueden ser modificados por el propietario. Lo
   "email": "andres123@correo.com",
   "created_at": "2026-09-22T09:58:43.123Z",
   "is_active": true,
-  "role_id": 1
+  "role_id": 2
 }
 ```
 
