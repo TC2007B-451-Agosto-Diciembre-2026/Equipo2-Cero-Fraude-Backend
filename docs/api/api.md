@@ -37,7 +37,8 @@
 * 5.1. [Obtener usuarios](#51-obtener-usuarios)
 * 5.2. [Obtener mi usuario](#52-obtener-mi-usuario)
 * 5.3. [Obtener usuario](#53-obtener-usuario)
-* 5.4. [Modificar un usuario](#54-modificar-un-usuario)
+* 5.4. [Modificar mi usuario](#54-modificar-mi-usuario)
+* 5.5. [Modificar un usuario](#55-modificar-un-usuario)
 
 6. [Publicaciones de fraude](#6-publicaciones-de-fraude)
 
@@ -161,7 +162,9 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | POST   | `/authorities`                            | Administrador                        |
 | PATCH  | `/authorities/:authorityId`               | Administrador                        |
 | GET    | `/users`                                  | Administrador                        |
+| GET    | `/users/me`                               | Usuario                              |
 | GET    | `/users/:userId`                          | Propietario o administrador          |
+| PATCH  | `/users/me`                               | Usuario                              |
 | PATCH  | `/users/:userId`                          | Propietario o administrador          |
 | GET    | `/posts`                                  | Usuario, propietario o administrador |
 | GET    | `/posts/me`                               | Usuario                              |
@@ -1027,30 +1030,21 @@ Obtener la información de un usuario.
 * 403 Forbidden
 * 404 Not Found
 
-### 5.4. Modificar un usuario
+### 5.4. Modificar mi usuario
 
-#### PATCH /users/:userId
+#### PATCH /users/me
 
-Modificar los datos de un usuario. El propietario puede modificar su nombre de usuario y contraseña. El administrador puede modificar el estado de la cuenta y el rol.
+Modificar los datos de usuario.
 
-**Acceso:** Propietario o administrador
-
-##### Parámetros de ruta
-
-| Campo  | Tipo | Obligatorio | Descripción      |
-| ------ | ---- | ----------- | ---------------- |
-| userId | UUID | Sí          | UUID del usuario |
+**Acceso:** Usuario
 
 ##### Body
 
-| Campo     | Tipo    | Obligatorio | Descripción                     |
-| --------- | ------- | ----------- | ------------------------------- |
-| username  | String  | Condicional | Nombre del usuario              |
-| password  | String  | Condicional | Contraseña a cambiar            |
-| is_active | Boolean | Condicional | Estado de la cuenta del usuario |
-| role_id   | Integer | Condicional | Rol del usuario                 |
+| Campo    | Tipo   | Obligatorio | Descripción          |
+| -------- | ------ | ----------- | -------------------- |
+| username | String | No          | Nombre del usuario   |
+| password | String | No          | Contraseña a cambiar |
 
-Los campos `username` y `password` pueden ser modificados por el propietario. Los campos `is_active` y `role_id` pueden ser modificados por un administrador.
 
 ##### Ejemplo de solicitud
 
@@ -1073,6 +1067,53 @@ Los campos `username` y `password` pueden ser modificados por el propietario. Lo
   "created_at": "2026-09-22T09:58:43.123Z",
   "is_active": true,
   "role_id": 1
+}
+```
+
+* 400 Bad Request
+* 401 Unauthorized
+
+### 5.5. Modificar un usuario
+
+#### PATCH /users/:userId
+
+Modificar los datos de un usuario.
+
+**Acceso:** Administrador
+
+##### Parámetros de ruta
+
+| Campo  | Tipo | Obligatorio | Descripción      |
+| ------ | ---- | ----------- | ---------------- |
+| userId | UUID | Sí          | UUID del usuario |
+
+##### Body
+
+| Campo     | Tipo    | Obligatorio | Descripción                     |
+| --------- | ------- | ----------- | ------------------------------- |
+| is_active | Boolean | No          | Estado de la cuenta del usuario |
+| role_id   | Integer | No          | Rol del usuario                 |
+
+##### Ejemplo de solicitud
+
+```json
+{
+  "role_id": 2
+}
+```
+
+##### Respuestas
+
+* 200 OK
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "username": "andres123",
+  "email": "andres123@correo.com",
+  "created_at": "2026-09-22T09:58:43.123Z",
+  "is_active": true,
+  "role_id": 2
 }
 ```
 
