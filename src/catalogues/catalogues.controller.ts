@@ -11,7 +11,7 @@ import {
 
 import { AuthGuard } from '../auth/auth.guard';
 import { CataloguesService } from './catalogues.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateReactionTypeDto } from './dto/requests/create-reaction-type.dto';
 import { CreateFraudCategoryDto} from './dto/requests/create-fraud-category.dto';
 import { CreateReportReasonDto } from './dto/requests/create-report-reason.dto';
@@ -35,7 +35,8 @@ import { ResponseEvidenceTypeDto } from './dto/responses/response-evidence-type.
 import { ResponseAuthorityDto } from './dto/responses/response-authority.dto';
 
 @ApiTags("catalogues")
-@Controller("catalogues")
+@ApiBearerAuth()
+@Controller("")
 @UseGuards(AuthGuard)
 export class CataloguesController {
     constructor(private readonly service: CataloguesService) {}

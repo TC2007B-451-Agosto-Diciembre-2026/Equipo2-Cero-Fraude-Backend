@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 
 import { CatalogueRepository } from './catalogues.repository';
 
@@ -38,8 +43,13 @@ export class CataloguesService {
     async createReaction(
         dto: CreateReactionTypeDto,
     ): Promise<ResponseReactionTypeDto> {
-        const reaction = await this.repository.createReaction(dto);
-        return ResponseReactionTypeDto.fromEntity(reaction);
+        try {
+            const reaction = await this.repository.createReaction(dto);
+            return ResponseReactionTypeDto.fromEntity(reaction);
+        } catch (error) {
+            this.handleDuplicateError(error);
+            throw error;
+        }
     }
 
     async findStates(): Promise<ResponsePostStatusDto[]> {
@@ -55,8 +65,13 @@ export class CataloguesService {
     async createCategory(
         dto: CreateFraudCategoryDto,
     ): Promise<ResponseFraudCategoryDto> {
-        const category = await this.repository.createCategory(dto);
-        return ResponseFraudCategoryDto.fromEntity(category);
+        try {
+            const category = await this.repository.createCategory(dto);
+            return ResponseFraudCategoryDto.fromEntity(category);
+        } catch (error) {
+            this.handleDuplicateError(error);
+            throw error;
+        }
     }
 
     async findAuditActions(): Promise<ResponseAuditActionDto[]> {
@@ -72,8 +87,13 @@ export class CataloguesService {
     async createReportReason(
         dto: CreateReportReasonDto,
     ): Promise<ResponseReportReasonDto> {
-        const reason = await this.repository.createReportReason(dto);
-        return ResponseReportReasonDto.fromEntity(reason);
+        try {
+            const reason = await this.repository.createReportReason(dto);
+            return ResponseReportReasonDto.fromEntity(reason);
+        } catch (error) {
+            this.handleDuplicateError(error);
+            throw error;
+        }
     }
 
     async findTypes(): Promise<ResponseFraudTypeDto[]> {
@@ -84,8 +104,13 @@ export class CataloguesService {
     async createType(
         dto: CreateFraudTypeDto,
     ): Promise<ResponseFraudTypeDto> {
-        const type = await this.repository.createType(dto);
-        return ResponseFraudTypeDto.fromEntity(type);
+        try {
+            const type = await this.repository.createType(dto);
+            return ResponseFraudTypeDto.fromEntity(type);
+        } catch (error) {
+            this.handleDuplicateError(error);
+            throw error;
+        }
     }
 
     async findModifiedFields(): Promise<ResponseModifiedFieldDto[]> {
@@ -101,8 +126,13 @@ export class CataloguesService {
     async createEvidenceType(
         dto: CreateEvidenceTypeDto,
     ): Promise<ResponseEvidenceTypeDto> {
-        const type = await this.repository.createEvidenceType(dto);
-        return ResponseEvidenceTypeDto.fromEntity(type);
+        try {
+            const type = await this.repository.createEvidenceType(dto);
+            return ResponseEvidenceTypeDto.fromEntity(type);
+        } catch (error) {
+            this.handleDuplicateError(error);
+            throw error;
+        }
     }
 
     async findAuthorities(): Promise<ResponseAuthorityDto[]> {
@@ -113,8 +143,13 @@ export class CataloguesService {
     async createAuthority(
         dto: CreateAuthorityDto,
     ): Promise<ResponseAuthorityDto> {
-        const authority = await this.repository.createAuthority(dto);
-        return ResponseAuthorityDto.fromEntity(authority);
+        try {
+            const authority = await this.repository.createAuthority(dto);
+            return ResponseAuthorityDto.fromEntity(authority);
+        } catch (error) {
+            this.handleDuplicateError(error);
+            throw error;
+        }
     }
 
     async updateAuthority(
@@ -122,15 +157,34 @@ export class CataloguesService {
         dto: UpdateAuthorityDto,
     ): Promise<ResponseAuthorityDto> {
         if(dto.name === undefined && dto.description === undefined){
-            throw new BadRequestException("At least one parameter required");
+            throw new BadRequestException(
+                'At least one parameter required',
+            );
         }
 
-        const authority = await this.repository.updateAuthority(id, dto);
+        try {
+            const authority = await this.repository.updateAuthority(id, dto);
 
-        if(!authority){
-            throw new NotFoundException("Authority not found");
+            if (!authority) {
+                throw new NotFoundException('Authority not found');
+            }
+
+            return ResponseAuthorityDto.fromEntity(authority);
+        } catch (error) {
+            this.handleDuplicateError(error);
+            throw error;
         }
+    }
 
-        return ResponseAuthorityDto.fromEntity(authority);
+    private handleDuplicateError(error: unknown): void {
+        if (
+            error instanceof Error &&
+            'code' in error &&
+            error.code === 'ER_DUP_ENTRY'
+        ) {
+            throw new ConflictException(
+                'A record with the same unique value already exists.',
+            );
+        }
     }
 }
