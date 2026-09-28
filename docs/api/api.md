@@ -994,7 +994,10 @@ Obtener una página de usuarios.
       "is_active": true,
       "role_id": 1
     }
-  ]
+  ],
+  "page": 1,
+  "total_pages": 3,
+  "total": 47
 }
 ```
 
@@ -1072,7 +1075,7 @@ Modificar el nombre de usuario.
 
 | Campo    | Tipo   | Obligatorio | Descripción        |
 | -------- | ------ | ----------- | ------------------ |
-| username | String | Sí          | Nombre del usuario |
+| username | String | No          | Nombre del usuario |
 
 ##### Ejemplo de solicitud
 
