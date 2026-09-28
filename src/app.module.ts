@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
-import { UsuarioModule } from './users/user.module';
+import { ConfigModule } from '@nestjs/config';
 import { AutenticacionModule } from './auth/auth.module';
 
 @Module({
-  imports: [AutenticacionModule, UsuarioModule],
+    imports: [ConfigModule.forRoot({
+        isGlobal: true,
+    }),
+    AutenticacionModule],
 })
 export class AppModule {}

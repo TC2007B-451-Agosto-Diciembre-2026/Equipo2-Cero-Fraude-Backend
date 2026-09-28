@@ -6,7 +6,6 @@ import type { Pool } from 'mysql2/promise';
 export const DB_POOL = "DB_POOL";
 
 @Module({
-    imports: [ConfigModule.forRoot()],
     providers: [{
         provide: DB_POOL,
         inject: [ConfigService],
