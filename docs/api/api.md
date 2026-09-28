@@ -18,8 +18,9 @@
 * 3.1. [Registro de usuario](#31-registro-de-usuario)
 * 3.2. [Inicio de sesión](#32-inicio-de-sesión)
 * 3.3. [Renovación del token de acceso](#33-renovación-del-token-de-acceso)
+* 3.4. [Cambiar contraseña](#34-cambiar-contraseña)
 
-4. [Catálogos](#4-catálogos)
+1. [Catálogos](#4-catálogos)
 
 * 4.1. [Roles](#41-roles)
 * 4.2. [Reacciones](#42-reacciones)
@@ -144,6 +145,7 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | POST   | `/auth/register`                          | Público                              |
 | POST   | `/auth/login`                             | Público                              |
 | POST   | `/auth/refresh`                           | Público                              |
+| PATCH  | `/auth/password`                          | Usuario                              |
 | GET    | `/roles`                                  | Administrador                        |
 | GET    | `/reactions`                              | Usuario                              |
 | POST   | `/reactions`                              | Administrador                        |
@@ -163,9 +165,9 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | PATCH  | `/authorities/:authorityId`               | Administrador                        |
 | GET    | `/users`                                  | Administrador                        |
 | GET    | `/users/me`                               | Usuario                              |
-| GET    | `/users/:userId`                          | Propietario o administrador          |
+| GET    | `/users/:userId`                          | Administrador                        |
 | PATCH  | `/users/me`                               | Usuario                              |
-| PATCH  | `/users/:userId`                          | Propietario o administrador          |
+| PATCH  | `/users/:userId`                          | Administrador                        |
 | GET    | `/posts`                                  | Usuario, propietario o administrador |
 | GET    | `/posts/me`                               | Usuario                              |
 | GET    | `/posts/:postId`                          | Usuario, propietario o administrador |
@@ -316,6 +318,34 @@ El endpoint se considera público porque no requiere un `access_token` previo.
 }
 ```
 
+* 400 Bad Request
+* 401 Unauthorized
+
+### 3.4. Cambiar contraseña
+
+#### PATCH /auth/password
+
+Cambiar la contraseña de usuario
+
+**Acceso:** Público
+
+##### Body
+
+| Campo    | Tipo   | Obligatorio | Descripción                 |
+| -------- | ------ | ----------- | --------------------------- |
+| password | string | Sí          | Nueva contraseña de usuario |
+
+##### Ejemplo de solicitud
+
+```json
+{
+  "password": "my_new_password_super_secret"
+}
+```
+
+##### Respuestas
+
+* 204 No Content
 * 400 Bad Request
 * 401 Unauthorized
 
@@ -945,9 +975,9 @@ Obtener una página de usuarios.
 | ------------ | ------- | ----------- | -------------------------------------------------------------------------- |
 | page         | Integer | No          | Página de resultados a obtener. Comienza en 1.                             |
 | is_active    | Boolean | No          | Si la cuenta de usuario está activa o no.                                  |
-| role         | Integer | No          | Rol del usuario.                                                           |
-| initial-date | String  | No          | Fecha inicial de la creación de la cuenta de usuario, en formato ISO 8601. |
-| final-date   | String  | No          | Fecha final de la creación de la cuenta de usuario, en formato ISO 8601.   |
+| role_id      | Integer | No          | Rol del usuario.                                                           |
+| initial_date | String  | No          | Fecha inicial de la creación de la cuenta de usuario, en formato ISO 8601. |
+| final_date   | String  | No          | Fecha final de la creación de la cuenta de usuario, en formato ISO 8601.   |
 
 ##### Respuestas
 
@@ -1003,7 +1033,7 @@ Obtener la información del usuario.
 
 Obtener la información de un usuario.
 
-**Acceso:** Propietario o administrador
+**Acceso:** Administrador
 
 ##### Parámetros de ruta
 
@@ -1034,24 +1064,21 @@ Obtener la información de un usuario.
 
 #### PATCH /users/me
 
-Modificar los datos de usuario.
+Modificar el nombre de usuario.
 
 **Acceso:** Usuario
 
 ##### Body
 
-| Campo    | Tipo   | Obligatorio | Descripción          |
-| -------- | ------ | ----------- | -------------------- |
-| username | String | No          | Nombre del usuario   |
-| password | String | No          | Contraseña a cambiar |
-
+| Campo    | Tipo   | Obligatorio | Descripción        |
+| -------- | ------ | ----------- | ------------------ |
+| username | String | Sí          | Nombre del usuario |
 
 ##### Ejemplo de solicitud
 
 ```json
 {
   "username": "Andres1234",
-  "password": "superSecret"
 }
 ```
 
@@ -1062,7 +1089,7 @@ Modificar los datos de usuario.
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "username": "andres123",
+  "username": "Andres1234",
   "email": "andres123@correo.com",
   "created_at": "2026-09-22T09:58:43.123Z",
   "is_active": true,
