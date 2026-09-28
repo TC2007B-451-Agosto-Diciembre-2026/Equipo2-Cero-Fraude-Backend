@@ -14,7 +14,9 @@ async function bootstrap() {
   app.enableCors({
     origin: "http://localhost:5173",
   })
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true}));
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true, whitelist: true
+  }));
 
   const config = new DocumentBuilder()
     .setTitle('Cero Fraude')
