@@ -1,26 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from "@nestjs/common";
 
-import { UserRoleEntity } from './entities/user-role.entity';
-import { ReactionTypeEntity } from './entities/reaction-type.entity';
-import { PostStatusEntity } from './entities/post-status.entity';
-import { FraudCategoryEntity } from './entities/fraud-category.entity';
-import { AuditActionEntity } from './entities/audit-action.entity';
-import { ReportReasonEntity } from './entities/report-reason.entity';
-import { FraudTypeEntity } from './entities/fraud-type.entity';
-import { ModifiedFieldEntity } from './entities/modified-field.entity';
-import { EvidenceTypeEntity } from './entities/evidence-type.entity';
-import { AuthorityEntity } from './entities/authority.entity';
+import { UserRoleEntity } from "./entities/user-role.entity";
+import { ReactionTypeEntity } from "./entities/reaction-type.entity";
+import { PostStatusEntity } from "./entities/post-status.entity";
+import { FraudCategoryEntity } from "./entities/fraud-category.entity";
+import { AuditActionEntity } from "./entities/audit-action.entity";
+import { ReportReasonEntity } from "./entities/report-reason.entity";
+import { FraudTypeEntity } from "./entities/fraud-type.entity";
+import { ModifiedFieldEntity } from "./entities/modified-field.entity";
+import { EvidenceTypeEntity } from "./entities/evidence-type.entity";
+import { AuthorityEntity } from "./entities/authority.entity";
 
-import { CreateReactionTypeDto } from './dto/requests/create-reaction-type.dto';
-import { CreateFraudCategoryDto } from './dto/requests/create-fraud-category.dto';
-import { CreateReportReasonDto } from './dto/requests/create-report-reason.dto';
-import { CreateFraudTypeDto } from './dto/requests/create-fraud-type.dto';
-import { CreateEvidenceTypeDto } from './dto/requests/create-evidence-type.dto';
-import { CreateAuthorityDto } from './dto/requests/create-authority.dto';
-import { UpdateAuthorityDto } from './dto/requests/update-authority.dto';
+import { CreateReactionTypeDto } from "./dto/requests/create-reaction-type.dto";
+import { CreateFraudCategoryDto } from "./dto/requests/create-fraud-category.dto";
+import { CreateReportReasonDto } from "./dto/requests/create-report-reason.dto";
+import { CreateFraudTypeDto } from "./dto/requests/create-fraud-type.dto";
+import { CreateEvidenceTypeDto } from "./dto/requests/create-evidence-type.dto";
+import { CreateAuthorityDto } from "./dto/requests/create-authority.dto";
+import { UpdateAuthorityDto } from "./dto/requests/update-authority.dto";
 
-import type { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import { DB_POOL } from '../database/database.module';
+import type { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { DB_POOL } from "../database/database.module";
 
 const STANDARD_COLUMNS = "id, name, code";
 const EVIDENCE_TYPE_COLUMNS = "id, name";
@@ -250,12 +250,12 @@ export class CatalogueRepository {
         const values: (string | number)[] = [];
 
         if (dto.name !== undefined) {
-            fields.push('name = ?');
+            fields.push("name = ?");
             values.push(dto.name);
         }
 
         if (dto.description !== undefined) {
-            fields.push('description = ?');
+            fields.push("description = ?");
             values.push(dto.description);
         }
 
@@ -263,7 +263,7 @@ export class CatalogueRepository {
 
         await this.pool.execute(
             `UPDATE authority
-            SET ${fields.join(', ')}
+            SET ${fields.join(", ")}
             WHERE id = ?`,
             values,
         );

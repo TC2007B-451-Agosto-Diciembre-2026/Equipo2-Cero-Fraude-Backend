@@ -7,32 +7,32 @@ import {
   Param,
   Body,
   ParseIntPipe,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
-import { AuthGuard } from '../auth/auth.guard';
-import { CataloguesService } from './catalogues.service';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateReactionTypeDto } from './dto/requests/create-reaction-type.dto';
-import { CreateFraudCategoryDto} from './dto/requests/create-fraud-category.dto';
-import { CreateReportReasonDto } from './dto/requests/create-report-reason.dto';
-import { CreateFraudTypeDto } from './dto/requests/create-fraud-type.dto';
-import { CreateEvidenceTypeDto } from './dto/requests/create-evidence-type.dto';
-import { CreateAuthorityDto } from './dto/requests/create-authority.dto';
-import { UpdateAuthorityDto } from './dto/requests/update-authority.dto';
+import { AuthGuard } from "../auth/auth.guard";
+import { CataloguesService } from "./catalogues.service";
+import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { CreateReactionTypeDto } from "./dto/requests/create-reaction-type.dto";
+import { CreateFraudCategoryDto} from "./dto/requests/create-fraud-category.dto";
+import { CreateReportReasonDto } from "./dto/requests/create-report-reason.dto";
+import { CreateFraudTypeDto } from "./dto/requests/create-fraud-type.dto";
+import { CreateEvidenceTypeDto } from "./dto/requests/create-evidence-type.dto";
+import { CreateAuthorityDto } from "./dto/requests/create-authority.dto";
+import { UpdateAuthorityDto } from "./dto/requests/update-authority.dto";
 
-import { ADMIN_ROLE_ID } from '../constants';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { ResponseFraudCategoryDto } from './dto/responses/response-fraud-category.dto';
-import { ResponsePostStatusDto } from './dto/responses/response-post-status.dto';
-import { ResponseUserRoleDto } from './dto/responses/response-user-role.dto';
-import { ResponseReactionTypeDto } from './dto/responses/response-reaction-type.dto';
-import { ResponseAuditActionDto } from './dto/responses/response-audit-action.dto';
-import { ResponseReportReasonDto } from './dto/responses/response-report-reason.dto';
-import { ResponseFraudTypeDto } from './dto/responses/response-fraud-type.dto';
-import { ResponseModifiedFieldDto } from './dto/responses/response-modified-field.dto';
-import { ResponseEvidenceTypeDto } from './dto/responses/response-evidence-type.dto';
-import { ResponseAuthorityDto } from './dto/responses/response-authority.dto';
+import { ADMIN_ROLE_ID } from "../constants";
+import { RolesGuard } from "../auth/roles.guard";
+import { Roles } from "../auth/roles.decorator";
+import { ResponseFraudCategoryDto } from "./dto/responses/response-fraud-category.dto";
+import { ResponsePostStatusDto } from "./dto/responses/response-post-status.dto";
+import { ResponseUserRoleDto } from "./dto/responses/response-user-role.dto";
+import { ResponseReactionTypeDto } from "./dto/responses/response-reaction-type.dto";
+import { ResponseAuditActionDto } from "./dto/responses/response-audit-action.dto";
+import { ResponseReportReasonDto } from "./dto/responses/response-report-reason.dto";
+import { ResponseFraudTypeDto } from "./dto/responses/response-fraud-type.dto";
+import { ResponseModifiedFieldDto } from "./dto/responses/response-modified-field.dto";
+import { ResponseEvidenceTypeDto } from "./dto/responses/response-evidence-type.dto";
+import { ResponseAuthorityDto } from "./dto/responses/response-authority.dto";
 
 @ApiTags("catalogues")
 @Controller("")

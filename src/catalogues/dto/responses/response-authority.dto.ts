@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { AuthorityEntity } from '../../entities/authority.entity';
+import { ApiProperty } from "@nestjs/swagger";
+import { AuthorityEntity } from "../../entities/authority.entity";
 
 export class ResponseAuthorityDto {
     @ApiProperty({

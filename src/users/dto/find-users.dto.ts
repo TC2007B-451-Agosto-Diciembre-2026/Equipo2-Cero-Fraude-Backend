@@ -1,11 +1,11 @@
-import { Transform, Type } from 'class-transformer';
+import { Transform, Type } from "class-transformer";
 import {
     IsBoolean,
     IsDateString,
     IsInt,
     IsOptional,
     Min,
-} from 'class-validator';
+} from "class-validator";
 
 export class FindUsersDto {
 
