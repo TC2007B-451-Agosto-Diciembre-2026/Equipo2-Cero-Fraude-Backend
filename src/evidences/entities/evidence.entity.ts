@@ -1,4 +1,16 @@
+import { ApiProperty } from "@nestjs/swagger";
+
 export class Evidence {
-  id: string | undefined;
-  url: string | undefined;
+    @ApiProperty()
+    id: number;
+    @ApiProperty()
+    is_visible: boolean;
+    url: string;
+    @ApiProperty()
+    created_at: Date;
+    @ApiProperty()
+    deleted_at: Date | null;
+    evidence_type_id: number;
+    @ApiProperty()
+    post_id: number | null;
 }
