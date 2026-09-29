@@ -7,18 +7,18 @@ import {
   Param,
   Patch,
   Post,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
-} from '@nestjs/swagger';
-import { RegisterDto } from './dto/register.dto';
-import { ValidAccessDto } from './dto/valid-access.dto';
-import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { RefreshDto } from './dto/refresh.dto';
+} from "@nestjs/swagger";
+import { RegisterDto } from "./dto/register.dto";
+import { ValidAccessDto } from "./dto/valid-access.dto";
+import { AuthService } from "./auth.service";
+import { LoginDto } from "./dto/login.dto";
+import { RefreshDto } from "./dto/refresh.dto";
 
 @ApiTags("auth")
 @Controller("auth")

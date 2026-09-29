@@ -12,7 +12,7 @@ import { AuthRepository } from './auth.repository';
 import { AuthUserEntity } from './entities/auth-user.entity';
 import { ACCESS_TTL, REFRESH_TTL } from '../constants';
 
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 @Injectable()
 export class AuthService {

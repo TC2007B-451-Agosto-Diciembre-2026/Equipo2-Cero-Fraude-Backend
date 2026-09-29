@@ -2,8 +2,8 @@ import {
     IsNotEmpty,
     IsString,
     MaxLength,
-} from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+} from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateReportReasonDto {
     @ApiProperty({

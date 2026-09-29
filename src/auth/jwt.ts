@@ -1,4 +1,4 @@
-import { createHmac } from 'node:crypto';
+import { createHmac } from "node:crypto";
 
 const SECRET = process.env.JWT_SECRET;
 

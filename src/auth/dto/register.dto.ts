@@ -1,11 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 import {
   IsEmail,
   IsNotEmpty,
   IsString,
   Matches,
   MinLength,
-} from 'class-validator';
+} from "class-validator";
 
 export class RegisterDto {
   @ApiProperty({
@@ -14,7 +14,7 @@ export class RegisterDto {
   })
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[A-Za-z0-9_]+$/, { message: 'Nombre de usuario inválido' })
+  @Matches(/^[A-Za-z0-9_]+$/, { message: "Nombre de usuario inválido" })
   username: string;
 
   @ApiProperty({
