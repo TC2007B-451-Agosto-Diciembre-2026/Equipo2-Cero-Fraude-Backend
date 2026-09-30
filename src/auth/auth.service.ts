@@ -10,9 +10,7 @@ import { RefreshDto } from "./dto/refresh.dto";
 import { ValidAccessDto } from "./dto/valid-access.dto";
 import { AuthRepository } from "./auth.repository";
 import { AuthUserEntity } from "./entities/auth-user.entity";
-
-const ACCESS_TTL = 15 * 60; // 15 minutos
-const REFRESH_TTL = 7 * 24 * 60 * 60; // 7 dias
+import { ACCESS_TTL, REFRESH_TTL } from "../constants";
 
 const bcrypt = require("bcrypt");
 

@@ -2,8 +2,6 @@
 
 # Índice
 
-# Índice
-
 1. [Introducción](#1-introducción)
 
 * 1.1. [Propósito](#11-propósito)
@@ -59,12 +57,11 @@
 
 8. [Evidencias](#8-evidencias)
 
-* 8.1. [Obtener evidencias](#81-obtener-evidencias)
-* 8.2. [Obtener evidencias de una publicación](#82-obtener-evidencias-de-una-publicación)
-* 8.3. [Crear una evidencia](#83-crear-una-evidencia)
-* 8.4. [Asociar una evidencia a una publicación](#84-asociar-una-evidencia-a-una-publicación)
-* 8.5. [Actualizar una evidencia](#85-actualizar-una-evidencia)
-* 8.6. [Eliminar una evidencia](#86-eliminar-una-evidencia)
+* 8.1. [Obtener evidencias de una publicación](#81-obtener-evidencias-de-una-publicación)
+* 8.2. [Crear una evidencia](#82-crear-una-evidencia)
+* 8.3. [Asociar una evidencia a una publicación](#83-asociar-una-evidencia-a-una-publicación)
+* 8.4. [Actualizar una evidencia](#84-actualizar-una-evidencia)
+* 8.5. [Eliminar una evidencia](#85-eliminar-una-evidencia)
 
 9. [Comentarios](#9-comentarios)
 
@@ -178,7 +175,6 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | GET    | `/posts/:postId/reports`                  | Administrador                        |
 | POST   | `/posts/:postId/reports`                  | Usuario                              |
 | DELETE | `/posts/:postId/reports/:reportId`        | Administrador                        |
-| GET    | `/evidences`                              | Administrador                        |
 | GET    | `/posts/:postId/evidences`                | Usuario, propietario o administrador |
 | POST   | `/evidences`                              | Usuario                              |
 | POST   | `/posts/:postId/evidences`                | Propietario o administrador          |
@@ -1751,41 +1747,7 @@ Al crear una publicación mediante `POST /posts`, el cliente puede enviar una li
 
 Las evidencias también pueden asociarse después de crear una publicación mediante `POST /posts/:postId/evidences`, por ejemplo, cuando una evidencia anterior fue eliminada o necesita ser agregada posteriormente.
 
-### 8.1. Obtener evidencias
-
-#### GET /evidences
-
-Obtener una página de evidencias.
-
-**Acceso:** Administrador
-
-##### Parámetros de query
-
-| Campo | Tipo    | Obligatorio | Descripción                                    |
-| ----- | ------- | ----------- | ---------------------------------------------- |
-| page  | Integer | No          | Página de resultados a obtener. Comienza en 1. |
-
-##### Respuestas
-
-* 200 OK
-
-```json
-{
-  "data": [
-    {
-      "id": 1,
-      "url": "https://ejemplo.com/evidencia.jpg",
-      "evidence_type": 1,
-      "post": 1
-    }
-  ]
-}
-```
-
-* 401 Unauthorized
-* 403 Forbidden
-
-### 8.2. Obtener evidencias de una publicación
+### 8.1. Obtener evidencias de una publicación
 
 #### GET /posts/:postId/evidences
 
@@ -1832,8 +1794,7 @@ Las respuestas para administradores incluyen información adicional de la eviden
 * 403 Forbidden
 * 404 Not Found
 
-### 8.3. Crear una evidencia
-
+### 8.2. Crear una evidencia
 #### POST /evidences
 
 Crear una evidencia que inicialmente no está asociada a una publicación.
@@ -1875,7 +1836,7 @@ evidence_type: 1
 * 400 Bad Request
 * 401 Unauthorized
 
-### 8.4. Asociar una evidencia a una publicación
+### 8.3. Asociar una evidencia a una publicación
 
 #### POST /posts/:postId/evidences
 
@@ -1924,7 +1885,7 @@ El propietario puede asociar evidencias mientras la publicación se encuentre en
 * 404 Not Found
 * 409 Conflict
 
-### 8.5. Actualizar una evidencia
+### 8.4. Actualizar una evidencia
 
 #### PATCH /posts/:postId/evidences/:evidenceId
 
@@ -1972,7 +1933,7 @@ Actualizar el estado `is_visible` de una evidencia.
 * 403 Forbidden
 * 404 Not Found
 
-### 8.6. Eliminar una evidencia
+### 8.5. Eliminar una evidencia
 
 #### DELETE /posts/:postId/evidences/:evidenceId
 
