@@ -140,12 +140,14 @@ CREATE TABLE post_report (
 
 CREATE TABLE post_evidence (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    owner_id CHAR(36) NOT NULL,
     is_visible BOOLEAN NOT NULL DEFAULT TRUE,
-    url VARCHAR(100) NOT NULL,
+    storage_path VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL,
+    expires_at TIMESTAMP DEFAULT NULL,
     evidence_type_id INT NOT NULL,
-    post_id INT NOT NULL,
+    post_id INT DEFAULT NULL,
 
     CONSTRAINT fk_post_evidence_evidence_type_id
     FOREIGN KEY (evidence_type_id) REFERENCES evidence_type(id),

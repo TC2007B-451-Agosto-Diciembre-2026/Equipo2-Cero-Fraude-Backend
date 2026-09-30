@@ -2,15 +2,15 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
-import { sign, verify } from './jwt';
-import { RefreshDto } from './dto/refresh.dto';
-import { ValidAccessDto } from './dto/valid-access.dto';
-import { AuthRepository } from './auth.repository';
-import { AuthUserEntity } from './entities/auth-user.entity';
-import { ACCESS_TTL, REFRESH_TTL } from '../constants';
+} from "@nestjs/common";
+import { RegisterDto } from "./dto/register.dto";
+import { LoginDto } from "./dto/login.dto";
+import { sign, verify } from "./jwt";
+import { RefreshDto } from "./dto/refresh.dto";
+import { ValidAccessDto } from "./dto/valid-access.dto";
+import { AuthRepository } from "./auth.repository";
+import { AuthUserEntity } from "./entities/auth-user.entity";
+import { ACCESS_TTL, REFRESH_TTL } from "../constants";
 
 const bcrypt = require("bcrypt");
 
