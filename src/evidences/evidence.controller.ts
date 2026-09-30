@@ -1,12 +1,7 @@
 import {
     BadRequestException,
-    Body,
     Controller,
-    Get,
-    Param,
-    ParseIntPipe,
     Post,
-    Res,
     UploadedFile,
     UseGuards,
     UseInterceptors,
@@ -19,9 +14,6 @@ import { ResponseEvidenceDto } from "./dto/response-evidence.dto";
 import { EvidenceService } from "./evidence.service";
 import { CurrentUser } from "../auth/current-user.decorator";
 import type { JwtPayload } from "../auth/jwt";
-import { RolesGuard } from "../auth/roles.guard";
-import { Roles } from "../auth/roles.decorator";
-import { ADMIN_ROLE_ID } from "../constants";
 
 @ApiTags("evidence")
 @Controller("evidence")
@@ -53,25 +45,5 @@ export class EvidenceController {
             throw new BadRequestException("No se ha enviado un archivo")
         }
         return this.service.create(user.sub, file);
-    }
-
-    @Get(":evidenceId/file")
-    @ApiOperation({
-        summary: "Obtener archivo de evidencia",
-    })
-    @ApiResponse({
-        status: 200,
-        description: "Archivo de evidencia.",
-    })
-    @ApiResponse({
-        status: 404,
-        description: "Evidencia no encontrada.",
-    })
-    @UseGuards(RolesGuard)
-    @Roles(ADMIN_ROLE_ID)
-    getFile(
-        @Param("evidenceId", ParseIntPipe) evidenceId: number,
-    ) {
-        return this.service.getFile(evidenceId);
     }
 }

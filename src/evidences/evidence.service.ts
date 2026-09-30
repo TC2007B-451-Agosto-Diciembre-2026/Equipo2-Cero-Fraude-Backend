@@ -1,13 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, StreamableFile } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { EvidenceRepository } from "./evidence.repository";
 import { ResponseEvidenceDto } from "./dto/response-evidence.dto";
-import { getLanUrl } from "../config/network";
 import { ALLOWED_FILE_TYPES, EXPIRATION_TTL, MAX_FILE_SIZE } from "../constants";
 import { extname, join } from "node:path";
 import { randomUUID } from "crypto";
 import { mkdir, writeFile } from "fs/promises";
-import { createReadStream } from "fs";
-import { lookup } from "mime-types";
 
 @Injectable()
 export class EvidenceService {
@@ -17,21 +14,16 @@ export class EvidenceService {
         owner_id: string,
         file: Express.Multer.File
     ): Promise<ResponseEvidenceDto> {
-         if(!file){
-            throw new BadRequestException("A file is required");
-        }
-
         if(file.size > MAX_FILE_SIZE){
-            throw new BadRequestException("The file exceeds the maximum allowed size, 10 MB.")
+            throw new BadRequestException("El archivo excede el límite permitido de 10 MB.")
         }
 
         const extension = extname(file.originalname).toLowerCase();
         const filename = `${randomUUID()}${extension}`;
 
-
         if(!ALLOWED_FILE_TYPES.has(file.mimetype)) {
             throw new BadRequestException(
-                "The file type is not supported."
+                "El tipo de archivo no está permitido."
             );
         }
 
@@ -68,30 +60,4 @@ export class EvidenceService {
 
         return ResponseEvidenceDto.fromEntity(evidence);
     }
-
-    async getFile(
-        evidenceId: number,
-    ): Promise<StreamableFile> {
-        const evidence = await this.repository.findById(evidenceId);
-
-        if(!evidence) {
-            throw new NotFoundException(
-                `Evidence ${evidenceId} not found`
-            );
-        }
-
-        const filePath = join(
-            process.cwd(),
-           "uploads",
-           evidence.storage_path
-        );
-
-        const fileStream = createReadStream(filePath);
-
-        const contentType = lookup(evidence.storage_path) || "application/octet-stream";
-
-        return new StreamableFile(fileStream, {
-            type: contentType,
-        });
-        }
 }

@@ -4,39 +4,39 @@ import { Evidence } from "../entities/evidence.entity";
 export class ResponseEvidenceDto {
     @ApiProperty({
         example: 1,
-        description: "Evidence identifier.",
+        description: "Identificador de la evidencia.",
     })
     id: number;
 
     @ApiProperty({
         example: "550e8400-e29b-41d4-a716-446655440000.pdf",
-        description: "Stored evidence filename.",
+        description: "Nombre de archivo de la evidencia guardada.",
     })
     storage_path: string;
 
     @ApiProperty({
         example: 1,
-        description: "Evidence type identifier.",
+        description: "Identificador del tipo de la evidencia.",
         nullable: true,
     })
     evidence_type_id: number | null;
 
     @ApiProperty({
         example: null,
-        description: "Post associated with the evidence.",
+        description: "Identificador de la publicación asociada a la evidencia.",
         nullable: true,
     })
     post_id: number | null;
 
     @ApiProperty({
         example: "2026-09-29T20:30:00.000Z",
-        description: "Evidence creation date.",
+        description: "Fecha de creación de la evidencia.",
     })
     created_at: Date;
 
     @ApiProperty({
         example: "2026-09-29T21:00:00.000Z",
-        description: "Expiration date for unassociated evidence.",
+        description: "Fecha de expiración de la evidencia.",
         nullable: true,
     })
     expires_at: Date | null;

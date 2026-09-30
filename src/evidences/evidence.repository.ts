@@ -15,8 +15,7 @@ interface EvidenceRow extends RowDataPacket {
     post_id: number | null;
 }
 
-const COLUMNS =
-"id, owner_id, is_visible, storage_path, created_at, expires_at, deleted_at, evidence_type_id, post_id";
+const COLUMNS = "id, owner_id, is_visible, storage_path, created_at, expires_at, deleted_at, evidence_type_id, post_id";
 
 @Injectable()
 export class EvidenceRepository {
@@ -43,7 +42,7 @@ export class EvidenceRepository {
         const evidence = await this.findById(result.insertId);
 
         if(!evidence) {
-            throw new Error("Evidence was created but could not be retrieved.")
+            throw new Error("La evidencia fue creada pero no pudo obtenerse.")
         }
 
         return evidence;
@@ -63,84 +62,6 @@ export class EvidenceRepository {
         );
 
         return rows.length > 0 ? this.toEntity(rows[0]) : null;
-    }
-
-    async findByIdAndOwnerId(
-        id: number,
-        owner_id: string
-    ): Promise <Evidence | null> {
-        const [rows] = await this.pool.execute<EvidenceRow[]>(
-            `
-            SELECT ${COLUMNS}
-            FROM post_evidence
-            WHERE id = ?
-            AND owner_id = ?
-            AND deleted_at IS NULL
-            `,
-            [id, owner_id],
-        );
-
-        return rows.length > 0 ? this.toEntity(rows[0]) : null;
-    }
-
-    async associateWithPost(
-        id: number,
-        post_id: number
-    ): Promise<Evidence | null>{
-        const [result] = await this.pool.execute<ResultSetHeader>(
-            `
-            UPDATE post_evidence
-            SET
-            post_id = ?,
-            WHERE id = ?
-            AND post_id IS NULL
-            AND deleted_at IS NULL
-            `,
-            [post_id, id]
-        );
-        if(result.affectedRows === 0){
-            return null;
-        }
-        return this.findById(id);
-    }
-
-    async updateById(
-        id: number,
-        post_id: number,
-        is_visible: boolean
-    ): Promise<Evidence | null> {
-        const [result] = await this.pool.execute<ResultSetHeader>(
-            `
-            UPDATE post_evidence
-            SET
-            is_visible = ?
-            WHERE id = ?
-            AND post_id = ?
-            AND deleted_at IS NULL
-            `,
-            [is_visible, id, post_id]
-        );
-
-        if(result.affectedRows === 0){
-            return null;
-        }
-        return this.findById(id);
-    }
-
-    async delete(
-        id: number
-    ): Promise<boolean> {
-        const [result] = await this.pool.execute<ResultSetHeader>(
-            `
-            UPDATE post_evidence
-            SET deleted_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-            AND deleted_at IS NULL
-            `,
-            [id]
-        );
-
-        return result.affectedRows > 0;
     }
 
     private toEntity(row: EvidenceRow): Evidence {
