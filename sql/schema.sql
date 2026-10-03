@@ -187,17 +187,6 @@ CREATE TABLE post_reaction (
 --  FRAUD TYPE RELATIONSHIPS
 -- ===================================
 
-CREATE TABLE fraud_type_subscription (
-    user_id CHAR(36) NOT NULL,
-    fraud_type_id INT NOT NULL,
-    subscribed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, fraud_type_id),
-    CONSTRAINT fk_fraud_type_subscription_user_id
-    FOREIGN KEY (user_id) REFERENCES user(id),
-    CONSTRAINT fk_fraud_type_subscription_fraud_type_id
-    FOREIGN KEY (fraud_type_id) REFERENCES fraud_type(id)
-);
-
 CREATE TABLE post_fraud_type (
     post_id INT NOT NULL,
     fraud_type_id INT NOT NULL,

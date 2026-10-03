@@ -1,6 +1,6 @@
 # Documentación API Cero Fraude
 
-## Índice
+# Índice
 
 1. [Introducción](#1-introducción)
 
@@ -75,26 +75,19 @@
 * 10.2. [Crear o cambiar una reacción](#102-crear-o-cambiar-una-reacción)
 * 10.3. [Eliminar una reacción](#103-eliminar-una-reacción)
 
-11. [Suscripciones](#11-suscripciones)
+11. [Autoridades](#11-autoridades)
 
-* 11.1. [Obtener suscripciones](#111-obtener-suscripciones)
-* 11.2. [Obtener suscripciones de un usuario](#112-obtener-suscripciones-de-un-usuario)
-* 11.3. [Crear una suscripción](#113-crear-una-suscripción)
-* 11.4. [Eliminar una suscripción](#114-eliminar-una-suscripción)
+* 11.1. [Obtener autoridades de un tipo de fraude](#111-obtener-autoridades-de-un-tipo-de-fraude)
+* 11.2. [Asociar autoridad a tipo](#112-asociar-autoridad-a-tipo)
+* 11.3. [Desasociar autoridad de tipo](#113-desasociar-autoridad-de-tipo)
+* 11.4. [Obtener las autoridades de una publicación](#114-obtener-las-autoridades-de-una-publicación)
+* 11.5. [Asociar autoridad a una publicación](#115-asociar-autoridad-a-una-publicación)
+* 11.6. [Cambiar prioridad de una autoridad asociada a una publicación](#116-cambiar-prioridad-de-una-autoridad-asociada-a-una-publicación)
+* 11.7. [Quitar autoridad de una publicación](#117-quitar-autoridad-de-una-publicación)
 
-12. [Autoridades](#12-autoridades)
+12. [Auditoría](#12-auditoría)
 
-* 12.1. [Obtener autoridades de un tipo de fraude](#121-obtener-autoridades-de-un-tipo-de-fraude)
-* 12.2. [Asociar autoridad a tipo](#122-asociar-autoridad-a-tipo)
-* 12.3. [Desasociar autoridad de tipo](#123-desasociar-autoridad-de-tipo)
-* 12.4. [Obtener las autoridades de una publicación](#124-obtener-las-autoridades-de-una-publicación)
-* 12.5. [Asociar autoridad a una publicación](#125-asociar-autoridad-a-una-publicación)
-* 12.6. [Cambiar prioridad de una autoridad asociada a una publicación](#126-cambiar-prioridad-de-una-autoridad-asociada-a-una-publicación)
-* 12.7. [Quitar autoridad de una publicación](#127-quitar-autoridad-de-una-publicación)
-
-13. [Auditoría](#13-auditoría)
-
-* 13.1. [Obtener registros de auditoría](#131-obtener-registros-de-auditoría)
+* 12.1. [Obtener registros de auditoría](#121-obtener-registros-de-auditoría)
 
 ## 1. Introducción
 
@@ -186,10 +179,6 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | GET    | `/posts/:postId/reactions`                | Usuario                              |
 | POST   | `/posts/:postId/reactions/:reactionId`    | Usuario                              |
 | DELETE | `/posts/:postId/reactions`                | Usuario                              |
-| GET    | `/subscriptions`                          | Usuario                              |
-| GET    | `/users/:userId/subscriptions`            | Propietario o administrador          |
-| POST   | `/subscriptions`                          | Usuario                              |
-| DELETE | `/subscriptions/:typeId`                  | Usuario                              |
 | GET    | `/types/:typeId/authorities`              | Administrador                        |
 | POST   | `/types/:typeId/authorities/:authorityId` | Administrador                        |
 | DELETE | `/types/:typeId/authorities/:authorityId` | Administrador                        |
@@ -198,7 +187,6 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | PATCH  | `/posts/:postId/authorities/:authorityId` | Administrador                        |
 | DELETE | `/posts/:postId/authorities/:authorityId` | Administrador                        |
 | GET    | `/audit-logs`                             | Administrador                        |
-
 
 ## 3. Autenticación
 
@@ -327,17 +315,15 @@ Cambiar la contraseña de usuario
 
 ##### Body
 
-| Campo        | Tipo   | Obligatorio | Descripción                  |
-| ------------ | ------ | ----------- | ---------------------------- |
-| old_password | string | Sí          | Contraseña vieja del usuario |
-| new_password | string | Sí          | Nueva contraseña del usuario |
+| Campo    | Tipo   | Obligatorio | Descripción                 |
+| -------- | ------ | ----------- | --------------------------- |
+| password | string | Sí          | Nueva contraseña de usuario |
 
 ##### Ejemplo de solicitud
 
 ```json
 {
-  "old_password": "supersecret123",
-  "new_password": "my_new_password_super_secret"
+  "password": "my_new_password_super_secret"
 }
 ```
 
@@ -2159,151 +2145,11 @@ Borrar la reacción del usuario a una publicación.
 * 401 Unauthorized
 * 404 Not Found
 
-## 11. Suscripciones
-
-Las suscripciones permiten que un usuario indique interés en recibir posteriormente notificaciones relacionadas con determinados tipos de fraude. En esta versión de la API únicamente se registra la suscripción; el mecanismo de notificaciones se implementará posteriormente.
-
-### 11.1. Obtener suscripciones
-
-#### GET /subscriptions
-
-Obtener una página de suscripciones del usuario autenticado.
-
-**Acceso:** Usuario
-
-##### Parámetros de query
-
-| Campo | Tipo    | Obligatorio | Descripción                                    |
-| ----- | ------- | ----------- | ---------------------------------------------- |
-| page  | Integer | No          | Página de resultados a obtener. Comienza en 1. |
-
-##### Respuestas
-
-* 200 OK
-
-```json
-{
-  "data": [
-    {
-      "type_id": 1,
-      "type": {
-        "id": 1,
-        "name": "Producto falso",
-        "code": "FAKE_PROD"
-      }
-    }
-  ]
-}
-```
-
-* 401 Unauthorized
-
-### 11.2. Obtener suscripciones de un usuario
-
-#### GET /users/:userId/subscriptions
-
-Obtener una página de suscripciones de un usuario.
-
-**Acceso:** Propietario o administrador
-
-##### Parámetros de ruta
-
-| Campo  | Tipo | Obligatorio | Descripción      |
-| ------ | ---- | ----------- | ---------------- |
-| userId | UUID | Sí          | UUID del usuario |
-
-##### Parámetros de query
-
-| Campo | Tipo    | Obligatorio | Descripción                                    |
-| ----- | ------- | ----------- | ---------------------------------------------- |
-| page  | Integer | No          | Página de resultados a obtener. Comienza en 1. |
-
-##### Respuestas
-
-* 200 OK
-
-```json
-{
-  "data": [
-    {
-      "type_id": 1,
-      "type": {
-        "id": 1,
-        "name": "Producto falso",
-        "code": "FAKE_PROD"
-      }
-    }
-  ]
-}
-```
-
-* 401 Unauthorized
-* 403 Forbidden
-* 404 Not Found
-
-### 11.3. Crear una suscripción
-
-#### POST /subscriptions
-
-Suscribirse a un tipo de fraude.
-
-**Acceso:** Usuario
-
-##### Body
-
-| Campo   | Tipo    | Obligatorio | Descripción                                     |
-| ------- | ------- | ----------- | ----------------------------------------------- |
-| type_id | Integer | Sí          | ID del tipo de fraude al que se desea suscribir |
-
-##### Ejemplo de solicitud
-
-```json
-{
-  "type_id": 1
-}
-```
-
-##### Respuestas
-
-* 201 Created
-
-```json
-{
-  "user": "550e8400-e29b-41d4-a716-446655440000",
-  "type_id": 1
-}
-```
-
-* 400 Bad Request
-* 401 Unauthorized
-* 404 Not Found
-* 409 Conflict
-
-### 11.4. Eliminar una suscripción
-
-#### DELETE /subscriptions/:typeId
-
-Desuscribirse de un tipo de fraude.
-
-**Acceso:** Usuario
-
-##### Parámetros de ruta
-
-| Campo  | Tipo    | Obligatorio | Descripción           |
-| ------ | ------- | ----------- | --------------------- |
-| typeId | Integer | Sí          | ID del tipo de fraude |
-
-##### Respuestas
-
-* 204 No Content
-* 401 Unauthorized
-* 404 Not Found
-
-## 12. Autoridades
+## 11. Autoridades
 
 Una publicación tiene varias autoridades asociadas. La asociación permite indicar qué autoridades resultan pertinentes para atender el caso de acuerdo con los tipos de fraude de la publicación.
 
-### 12.1. Obtener autoridades de un tipo de fraude
+### 11.1. Obtener autoridades de un tipo de fraude
 
 #### GET /types/:typeId/authorities
 
@@ -2336,7 +2182,7 @@ Obtener las autoridades asociadas a un tipo de fraude.
 * 403 Forbidden
 * 404 Not Found
 
-### 12.2. Asociar autoridad a tipo
+### 11.2. Asociar autoridad a tipo
 
 #### POST /types/:typeId/authorities/:authorityId
 
@@ -2368,7 +2214,7 @@ Asociar una autoridad a un tipo de fraude.
 * 404 Not Found
 * 409 Conflict
 
-### 12.3. Desasociar autoridad de tipo
+### 11.3. Desasociar autoridad de tipo
 
 #### DELETE /types/:typeId/authorities/:authorityId
 
@@ -2390,7 +2236,7 @@ Desasociar una autoridad de un tipo de fraude.
 * 403 Forbidden
 * 404 Not Found
 
-### 12.4. Obtener las autoridades de una publicación
+### 11.4. Obtener las autoridades de una publicación
 
 #### GET /posts/:postId/authorities
 
@@ -2423,7 +2269,7 @@ Obtener las autoridades asociadas a una publicación.
 * 401 Unauthorized
 * 404 Not Found
 
-### 12.5. Asociar autoridad a una publicación
+### 11.5. Asociar autoridad a una publicación
 
 #### POST /posts/:postId/authorities/:authorityId
 
@@ -2458,7 +2304,7 @@ La prioridad se asigna automáticamente al realizar la asociación. El cliente n
 * 404 Not Found
 * 409 Conflict
 
-### 12.6. Cambiar prioridad de una autoridad asociada a una publicación
+### 11.6. Cambiar prioridad de una autoridad asociada a una publicación
 
 #### PATCH /posts/:postId/authorities/:authorityId
 
@@ -2504,7 +2350,7 @@ Cambiar la prioridad de una autoridad asociada a una publicación.
 * 403 Forbidden
 * 404 Not Found
 
-### 12.7. Quitar autoridad de una publicación
+### 11.7. Quitar autoridad de una publicación
 
 #### DELETE /posts/:postId/authorities/:authorityId
 
@@ -2525,11 +2371,11 @@ Quitar una autoridad asociada a una publicación.
 * 403 Forbidden
 * 404 Not Found
 
-## 13. Auditoría
+## 12. Auditoría
 
 Los registros de auditoría permiten consultar las modificaciones realizadas por administradores sobre los recursos del sistema.
 
-### 13.1. Obtener registros de auditoría
+### 12.1. Obtener registros de auditoría
 
 #### GET /audit-logs
 
