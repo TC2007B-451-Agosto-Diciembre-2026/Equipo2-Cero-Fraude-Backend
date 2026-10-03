@@ -1,6 +1,6 @@
 # Documentación API Cero Fraude
 
-# Índice
+## Índice
 
 1. [Introducción](#1-introducción)
 
@@ -327,15 +327,17 @@ Cambiar la contraseña de usuario
 
 ##### Body
 
-| Campo    | Tipo   | Obligatorio | Descripción                 |
-| -------- | ------ | ----------- | --------------------------- |
-| password | string | Sí          | Nueva contraseña de usuario |
+| Campo        | Tipo   | Obligatorio | Descripción                  |
+| ------------ | ------ | ----------- | ---------------------------- |
+| old_password | string | Sí          | Contraseña vieja del usuario |
+| new_password | string | Sí          | Nueva contraseña del usuario |
 
 ##### Ejemplo de solicitud
 
 ```json
 {
-  "password": "my_new_password_super_secret"
+  "old_password": "supersecret123",
+  "new_password": "my_new_password_super_secret"
 }
 ```
 

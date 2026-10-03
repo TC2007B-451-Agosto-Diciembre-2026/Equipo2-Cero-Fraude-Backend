@@ -1,16 +1,13 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
   HttpCode,
-  Param,
   Patch,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import {
-  ApiBearerAuth,
-  ApiOperation,
+    ApiBearerAuth,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
@@ -19,6 +16,10 @@ import { ValidAccessDto } from "./dto/valid-access.dto";
 import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
 import { RefreshDto } from "./dto/refresh.dto";
+import { UpdatePasswordDto } from "./dto/update-password.dto";
+import { CurrentUser } from "./current-user.decorator";
+import type { JwtPayload } from "./jwt";
+import { AuthGuard } from "./auth.guard";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -38,7 +39,7 @@ export class AuthController {
     @HttpCode(200)
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
-    login(@Body() dto: LoginDto) {
+    login(@Body() dto: LoginDto): Promise<ValidAccessDto> {
         return this.service.login(dto);
     }
 
@@ -46,7 +47,21 @@ export class AuthController {
     @HttpCode(200)
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
-    refresh(@Body() dto: RefreshDto) {
+    refresh(@Body() dto: RefreshDto) : { accessToken: string } {
         return this.service.refresh(dto);
+    }
+
+    @Patch("update-password")
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth()
+    @HttpCode(204)
+    @ApiResponse({ status: 204, description: "" })
+    @ApiResponse({ status: 400, description: "" })
+    @ApiResponse({ status: 401, description: "" })
+    updatePassword(
+        @CurrentUser() user: JwtPayload,
+        @Body() dto: UpdatePasswordDto
+    ): Promise<void> {
+        return this.service.updatePassword(user.sub, dto);
     }
 }

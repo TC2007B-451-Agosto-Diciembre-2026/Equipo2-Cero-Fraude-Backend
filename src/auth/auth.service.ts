@@ -1,6 +1,8 @@
 import {
+    BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
@@ -10,20 +12,28 @@ import { RefreshDto } from "./dto/refresh.dto";
 import { ValidAccessDto } from "./dto/valid-access.dto";
 import { AuthRepository } from "./auth.repository";
 import { AuthUserEntity } from "./entities/auth-user.entity";
-import { ACCESS_TTL, REFRESH_TTL } from "../constants";
+import { ACCESS_TTL, MINIMUM_PASSWORD_LENGTH, REFRESH_TTL } from "../constants";
+import { UpdatePasswordDto } from "./dto/update-password.dto";
+import { UserRepository } from "../users/user.repository";
 
 const bcrypt = require("bcrypt");
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly repository: AuthRepository) {}
+    constructor(
+        private readonly repository: AuthRepository,
+        private readonly user_repository : UserRepository,
+    ) {}
 
     async register(dto: RegisterDto): Promise<ValidAccessDto> {
+        if(dto.password.length < MINIMUM_PASSWORD_LENGTH){
+            throw new BadRequestException("La contraseña debe ser de 8 o más carácteres!")
+        }
         if(await this.repository.findByEmail(dto.email!)){
-            throw new ConflictException("El email ya está registrado!");
+            throw new ConflictException("El usuario o correo ya están registrados!");
         }
         if(await this.repository.findByUsername(dto.username!)){
-            throw new ConflictException("El usuario ya está registrado!");
+            throw new ConflictException("El usuario o correo ya están registrados!");
         }
         const user = new AuthUserEntity();
         user.username = dto.username;
@@ -64,7 +74,7 @@ export class AuthService {
         return ValidAccessDto.create(access_token, refresh_token);
     }
 
-    refresh(dto: RefreshDto ): { accessToken: string }{
+    refresh(dto: RefreshDto ): { accessToken: string } {
         const payload = verify(dto.refresh_token!);
         if(!payload || payload.type !== "refresh") {
             throw new UnauthorizedException("Refresh token inválido!");
@@ -74,6 +84,46 @@ export class AuthService {
             ACCESS_TTL,
         );
         return { accessToken };
+    }
+
+
+    async updatePassword(
+        id: string,
+        dto: UpdatePasswordDto
+    ): Promise<void> {
+        if(dto.old_password == undefined){
+            throw new BadRequestException(
+                "Falta la contraseña actual."
+            );
+        }
+        if(dto.new_password == undefined){
+            throw new BadRequestException(
+                "Falta la contraseña nueva."
+            );
+        }
+        if(dto.new_password.length < MINIMUM_PASSWORD_LENGTH){
+            throw new BadRequestException(
+                "La contraseña debe ser de 8 o más carácteres!"
+            )
+        }
+
+        const user = await this.user_repository.findByIdWithPassword(id);
+        if(!user){
+            throw new NotFoundException("User not found");
+        }
+
+        const validPassword = await bcrypt.compare(
+            dto.old_password,
+            user.password_hash,
+        );
+
+        if(!validPassword){
+            throw new UnauthorizedException("Contraseña actual inválida.");
+        }
+
+        const password_hash = await bcrypt.hash(dto.new_password, 10);
+
+        await this.user_repository.updatePasswordById(id, password_hash);
     }
 
     isValidEmail(email : string): boolean {

@@ -4,8 +4,10 @@ import type { Pool, RowDataPacket } from "mysql2/promise";
 import { DB_POOL } from "../database/database.module";
 import { FindUsersDto } from "./dto/find-users.dto";
 import { PAGE_SIZE } from "../constants";
+import { AuthUser } from "./entities/auth-user.entity";
 
 const COLUMNS = "id, username, email, created_at, is_active, role_id";
+const AUTH_COLUMNS = COLUMNS + ", password_hash";
 
 interface UserRow extends RowDataPacket {
     id: string;
@@ -106,6 +108,21 @@ export class UserRepository {
         return rows.length > 0 ? toEntity(rows[0]) : null;
     }
 
+    async findByIdWithPassword(
+        id: string
+    ): Promise<AuthUser | null> {
+        const [rows] = await this.pool.query<UserRow[]>(
+            `
+            SELECT ${AUTH_COLUMNS}
+            FROM user
+            WHERE id = ?
+            `,
+            [id],
+        );
+
+        return rows.length > 0 ? toAuthEntity(rows[0]) : null;
+    }
+
     async updateById(
         id: string,
         data: Partial<Pick<User, "username" | "role_id" | "is_active">>
@@ -141,6 +158,24 @@ export class UserRepository {
 
         return await this.findById(id);
     }
+
+    async updatePasswordById(
+        id: string,
+        password_hash: string,
+    ): Promise<void> {
+
+        if(password_hash !== undefined) {
+        }
+
+        await this.pool.execute(
+            `
+            UPDATE user
+            SET password_hash = ?
+            WHERE id = ?
+            `,
+            [password_hash, id]
+        );
+    }
 }
 
 function toEntity(userRow: UserRow): User {
@@ -148,6 +183,18 @@ function toEntity(userRow: UserRow): User {
     user.id = userRow.id;
     user.username = userRow.username;
     user.email = userRow.email;
+    user.created_at = userRow.created_at;
+    user.is_active = userRow.is_active;
+    user.role_id = userRow.role_id;
+    return user;
+}
+
+function toAuthEntity(userRow: UserRow): AuthUser {
+    const user = new AuthUser();
+    user.id = userRow.id;
+    user.username = userRow.username;
+    user.email = userRow.email;
+    user.password_hash = userRow.password_hash;
     user.created_at = userRow.created_at;
     user.is_active = userRow.is_active;
     user.role_id = userRow.role_id;
