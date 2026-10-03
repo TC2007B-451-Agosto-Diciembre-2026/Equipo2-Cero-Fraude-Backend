@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { EvidenceRepository } from "./evidence.repository";
 import { ResponseEvidenceDto } from "./dto/response-evidence.dto";
-import { ALLOWED_FILE_TYPES, EXPIRATION_TTL, MAX_FILE_SIZE } from "../constants";
+import { ALLOWED_FILE_TYPES, EXPIRATION_TTL, MAX_FILE_SIZE } from "../common/constants";
 import { extname, join } from "node:path";
 import { randomUUID } from "crypto";
 import { mkdir, writeFile } from "fs/promises";

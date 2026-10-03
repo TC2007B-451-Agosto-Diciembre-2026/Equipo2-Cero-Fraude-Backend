@@ -15,7 +15,7 @@ import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ResponseUserDto } from "./dto/response-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UpdateMeDto } from "./dto/update-me.dto";
-import { ADMIN_ROLE_ID } from "../constants";
+import { ADMIN_ROLE_ID } from "../common/constants";
 import { RolesGuard } from "../auth/roles.guard";
 import { Roles } from "../auth/roles.decorator";
 import { CurrentUser } from "../auth/current-user.decorator";

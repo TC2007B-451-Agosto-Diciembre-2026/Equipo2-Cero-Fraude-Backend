@@ -20,7 +20,7 @@ import { CreateEvidenceTypeDto } from "./dto/requests/create-evidence-type.dto";
 import { CreateAuthorityDto } from "./dto/requests/create-authority.dto";
 import { UpdateAuthorityDto } from "./dto/requests/update-authority.dto";
 
-import { ADMIN_ROLE_ID } from "../constants";
+import { ADMIN_ROLE_ID } from "../common/constants";
 import { RolesGuard } from "../auth/roles.guard";
 import { Roles } from "../auth/roles.decorator";
 import { ResponseFraudCategoryDto } from "./dto/responses/response-fraud-category.dto";

@@ -5,7 +5,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { UpdateMeDto } from "./dto/update-me.dto";
 import { FindUsersDto } from "./dto/find-users.dto";
 import { ResponseUsersDto } from "./dto/response-users.dto";
-import { PAGE_SIZE } from "../constants";
+import { PAGE_SIZE } from "../common/constants";
 
 @Injectable()
 export class UserService {

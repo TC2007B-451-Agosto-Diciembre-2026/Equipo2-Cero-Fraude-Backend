@@ -3,7 +3,7 @@ import { User } from "./entities/user.entity";
 import type { Pool, RowDataPacket } from "mysql2/promise";
 import { DB_POOL } from "../database/database.module";
 import { FindUsersDto } from "./dto/find-users.dto";
-import { PAGE_SIZE } from "../constants";
+import { PAGE_SIZE } from "../common/constants";
 import { AuthUser } from "./entities/auth-user.entity";
 
 const COLUMNS = "id, username, email, created_at, is_active, role_id";

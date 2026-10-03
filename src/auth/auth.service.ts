@@ -12,7 +12,7 @@ import { RefreshDto } from "./dto/refresh.dto";
 import { ValidAccessDto } from "./dto/valid-access.dto";
 import { AuthRepository } from "./auth.repository";
 import { AuthUserEntity } from "./entities/auth-user.entity";
-import { ACCESS_TTL, MINIMUM_PASSWORD_LENGTH, REFRESH_TTL } from "../constants";
+import { ACCESS_TTL, MINIMUM_PASSWORD_LENGTH, REFRESH_TTL } from "../common/constants";
 import { UpdatePasswordDto } from "./dto/update-password.dto";
 import { UserRepository } from "../users/user.repository";
 
