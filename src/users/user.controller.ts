@@ -31,41 +31,6 @@ export class UserController {
     constructor(private readonly service: UserService) {}
 
     @Get()
-    @ApiQuery({
-        name: "page",
-        required: false,
-        type: Number,
-        description: "Página de resultados. Comienza en 1.",
-        example: 1,
-    })
-    @ApiQuery({
-        name: "is_active",
-        required: false,
-        type: Boolean,
-        description: "Filtra por estado de la cuenta.",
-        example: true,
-    })
-    @ApiQuery({
-        name: "role_id",
-        required: false,
-        type: Number,
-        description: "Filtra por identificador de rol.",
-        example: 1,
-    })
-    @ApiQuery({
-        name: "initial_date",
-        required: false,
-        type: String,
-        description: "Fecha inicial en formato ISO 8601.",
-        example: "2026-09-01T00:00:00.000Z",
-    })
-    @ApiQuery({
-        name: "final_date",
-        required: false,
-        type: String,
-        description: "Fecha final en formato ISO 8601.",
-        example: "2026-09-27T23:59:59.999Z",
-    })
     @ApiResponse({
         status: 200,
         description: "Página de usuarios.",
@@ -82,13 +47,13 @@ export class UserController {
         return this.service.findAll(query);
     }
 
+    @Get("me")
     @ApiResponse({
         status: 200,
         description: "Información del usuario autenticado.",
         type: ResponseUserDto
     })
     @ApiResponse({ status: 401, description: "" })
-    @Get("me")
     findMe(
         @CurrentUser() user: JwtPayload
     ): Promise<ResponseUserDto> {
@@ -105,9 +70,9 @@ export class UserController {
         return this.service.findById(userId);
     }
 
+    @Patch("me")
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
-    @Patch("me")
     updateMe(
         @CurrentUser() user: JwtPayload,
         @Body() dto: UpdateMeDto
@@ -115,13 +80,13 @@ export class UserController {
         return this.service.updateMe(user.sub, dto);
     }
 
+    @Patch(":userId")
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
     @ApiResponse({ status: 403, description: "" })
     @ApiResponse({ status: 404, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Patch(":userId")
     updateById(
         @Param("userId", ParseUUIDPipe) userId: string,
         @Body() dto: UpdateUserDto

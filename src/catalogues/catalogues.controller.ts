@@ -41,24 +41,25 @@ import { ResponseAuthorityDto } from "./dto/responses/response-authority.dto";
 export class CataloguesController {
     constructor(private readonly service: CataloguesService) {}
 
+    @Get("roles")
     @ApiResponse({ status: 200, type: ResponseUserRoleDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
     @ApiResponse({ status: 403, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Get("roles")
     findRoles(): Promise<ResponseUserRoleDto[]> {
         return this.service.findRoles();
     }
 
 
+    @Get("reactions")
     @ApiResponse({ status: 200, type: ResponseReactionTypeDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
-    @Get("reactions")
     findReactions(): Promise<ResponseReactionTypeDto[]> {
         return this.service.findReactions();
     }
 
+    @Post("reactions")
     @ApiResponse({status: 201, type: ResponseReactionTypeDto})
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
@@ -66,7 +67,6 @@ export class CataloguesController {
     @ApiResponse({ status: 409, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Post("reactions")
     createReaction(
         @Body() dto: CreateReactionTypeDto,
     ): Promise<ResponseReactionTypeDto> {
@@ -74,21 +74,22 @@ export class CataloguesController {
     }
 
 
+    @Get("states")
     @ApiResponse({ status: 200, type: ResponsePostStatusDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
-    @Get("states")
     findStates(): Promise<ResponsePostStatusDto[]> {
         return this.service.findStates();
     }
 
 
+    @Get("categories")
     @ApiResponse({ status: 200, type: ResponseFraudCategoryDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
-    @Get("categories")
     findCategories(): Promise<ResponseFraudCategoryDto[]> {
         return this.service.findCategories();
     }
 
+    @Post("categories")
     @ApiResponse({status: 201, type: ResponseFraudCategoryDto})
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
@@ -96,32 +97,33 @@ export class CataloguesController {
     @ApiResponse({ status: 409, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Post("categories")
     createCategory(
         @Body() dto: CreateFraudCategoryDto,
     ): Promise<ResponseFraudCategoryDto> {
         return this.service.createCategory(dto);
     }
 
+
+    @Get("audit-actions")
     @ApiResponse({ status: 200, type: ResponseAuditActionDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
     @ApiResponse({ status: 403, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Get("audit-actions")
     findAuditActions(): Promise<ResponseAuditActionDto[]> {
         return this.service.findAuditActions();
     }
 
 
+    @Get("report-reasons")
     @ApiResponse({ status: 200, type: ResponseReportReasonDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
     @ApiResponse({ status: 403, description: "" })
-    @Get("report-reasons")
     findReportReasons(): Promise<ResponseReportReasonDto[]> {
         return this.service.findReportReasons();
     }
 
+    @Post("report-reasons")
     @ApiResponse({status: 201, type: ResponseReportReasonDto})
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
@@ -129,7 +131,6 @@ export class CataloguesController {
     @ApiResponse({ status: 409, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Post("report-reasons")
     createReportReason(
         @Body() dto: CreateReportReasonDto,
     ): Promise<ResponseReportReasonDto> {
@@ -137,13 +138,14 @@ export class CataloguesController {
     }
 
 
+    @Get("types")
     @ApiResponse({ status: 200, type: ResponseFraudTypeDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
-    @Get("types")
     findTypes(): Promise<ResponseFraudTypeDto[]> {
         return this.service.findTypes();
     }
 
+    @Post("types")
     @ApiResponse({status: 201, type: ResponseFraudTypeDto})
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
@@ -151,7 +153,6 @@ export class CataloguesController {
     @ApiResponse({ status: 409, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Post("types")
     createType(
         @Body() dto: CreateFraudTypeDto,
     ): Promise<ResponseFraudTypeDto> {
@@ -159,24 +160,25 @@ export class CataloguesController {
     }
 
 
+    @Get("modified-fields")
     @ApiResponse({ status: 200, type: ResponseModifiedFieldDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
     @ApiResponse({ status: 403, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Get("modified-fields")
     findModifiedFields(): Promise<ResponseModifiedFieldDto[]> {
         return this.service.findModifiedFields();
     }
 
 
+    @Get("evidence-types")
     @ApiResponse({ status: 200, type: ResponseEvidenceTypeDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
-    @Get("evidence-types")
     findEvidenceTypes(): Promise<ResponseEvidenceTypeDto[]> {
         return this.service.findEvidenceTypes();
     }
 
+    @Post("evidence-types")
     @ApiResponse({status: 201, type: ResponseEvidenceTypeDto})
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
@@ -184,7 +186,6 @@ export class CataloguesController {
     @ApiResponse({ status: 409, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Post("evidence-types")
     createEvidenceType(
         @Body() dto: CreateEvidenceTypeDto,
     ): Promise<ResponseEvidenceTypeDto> {
@@ -192,16 +193,17 @@ export class CataloguesController {
     }
 
 
+    @Get("authorities")
     @ApiResponse({ status: 200, type: ResponseAuthorityDto, isArray: true})
     @ApiResponse({ status: 401, description: "" })
     @ApiResponse({ status: 403, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Get("authorities")
     findAuthorities(): Promise<ResponseAuthorityDto[]> {
         return this.service.findAuthorities();
     }
 
+    @Post("authorities")
     @ApiResponse({status: 201, type: ResponseAuthorityDto})
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
@@ -209,13 +211,13 @@ export class CataloguesController {
     @ApiResponse({ status: 409, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Post("authorities")
     createAuthority(
         @Body() dto: CreateAuthorityDto,
     ): Promise<ResponseAuthorityDto> {
         return this.service.createAuthority(dto);
     }
 
+    @Patch("authorities/:authorityId")
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
     @ApiResponse({ status: 403, description: "" })
@@ -223,7 +225,6 @@ export class CataloguesController {
     @ApiResponse({ status: 409, description: "" })
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    @Patch("authorities/:authorityId")
     updateAuthority(
         @Param("authorityId", ParseIntPipe) authorityId: number,
         @Body() dto: UpdateAuthorityDto
