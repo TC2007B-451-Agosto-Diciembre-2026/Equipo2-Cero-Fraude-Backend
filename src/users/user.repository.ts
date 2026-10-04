@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { User } from "./entities/user.entity";
 import type { Pool, RowDataPacket } from "mysql2/promise";
 import { DB_POOL } from "../database/database.module";
-import { FindUsersDto } from "./dto/find-users.dto";
+import { FindUsersDto } from "./dto/requests/find-users.dto";
 import { PAGE_SIZE } from "../common/constants";
 import { AuthUser } from "./entities/auth-user.entity";
 

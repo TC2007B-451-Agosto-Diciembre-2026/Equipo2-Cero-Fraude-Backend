@@ -9,6 +9,6 @@ import { EvidenceModule } from "./evidences/evidence.module";
     imports: [ConfigModule.forRoot({
         isGlobal: true,
     }),
-    AuthModule, CataloguesModule ,UserModule, EvidenceModule],
+    AuthModule, CataloguesModule ,UserModule, EvidenceModule]
 })
 export class AppModule {}

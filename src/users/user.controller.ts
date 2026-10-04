@@ -11,17 +11,23 @@ import {
 
 import { UserService } from "./user.service";
 import { AuthGuard } from "../auth/auth.guard";
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { ResponseUserDto } from "./dto/response-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { UpdateMeDto } from "./dto/update-me.dto";
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiParam,
+    ApiResponse,
+    ApiTags
+} from "@nestjs/swagger";
+import { ResponseUserDto } from "./dto/responses/response-user.dto";
+import { UpdateUserDto } from "./dto/requests/update-user.dto";
+import { UpdateMeDto } from "./dto/requests/update-me.dto";
 import { ADMIN_ROLE_ID } from "../common/constants";
 import { RolesGuard } from "../auth/roles.guard";
 import { Roles } from "../auth/roles.decorator";
 import { CurrentUser } from "../auth/current-user.decorator";
 import type { JwtPayload } from "../auth/jwt";
-import { FindUsersDto } from "./dto/find-users.dto";
-import { ResponseUsersDto } from "./dto/response-users.dto";
+import { FindUsersDto } from "./dto/requests/find-users.dto";
+import { ResponseUsersDto } from "./dto/responses/response-users.dto";
 import {
     ApiBadRequestResponse,
     ApiForbiddenResponse,
@@ -39,12 +45,12 @@ export class UserController {
     @Get()
     @ApiOperation({
         summary: "Obtener usuarios",
-        description: "Obtiene una página de usuarios.",
+        description: "Obtiene una página de usuarios."
     })
     @ApiResponse({
         status: 200,
         description: "Página de usuarios.",
-        type: ResponseUsersDto,
+        type: ResponseUsersDto
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
@@ -60,7 +66,7 @@ export class UserController {
     @Get("me")
     @ApiOperation({
         summary: "Obtener mi usuario",
-        description: "Obtiene la información del usuario autenticado.",
+        description: "Obtiene la información del usuario autenticado."
     })
     @ApiResponse({
         status: 200,
@@ -77,19 +83,19 @@ export class UserController {
     @Get(":userId")
     @ApiOperation({
         summary: "Obtener usuario",
-        description: "Obtiene la información de un usuario mediante su UUID.",
+        description: "Obtiene la información de un usuario mediante su UUID."
     })
     @ApiParam({
         name: "userId",
         description: "UUID del usuario.",
         type: String,
         format: "uuid",
-        example: "550e8400-e29b-41d4-a716-446655440000",
+        example: "550e8400-e29b-41d4-a716-446655440000"
     })
     @ApiResponse({
         status: 200,
         description: "Información del usuario.",
-        type: ResponseUserDto,
+        type: ResponseUserDto
     })
     @ApiUnauthorizedResponse()
     @ApiForbiddenResponse()
@@ -105,12 +111,12 @@ export class UserController {
     @Patch("me")
     @ApiOperation({
         summary: "Modificar mi usuario",
-        description: "Modifica el nombre de usuario del usuario autenticado.",
+        description: "Modifica el nombre de usuario del usuario autenticado."
     })
     @ApiResponse({
         status: 200,
         description: "Modifica el nombre del usuario.",
-        type: ResponseUserDto,
+        type: ResponseUserDto
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
@@ -124,12 +130,12 @@ export class UserController {
     @Patch(":userId")
     @ApiOperation({
         summary: "Modificar un usuario",
-        description: "Modifica el estado de la cuenta o el rol de un usuario mediante su UUID.",
+        description: "Modifica el estado de la cuenta o el rol de un usuario mediante su UUID."
     })
     @ApiResponse({
         status: 200,
         description: "Modifica el estado o rol de un usuario.",
-        type: ResponseUserDto,
+        type: ResponseUserDto
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
