@@ -15,7 +15,7 @@ export const DB_POOL = "DB_POOL";
                 port: configService.get<number>("DB_PORT"),
                 user: configService.get<string>("DB_USER"),
                 password: configService.get<string>("DB_PASSWORD"),
-                database: configService.get<string>("DB_NAME"),
+                database: configService.get<string>("DB_NAME")
             });
         },
     },],

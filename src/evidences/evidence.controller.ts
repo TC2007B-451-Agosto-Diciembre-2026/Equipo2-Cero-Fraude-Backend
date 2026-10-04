@@ -23,6 +23,10 @@ export class EvidenceController {
     constructor(private readonly service: EvidenceService) {}
 
     @Post()
+    @ApiOperation({
+        summary: "Crear una evidencia",
+        description: "Crear una evidencia que inicialmente no está asociada a una publicación."
+    })
     @UseInterceptors(
         FileInterceptor("file")
     )
@@ -34,7 +38,11 @@ export class EvidenceController {
             required: ["file"]
         }
     })
-    @ApiResponse({ status: 201, type: ResponseEvidenceDto })
+    @ApiResponse({
+        status: 201,
+        description: "Evidencia creada correctamente.",
+        type: ResponseEvidenceDto
+    })
     @ApiResponse({ status: 400, description: "" })
     @ApiResponse({ status: 401, description: "" })
     uploadEvidence(
