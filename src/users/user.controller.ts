@@ -1,17 +1,17 @@
 import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Patch,
-  Query,
-  UseGuards,
+    Body,
+    Controller,
+    Get,
+    Param,
+    ParseUUIDPipe,
+    Patch,
+    Query,
+    UseGuards,
 } from "@nestjs/common";
 
 import { UserService } from "./user.service";
 import { AuthGuard } from "../auth/auth.guard";
-import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ResponseUserDto } from "./dto/response-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UpdateMeDto } from "./dto/update-me.dto";
@@ -22,6 +22,12 @@ import { CurrentUser } from "../auth/current-user.decorator";
 import type { JwtPayload } from "../auth/jwt";
 import { FindUsersDto } from "./dto/find-users.dto";
 import { ResponseUsersDto } from "./dto/response-users.dto";
+import {
+    ApiBadRequestResponse,
+    ApiForbiddenResponse,
+    ApiNotFoundResponse,
+    ApiUnauthorizedResponse
+} from "../common/api-responses";
 
 @ApiTags("users")
 @ApiBearerAuth()
@@ -31,14 +37,18 @@ export class UserController {
     constructor(private readonly service: UserService) {}
 
     @Get()
+    @ApiOperation({
+        summary: "Obtener usuarios",
+        description: "Obtiene una página de usuarios.",
+    })
     @ApiResponse({
         status: 200,
         description: "Página de usuarios.",
         type: ResponseUsersDto,
     })
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     findAll(
@@ -48,12 +58,16 @@ export class UserController {
     }
 
     @Get("me")
+    @ApiOperation({
+        summary: "Obtener mi usuario",
+        description: "Obtiene la información del usuario autenticado.",
+    })
     @ApiResponse({
         status: 200,
         description: "Información del usuario autenticado.",
         type: ResponseUserDto
     })
-    @ApiResponse({ status: 401, description: "" })
+    @ApiUnauthorizedResponse()
     findMe(
         @CurrentUser() user: JwtPayload
     ): Promise<ResponseUserDto> {
@@ -61,18 +75,45 @@ export class UserController {
     }
 
     @Get(":userId")
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
-    @ApiResponse({ status: 404, description: "" })
+    @ApiOperation({
+        summary: "Obtener usuario",
+        description: "Obtiene la información de un usuario mediante su UUID.",
+    })
+    @ApiParam({
+        name: "userId",
+        description: "UUID del usuario.",
+        type: String,
+        format: "uuid",
+        example: "550e8400-e29b-41d4-a716-446655440000",
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Información del usuario.",
+        type: ResponseUserDto,
+    })
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiNotFoundResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    findById(@Param("userId", ParseUUIDPipe) userId: string): Promise<ResponseUserDto> {
+    findById(
+        @Param("userId", ParseUUIDPipe) userId: string
+    ): Promise<ResponseUserDto> {
         return this.service.findById(userId);
     }
 
     @Patch("me")
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
+    @ApiOperation({
+        summary: "Modificar mi usuario",
+        description: "Modifica el nombre de usuario del usuario autenticado.",
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Modifica el nombre del usuario.",
+        type: ResponseUserDto,
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
     updateMe(
         @CurrentUser() user: JwtPayload,
         @Body() dto: UpdateMeDto
@@ -81,10 +122,19 @@ export class UserController {
     }
 
     @Patch(":userId")
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
-    @ApiResponse({ status: 404, description: "" })
+    @ApiOperation({
+        summary: "Modificar un usuario",
+        description: "Modifica el estado de la cuenta o el rol de un usuario mediante su UUID.",
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Modifica el estado o rol de un usuario.",
+        type: ResponseUserDto,
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiNotFoundResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     updateById(
