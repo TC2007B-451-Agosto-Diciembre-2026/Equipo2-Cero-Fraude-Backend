@@ -1,10 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { User } from "./entities/user.entity";
+import { UserEntity } from "./entities/user.entity";
 import type { Pool, RowDataPacket } from "mysql2/promise";
 import { DB_POOL } from "../database/database.module";
 import { FindUsersDto } from "./dto/requests/find-users.dto";
 import { PAGE_SIZE } from "../common/constants";
-import { AuthUser } from "./entities/auth-user.entity";
+import { AuthUserEntity } from "./entities/auth-user.entity";
 
 const COLUMNS = "id, username, email, created_at, is_active, role_id";
 const AUTH_COLUMNS = COLUMNS + ", password_hash";
@@ -23,7 +23,7 @@ interface CountRow extends RowDataPacket {
 }
 
 interface FindUsersResult {
-    users: User[];
+    users: UserEntity[];
     total: number;
 }
 
@@ -95,7 +95,7 @@ export class UserRepository {
 
     async findById(
         id: string
-    ): Promise<User | null> {
+    ): Promise<UserEntity | null> {
         const [rows] = await this.pool.query<UserRow[]>(
             `
             SELECT ${COLUMNS}
@@ -110,7 +110,7 @@ export class UserRepository {
 
     async findByIdWithPassword(
         id: string
-    ): Promise<AuthUser | null> {
+    ): Promise<AuthUserEntity | null> {
         const [rows] = await this.pool.query<UserRow[]>(
             `
             SELECT ${AUTH_COLUMNS}
@@ -125,8 +125,8 @@ export class UserRepository {
 
     async updateById(
         id: string,
-        data: Partial<Pick<User, "username" | "role_id" | "is_active">>
-    ): Promise<User | null> {
+        data: Partial<Pick<UserEntity, "username" | "role_id" | "is_active">>
+    ): Promise<UserEntity | null> {
         const fields: string[] = [];
         const values: (string | number | boolean)[] = [];
 
@@ -178,8 +178,8 @@ export class UserRepository {
     }
 }
 
-function toEntity(userRow: UserRow): User {
-    const user = new User();
+function toEntity(userRow: UserRow): UserEntity {
+    const user = new UserEntity();
     user.id = userRow.id;
     user.username = userRow.username;
     user.email = userRow.email;
@@ -189,8 +189,8 @@ function toEntity(userRow: UserRow): User {
     return user;
 }
 
-function toAuthEntity(userRow: UserRow): AuthUser {
-    const user = new AuthUser();
+function toAuthEntity(userRow: UserRow): AuthUserEntity {
+    const user = new AuthUserEntity();
     user.id = userRow.id;
     user.username = userRow.username;
     user.email = userRow.email;

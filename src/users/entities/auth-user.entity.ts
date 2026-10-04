@@ -1,5 +1,5 @@
-import { User } from "./user.entity";
+import { UserEntity } from "./user.entity";
 
-export class AuthUser extends User{
+export class AuthUserEntity extends UserEntity {
     password_hash: string;
 }

@@ -1,4 +1,4 @@
-import { User } from "../../entities/user.entity"
+import { UserEntity } from "../../entities/user.entity"
 import { ApiProperty } from "@nestjs/swagger";
 
 export class ResponseUserDto {
@@ -34,7 +34,7 @@ export class ResponseUserDto {
     })
     role_id: number;
 
-    static fromEntity(user : User){
+    static fromEntity(user : UserEntity){
         const dto = new ResponseUserDto();
         dto.id = user.id;
         dto.username = user.username;
