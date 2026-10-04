@@ -5,16 +5,17 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
-import { RegisterDto } from "./dto/register.dto";
-import { LoginDto } from "./dto/login.dto";
+import { RegisterDto } from "./dto/requests/register.dto";
+import { LoginDto } from "./dto/requests/login.dto";
 import { sign, verify } from "./jwt";
-import { RefreshDto } from "./dto/refresh.dto";
-import { ValidAccessDto } from "./dto/valid-access.dto";
+import { RefreshDto } from "./dto/requests/refresh.dto";
+import { ValidAccessDto } from "./dto/responses/valid-access.dto";
 import { AuthRepository } from "./auth.repository";
 import { AuthUserEntity } from "./entities/auth-user.entity";
 import { ACCESS_TTL, MINIMUM_PASSWORD_LENGTH, REFRESH_TTL } from "../common/constants";
-import { UpdatePasswordDto } from "./dto/update-password.dto";
+import { UpdatePasswordDto } from "./dto/requests/update-password.dto";
 import { UserRepository } from "../users/user.repository";
+import { AccessTokenDto } from "./dto/responses/access-token.dto";
 
 const bcrypt = require("bcrypt");
 
@@ -25,15 +26,17 @@ export class AuthService {
         private readonly user_repository : UserRepository,
     ) {}
 
-    async register(dto: RegisterDto): Promise<ValidAccessDto> {
+    async register(
+        dto: RegisterDto
+    ): Promise<ValidAccessDto> {
         if(dto.password.length < MINIMUM_PASSWORD_LENGTH){
-            throw new BadRequestException("La contraseña debe ser de 8 o más carácteres!")
+            throw new BadRequestException("La contraseña debe ser de 8 o más carácteres.")
         }
         if(await this.repository.findByEmail(dto.email!)){
-            throw new ConflictException("El usuario o correo ya están registrados!");
+            throw new ConflictException("El usuario o correo ya están registrados.");
         }
         if(await this.repository.findByUsername(dto.username!)){
-            throw new ConflictException("El usuario o correo ya están registrados!");
+            throw new ConflictException("El usuario o correo ya están registrados.");
         }
         const user = new AuthUserEntity();
         user.username = dto.username;
@@ -48,7 +51,9 @@ export class AuthService {
         return ValidAccessDto.create(access_token, refresh_token);
     }
 
-    async login(dto: LoginDto):Promise<ValidAccessDto> {
+    async login(
+        dto: LoginDto
+    ):Promise<ValidAccessDto> {
 
         let user;
 
@@ -59,13 +64,13 @@ export class AuthService {
             user = await this.repository.findByUsername(dto.identifier!);
         }
         if(!user) {
-            throw new UnauthorizedException("Credenciales inválidas!");
+            throw new UnauthorizedException("Credenciales inválidas.");
         }
 
         const valid_password = await bcrypt.compare(dto.password, user.password_hash);
 
         if (!valid_password || !user.is_active) {
-            throw new UnauthorizedException("Credenciales inválidas!");
+            throw new UnauthorizedException("Credenciales inválidas.");
         }
 
         const claims = { sub: user.id!, email: user.email! };
@@ -74,16 +79,18 @@ export class AuthService {
         return ValidAccessDto.create(access_token, refresh_token);
     }
 
-    refresh(dto: RefreshDto ): { accessToken: string } {
+    refresh(
+        dto: RefreshDto
+    ): AccessTokenDto {
         const payload = verify(dto.refresh_token!);
         if(!payload || payload.type !== "refresh") {
-            throw new UnauthorizedException("Refresh token inválido!");
+            throw new UnauthorizedException("Refresh token inválido.");
         }
-        const accessToken = sign(
+        const access_token = sign(
             { sub: payload.sub, email: payload.email, role_id: payload.role_id, type: "access" },
             ACCESS_TTL,
         );
-        return { accessToken };
+        return AccessTokenDto.create(access_token);
     }
 
 
@@ -103,13 +110,13 @@ export class AuthService {
         }
         if(dto.new_password.length < MINIMUM_PASSWORD_LENGTH){
             throw new BadRequestException(
-                "La contraseña debe ser de 8 o más carácteres!"
+                "La contraseña debe ser de 8 o más carácteres."
             )
         }
 
         const user = await this.user_repository.findByIdWithPassword(id);
         if(!user){
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("Usuario no encontrado.");
         }
 
         const validPassword = await bcrypt.compare(
@@ -126,7 +133,9 @@ export class AuthService {
         await this.user_repository.updatePasswordById(id, password_hash);
     }
 
-    isValidEmail(email : string): boolean {
+    isValidEmail(
+        email: string
+    ): boolean {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     }

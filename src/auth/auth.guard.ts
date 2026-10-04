@@ -7,11 +7,11 @@ export class AuthGuard implements CanActivate {
         const req = context.switchToHttp().getRequest();
         const header: string = req.headers.authorization ?? "";
         if(!header.startsWith("Bearer ")) {
-            throw new UnauthorizedException("Falta el token");
+            throw new UnauthorizedException("Falta el token.");
         }
         const payload = verify(header.slice("Bearer ".length));
         if(!payload || payload.type !== "access"){
-            throw new UnauthorizedException("Falta el token");
+            throw new UnauthorizedException("Falta el token.");
         }
         req.user = payload;
         return true;
