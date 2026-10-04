@@ -41,7 +41,7 @@ export class CataloguesService {
     }
 
     async createReaction(
-        dto: CreateReactionTypeDto,
+        dto: CreateReactionTypeDto
     ): Promise<ResponseReactionTypeDto> {
         try {
             const reaction = await this.repository.createReaction(dto);
@@ -63,7 +63,7 @@ export class CataloguesService {
     }
 
     async createCategory(
-        dto: CreateFraudCategoryDto,
+        dto: CreateFraudCategoryDto
     ): Promise<ResponseFraudCategoryDto> {
         try {
             const category = await this.repository.createCategory(dto);
@@ -85,7 +85,7 @@ export class CataloguesService {
     }
 
     async createReportReason(
-        dto: CreateReportReasonDto,
+        dto: CreateReportReasonDto
     ): Promise<ResponseReportReasonDto> {
         try {
             const reason = await this.repository.createReportReason(dto);
@@ -102,7 +102,7 @@ export class CataloguesService {
     }
 
     async createType(
-        dto: CreateFraudTypeDto,
+        dto: CreateFraudTypeDto
     ): Promise<ResponseFraudTypeDto> {
         try {
             const type = await this.repository.createType(dto);
@@ -124,7 +124,7 @@ export class CataloguesService {
     }
 
     async createEvidenceType(
-        dto: CreateEvidenceTypeDto,
+        dto: CreateEvidenceTypeDto
     ): Promise<ResponseEvidenceTypeDto> {
         try {
             const type = await this.repository.createEvidenceType(dto);
@@ -141,7 +141,7 @@ export class CataloguesService {
     }
 
     async createAuthority(
-        dto: CreateAuthorityDto,
+        dto: CreateAuthorityDto
     ): Promise<ResponseAuthorityDto> {
         try {
             const authority = await this.repository.createAuthority(dto);
@@ -154,19 +154,17 @@ export class CataloguesService {
 
     async updateAuthority(
         id: number,
-        dto: UpdateAuthorityDto,
+        dto: UpdateAuthorityDto
     ): Promise<ResponseAuthorityDto> {
         if(dto.name === undefined && dto.description === undefined){
-            throw new BadRequestException(
-                "At least one parameter required",
-            );
+            throw new BadRequestException("Al menos un campo requerido.");
         }
 
         try {
             const authority = await this.repository.updateAuthority(id, dto);
 
             if (!authority) {
-                throw new NotFoundException("Authority not found");
+                throw new NotFoundException("Autoridad no encontrada.");
             }
 
             return ResponseAuthorityDto.fromEntity(authority);
@@ -183,7 +181,7 @@ export class CataloguesService {
             error.code === "ER_DUP_ENTRY"
         ) {
             throw new ConflictException(
-                "A record with the same unique value already exists.",
+                "Un recurso con ese mismo valor ya existe."
             );
         }
     }

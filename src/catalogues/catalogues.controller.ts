@@ -1,28 +1,43 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  UseGuards,
-  Param,
-  Body,
-  ParseIntPipe,
+    Controller,
+    Get,
+    Post,
+    Patch,
+    UseGuards,
+    Param,
+    Body,
+    ParseIntPipe,
 } from "@nestjs/common";
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiParam,
+    ApiResponse,
+    ApiTags,
+} from "@nestjs/swagger";
 
 import { AuthGuard } from "../auth/auth.guard";
+import { RolesGuard } from "../auth/roles.guard";
+import { Roles } from "../auth/roles.decorator";
+import { ADMIN_ROLE_ID } from "../common/constants";
+import {
+    ApiBadRequestResponse,
+    ApiConflictResponse,
+    ApiForbiddenResponse,
+    ApiNotFoundResponse,
+    ApiUnauthorizedResponse,
+} from "../common/api-responses";
+
 import { CataloguesService } from "./catalogues.service";
-import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
+
 import { CreateReactionTypeDto } from "./dto/requests/create-reaction-type.dto";
-import { CreateFraudCategoryDto} from "./dto/requests/create-fraud-category.dto";
+import { CreateFraudCategoryDto } from "./dto/requests/create-fraud-category.dto";
 import { CreateReportReasonDto } from "./dto/requests/create-report-reason.dto";
 import { CreateFraudTypeDto } from "./dto/requests/create-fraud-type.dto";
 import { CreateEvidenceTypeDto } from "./dto/requests/create-evidence-type.dto";
 import { CreateAuthorityDto } from "./dto/requests/create-authority.dto";
 import { UpdateAuthorityDto } from "./dto/requests/update-authority.dto";
 
-import { ADMIN_ROLE_ID } from "../common/constants";
-import { RolesGuard } from "../auth/roles.guard";
-import { Roles } from "../auth/roles.decorator";
 import { ResponseFraudCategoryDto } from "./dto/responses/response-fraud-category.dto";
 import { ResponsePostStatusDto } from "./dto/responses/response-post-status.dto";
 import { ResponseUserRoleDto } from "./dto/responses/response-user-role.dto";
@@ -35,36 +50,61 @@ import { ResponseEvidenceTypeDto } from "./dto/responses/response-evidence-type.
 import { ResponseAuthorityDto } from "./dto/responses/response-authority.dto";
 
 @ApiTags("catalogues")
-@Controller("")
 @ApiBearerAuth()
+@Controller("")
 @UseGuards(AuthGuard)
 export class CataloguesController {
     constructor(private readonly service: CataloguesService) {}
 
     @Get("roles")
-    @ApiResponse({ status: 200, type: ResponseUserRoleDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
+    @ApiOperation({
+        summary: "Obtener roles",
+        description: "Obtiene la lista de roles disponibles."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de roles.",
+        type: ResponseUserRoleDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     findRoles(): Promise<ResponseUserRoleDto[]> {
         return this.service.findRoles();
     }
 
-
     @Get("reactions")
-    @ApiResponse({ status: 200, type: ResponseReactionTypeDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
+    @ApiOperation({
+        summary: "Obtener tipos de reacción",
+        description: "Obtiene la lista de tipos de reacción disponibles."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de tipos de reacción.",
+        type: ResponseReactionTypeDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
     findReactions(): Promise<ResponseReactionTypeDto[]> {
         return this.service.findReactions();
     }
 
     @Post("reactions")
-    @ApiResponse({status: 201, type: ResponseReactionTypeDto})
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
-    @ApiResponse({ status: 409, description: "" })
+    @ApiOperation({
+        summary: "Crear tipo de reacción",
+        description: "Crea un nuevo tipo de reacción."
+    })
+    @ApiResponse({
+        status: 201,
+        description: "Tipo de reacción creado correctamente.",
+        type: ResponseReactionTypeDto
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiConflictResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createReaction(
@@ -73,28 +113,52 @@ export class CataloguesController {
         return this.service.createReaction(dto);
     }
 
-
     @Get("states")
-    @ApiResponse({ status: 200, type: ResponsePostStatusDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
+    @ApiOperation({
+        summary: "Obtener estados de publicación",
+        description: "Obtiene la lista de estados disponibles para las publicaciones."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de estados de publicación.",
+        type: ResponsePostStatusDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
     findStates(): Promise<ResponsePostStatusDto[]> {
         return this.service.findStates();
     }
 
-
     @Get("categories")
-    @ApiResponse({ status: 200, type: ResponseFraudCategoryDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
+    @ApiOperation({
+        summary: "Obtener categorías de fraude",
+        description: "Obtiene la lista de categorías de fraude disponibles."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de categorías de fraude.",
+        type: ResponseFraudCategoryDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
     findCategories(): Promise<ResponseFraudCategoryDto[]> {
         return this.service.findCategories();
     }
 
     @Post("categories")
-    @ApiResponse({status: 201, type: ResponseFraudCategoryDto})
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
-    @ApiResponse({ status: 409, description: "" })
+    @ApiOperation({
+        summary: "Crear categoría de fraude",
+        description: "Crea una nueva categoría de fraude."
+    })
+    @ApiResponse({
+        status: 201,
+        description: "Categoría de fraude creada correctamente.",
+        type: ResponseFraudCategoryDto
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiConflictResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createCategory(
@@ -103,32 +167,55 @@ export class CataloguesController {
         return this.service.createCategory(dto);
     }
 
-
     @Get("audit-actions")
-    @ApiResponse({ status: 200, type: ResponseAuditActionDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
+    @ApiOperation({
+        summary: "Obtener acciones de auditoría",
+        description: "Obtiene la lista de acciones disponibles para los registros de auditoría."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de acciones de auditoría.",
+        type: ResponseAuditActionDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     findAuditActions(): Promise<ResponseAuditActionDto[]> {
         return this.service.findAuditActions();
     }
 
-
     @Get("report-reasons")
-    @ApiResponse({ status: 200, type: ResponseReportReasonDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
+    @ApiOperation({
+        summary: "Obtener motivos de reporte",
+        description: "Obtiene la lista de motivos disponibles para reportar publicaciones."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de motivos de reporte.",
+        type: ResponseReportReasonDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
     findReportReasons(): Promise<ResponseReportReasonDto[]> {
         return this.service.findReportReasons();
     }
 
     @Post("report-reasons")
-    @ApiResponse({status: 201, type: ResponseReportReasonDto})
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
-    @ApiResponse({ status: 409, description: "" })
+    @ApiOperation({
+        summary: "Crear motivo de reporte",
+        description: "Crea un nuevo motivo para reportar publicaciones."
+    })
+    @ApiResponse({
+        status: 201,
+        description: "Motivo de reporte creado correctamente.",
+        type: ResponseReportReasonDto
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiConflictResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createReportReason(
@@ -137,20 +224,36 @@ export class CataloguesController {
         return this.service.createReportReason(dto);
     }
 
-
     @Get("types")
-    @ApiResponse({ status: 200, type: ResponseFraudTypeDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
+    @ApiOperation({
+        summary: "Obtener tipos de fraude",
+        description: "Obtiene la lista de tipos de fraude disponibles."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de tipos de fraude.",
+        type: ResponseFraudTypeDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
     findTypes(): Promise<ResponseFraudTypeDto[]> {
         return this.service.findTypes();
     }
 
     @Post("types")
-    @ApiResponse({status: 201, type: ResponseFraudTypeDto})
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
-    @ApiResponse({ status: 409, description: "" })
+    @ApiOperation({
+        summary: "Crear tipo de fraude",
+        description: "Crea un nuevo tipo de fraude."
+    })
+    @ApiResponse({
+        status: 201,
+        description: "Tipo de fraude creado correctamente.",
+        type: ResponseFraudTypeDto
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiConflictResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createType(
@@ -159,31 +262,55 @@ export class CataloguesController {
         return this.service.createType(dto);
     }
 
-
     @Get("modified-fields")
-    @ApiResponse({ status: 200, type: ResponseModifiedFieldDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
+    @ApiOperation({
+        summary: "Obtener campos modificables",
+        description: "Obtiene la lista de campos disponibles para los registros de auditoría."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de campos modificables.",
+        type: ResponseModifiedFieldDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     findModifiedFields(): Promise<ResponseModifiedFieldDto[]> {
         return this.service.findModifiedFields();
     }
 
-
     @Get("evidence-types")
-    @ApiResponse({ status: 200, type: ResponseEvidenceTypeDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
+    @ApiOperation({
+        summary: "Obtener tipos de evidencia",
+        description: "Obtiene la lista de tipos de evidencia disponibles."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de tipos de evidencia.",
+        type: ResponseEvidenceTypeDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
     findEvidenceTypes(): Promise<ResponseEvidenceTypeDto[]> {
         return this.service.findEvidenceTypes();
     }
 
     @Post("evidence-types")
-    @ApiResponse({status: 201, type: ResponseEvidenceTypeDto})
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
-    @ApiResponse({ status: 409, description: "" })
+    @ApiOperation({
+        summary: "Crear tipo de evidencia",
+        description: "Crea un nuevo tipo de evidencia."
+    })
+    @ApiResponse({
+        status: 201,
+        description: "Tipo de evidencia creado correctamente.",
+        type: ResponseEvidenceTypeDto
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiConflictResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createEvidenceType(
@@ -192,11 +319,19 @@ export class CataloguesController {
         return this.service.createEvidenceType(dto);
     }
 
-
     @Get("authorities")
-    @ApiResponse({ status: 200, type: ResponseAuthorityDto, isArray: true})
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
+    @ApiOperation({
+        summary: "Obtener autoridades",
+        description: "Obtiene la lista de autoridades disponibles."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Lista de autoridades.",
+        type: ResponseAuthorityDto,
+        isArray: true
+    })
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     findAuthorities(): Promise<ResponseAuthorityDto[]> {
@@ -204,11 +339,19 @@ export class CataloguesController {
     }
 
     @Post("authorities")
-    @ApiResponse({status: 201, type: ResponseAuthorityDto})
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
-    @ApiResponse({ status: 409, description: "" })
+    @ApiOperation({
+        summary: "Crear autoridad",
+        description: "Crea una nueva autoridad."
+    })
+    @ApiResponse({
+        status: 201,
+        description: "Autoridad creada correctamente.",
+        type: ResponseAuthorityDto
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiConflictResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createAuthority(
@@ -218,16 +361,31 @@ export class CataloguesController {
     }
 
     @Patch("authorities/:authorityId")
-    @ApiResponse({ status: 400, description: "" })
-    @ApiResponse({ status: 401, description: "" })
-    @ApiResponse({ status: 403, description: "" })
-    @ApiResponse({ status: 404, description: "" })
-    @ApiResponse({ status: 409, description: "" })
+    @ApiOperation({
+        summary: "Modificar autoridad",
+        description: "Modifica una autoridad mediante su identificador."
+    })
+    @ApiParam({
+        name: "authorityId",
+        description: "Identificador de la autoridad.",
+        type: Number,
+        example: 1
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Autoridad actualizada correctamente.",
+        type: ResponseAuthorityDto
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiNotFoundResponse()
+    @ApiConflictResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     updateAuthority(
         @Param("authorityId", ParseIntPipe) authorityId: number,
-        @Body() dto: UpdateAuthorityDto
+        @Body() dto: UpdateAuthorityDto,
     ): Promise<ResponseAuthorityDto> {
         return this.service.updateAuthority(authorityId, dto);
     }
