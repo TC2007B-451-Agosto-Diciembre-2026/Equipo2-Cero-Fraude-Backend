@@ -20,7 +20,11 @@ export class AuthRepository {
 
     async findByEmail(email: string): Promise<AuthUserEntity | undefined> {
         const [rows] = await this.pool.query<AuthUserRow[]>(
-            `SELECT ${COLUMNS} FROM user WHERE email = ?`
+            `SELECT ${COLUMNS}
+            FROM user
+            WHERE email = ?
+            AND is_active = true
+            `
             ,[email],
         );
         return rows.length > 0 ? toEntity(rows[0]) : undefined;
@@ -28,7 +32,12 @@ export class AuthRepository {
 
     async findByUsername(username: string): Promise<AuthUserEntity | undefined> {
         const [rows] = await this.pool.query<AuthUserRow[]>(
-            `SELECT ${COLUMNS} FROM user WHERE username = ?`
+            `
+            SELECT ${COLUMNS}
+            FROM user
+            WHERE username = ?
+            AND is_active = true
+            `
             ,[username],
         );
 

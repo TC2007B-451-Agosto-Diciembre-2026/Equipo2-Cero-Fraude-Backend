@@ -1,4 +1,4 @@
-export class Evidence {
+export class EvidenceEntity {
     id: number;
     owner_id: string;
     is_visible: boolean;

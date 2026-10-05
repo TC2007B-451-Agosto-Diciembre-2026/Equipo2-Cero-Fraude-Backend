@@ -23,7 +23,7 @@ export class UserService {
             data: result.users.map(
                 user => ResponseUserDto.fromEntity(user)
             ),
-            page,
+            page: page,
             total_pages: total_pages,
             total: result.total
         };
