@@ -98,7 +98,9 @@ export class PostService {
         dto: CreatePostDto,
         user_id: string
     ): Promise<ResponseDetailedPostDto> {
-
+        if(dto.status_id === undefined){
+            throw new BadRequestException("Una publicación subida debe tener un estado.");
+        }
         if(dto.status_id === UPLOADED_STATUS_ID){
             if(!dto.title || (!dto.description && (!dto.evidences || dto.evidences.length === 0))){
                 throw new BadRequestException("Una publicación subida debe tener un título y una descripción o al menos una evidencia.");
@@ -115,5 +117,4 @@ export class PostService {
             throw error;
         }
     }
-
 }

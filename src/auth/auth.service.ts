@@ -43,8 +43,8 @@ export class AuthService {
         user.email = dto.email;
         user.password_hash = await bcrypt.hash(dto.password!, 10);
         user.role_id = 1;
-        await this.repository.save(user);
-
+        const auth_user = await this.repository.save(user);
+        user.id = auth_user.id;
         const claims = { sub: user.id!, email: user.email!, role_id: user.role_id! };
         const access_token = sign({ ...claims, type: "access" }, ACCESS_TTL);
         const refresh_token = sign({ ...claims, type: "refresh" }, REFRESH_TTL);
