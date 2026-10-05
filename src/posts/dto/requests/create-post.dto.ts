@@ -111,17 +111,17 @@ export class CreatePostDto {
     types?: number[];
 
     @ApiPropertyOptional({
-        description: "URLs de las evidencias previamente creadas mediante /evidences.",
+        description: "IDs de las evidencias previamente creadas mediante /evidences.",
         example: [
-            "http://localhost:3000/uploads/evidence-1.png",
-            "http://localhost:3000/uploads/evidence-2.pdf",
+            1,
+            2,
         ],
-        type: [String],
+        type: [Number],
     })
     @IsOptional()
     @IsArray()
     @IsUrl({}, { each: true })
-    evidences?: string[];
+    evidences?: number[];
 
     @ApiPropertyOptional({
         description: "Indica si la identidad del autor debe mantenerse anónima al publicar.",
