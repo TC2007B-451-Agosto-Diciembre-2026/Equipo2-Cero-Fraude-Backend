@@ -9,10 +9,10 @@ export class ResponseEvidenceDto {
     id: number;
 
     @ApiProperty({
-        example: "550e8400-e29b-41d4-a716-446655440000.pdf",
-        description: "Nombre de archivo de la evidencia guardada.",
+        example: "http://localhost:3000/550e8400-e29b-41d4-a716-446655440000.pdf",
+        description: "Url de la evidencia guardada.",
     })
-    storage_path: string;
+    url: string;
 
     @ApiProperty({
         example: 1,
@@ -41,11 +41,14 @@ export class ResponseEvidenceDto {
     })
     expires_at: Date | null;
 
-    static fromEntity(evidence: EvidenceEntity): ResponseEvidenceDto {
+    static fromEntity(
+        evidence: EvidenceEntity,
+        baseUrl: string
+    ): ResponseEvidenceDto {
         const dto = new ResponseEvidenceDto();
 
         dto.id = evidence.id;
-        dto.storage_path = evidence.storage_path;
+        dto.url = `${baseUrl}/uploads/${evidence.storage_path}`;
         dto.evidence_type_id = evidence.evidence_type_id;
         dto.post_id = evidence.post_id;
         dto.created_at = evidence.created_at;

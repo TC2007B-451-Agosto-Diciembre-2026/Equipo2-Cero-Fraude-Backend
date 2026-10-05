@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable } from "@nestjs/common";
 import type { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { DB_POOL } from "../database/database.module";
 import { DRAFT_STATUS_ID, PAGE_SIZE, PUBLISHED_STATUS_ID, REJECTED_STATUS_ID, UPLOADED_STATUS_ID, VALIDATED_STATUS_ID } from "../common/constants";
@@ -6,6 +6,7 @@ import { FindPostsDto } from "./dto/requests/find-posts.dto";
 import { FindPostsResult } from "./dto/responses/find-posts-result.dto";
 import { CreatePostDto } from "./dto/requests/create-post.dto";
 import { PostEntity } from "./entities/post.entity";
+import { EvidenceEntity } from "../evidences/entities/evidence.entity";
 
 const POST_COLUMNS =
     "fp.id, fp.title, fp.description, fp.status_id," +
@@ -19,6 +20,10 @@ const DETAILED_POST_COLUMNS =
     "u.username AS author";
 
 const ADMIN_POST_DETAILED_COLUMNS = DETAILED_POST_COLUMNS + ", fp.is_anonymous, fp.deleted_at";
+
+const EVIDENCE_COLUMNS =
+    "e.id, e.owner_id, e.is_visible, e.storage_path,"+
+    "e.created_at, e.evidence_type_id, e.post_id"
 
 const POST_TYPE_COLUMNS = "pf.post_id, pf.fraud_type_id";
 
@@ -54,6 +59,16 @@ interface AdminPostRow extends DetailedPostRow {
 
 interface FraudTypeIdRow extends RowDataPacket {
     fraud_type_id: number;
+}
+
+interface EvidenceRow extends RowDataPacket {
+    id: number;
+    owner_id: string;
+    is_visible: boolean;
+    storage_path: string;
+    created_at: Date;
+    evidence_type_id: number;
+    post_id: number | null;
 }
 
 interface TypeRow extends RowDataPacket {
@@ -180,6 +195,25 @@ export class PostRepository{
         };
     }
 
+    async findOne(): Promise<PostEntity | null> {
+        const [rows] = await this.pool.query<PostRow[]>(
+            `SELECT ${POST_COLUMNS}
+            FROM fraud_post fp
+            INNER JOIN user u ON u.id = fp.author_id
+            WHERE status_id IN (${PUBLISHED_STATUS_ID}, ${VALIDATED_STATUS_ID})
+            ORDER BY fp.published_at DESC, fp.id DESC
+            LIMIT 1
+            `,
+        );
+
+        if(rows[0] === null){
+            return null;
+        }
+
+        const post = this.toPostEntity(rows[0]);
+        return post;
+    }
+
     async findAdminById(
         post_id: number
     ): Promise<PostEntity | null> {
@@ -205,22 +239,20 @@ export class PostRepository{
             [post_id],
         );
 
-        /*const [evidenceRows] = await this.pool.query<EvidenceRow[]>(
+        const [evidenceRows] = await this.pool.query<EvidenceRow[]>(
             `
-            SELECT
-                e.id,
-                e.url,
-                e.evidence_type
-            FROM post_evidence pe
-            INNER JOIN evidence e ON e.id = pe.evidence_id
-            WHERE pe.post_id = ?
+            SELECT ${EVIDENCE_COLUMNS}
+            FROM post_evidence e
+            WHERE e.post_id = ?
             `,
             [post_id],
-        );*/
+        );
 
         const post = this.toAdminPostEntity(rows[0]);
         post.types = typeRows.map(row => row.fraud_type_id);
-
+        post.evidences = evidenceRows.map(row =>
+            this.toEvidenceEntity(row)
+        );
         return post;
     }
 
@@ -255,22 +287,21 @@ export class PostRepository{
             [post_id],
         );
 
-        /*const [evidenceRows] = await this.pool.query<EvidenceRow[]>(
+        const [evidenceRows] = await this.pool.query<EvidenceRow[]>(
             `
-            SELECT
-                e.id,
-                e.url,
-                e.evidence_type
-            FROM post_evidence pe
-            INNER JOIN evidence e ON e.id = pe.evidence_id
-            WHERE pe.post_id = ?
+            SELECT ${EVIDENCE_COLUMNS}
+            FROM post_evidence e
+            WHERE e.post_id = ?
+            AND is_visible = true
             `,
             [post_id],
-        );*/
+        );
 
         const post = this.toDetailedPostEntity(rows[0]);
         post.types = typeRows.map(row => row.fraud_type_id);
-
+        post.evidences = evidenceRows.map(row =>
+            this.toEvidenceEntity(row)
+        );
         return post;
     }
 
@@ -278,66 +309,97 @@ export class PostRepository{
         dto: CreatePostDto,
         user_id: string
     ): Promise<PostEntity>{
-        const [result] = await this.pool.execute<ResultSetHeader>(
-            `INSERT INTO fraud_post (${CREATE_COLUMNS})
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                dto.title ?? null,
-                dto.description ?? null,
-                dto.seller_name ?? null,
-                dto.product ?? null,
-                dto.phone_number ?? null,
-                dto.url ?? null,
-                dto.platform ?? null,
-                dto.fraudulent_email ?? null,
-                dto.status_id,
-                dto.is_anonymous ?? false,
-                user_id,
-                dto.category ?? null,
-            ]
-        );
-        const post_id = result.insertId;
 
-        if (dto.types !== undefined && dto.types.length > 0) {
-            const values = dto.types.map(type_id => [
-                post_id,
-                type_id,
-            ]);
+        const connection = await this.pool.getConnection();
 
-            await this.pool.query(
-                `
-                INSERT INTO post_fraud_type (
-                    post_id,
-                    fraud_type_id
-                )
-                VALUES ?
-                `,
-                [values],
+        try{
+            await connection.beginTransaction();
+            const [result] = await connection.execute<ResultSetHeader>(
+                `INSERT INTO fraud_post (${CREATE_COLUMNS})
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    dto.title ?? null,
+                    dto.description ?? null,
+                    dto.seller_name ?? null,
+                    dto.product ?? null,
+                    dto.phone_number ?? null,
+                    dto.url ?? null,
+                    dto.platform ?? null,
+                    dto.fraudulent_email ?? null,
+                    dto.status_id,
+                    dto.is_anonymous ?? false,
+                    user_id,
+                    dto.category ?? null,
+                ]
             );
-        }
-        /*if (dto.evidences !== undefined && dto.evidences.length > 0) {
-            const values = dto.evidences.map(evidence_id => [
-                post_id,
-                evidence_id,
-            ]);
+            const post_id = result.insertId;
 
-            await this.pool.query(
-                `
-                INSERT INTO post_evidence (
+            if (dto.types !== undefined && dto.types.length > 0) {
+                const values = dto.types.map(type_id => [
                     post_id,
-                    evidence_id
-                )
-                VALUES ?
-                `,
-                [values],
-            );
-        }*/
+                    type_id,
+                ]);
 
-        const post = await this.findAdminById(post_id);
-        if(post === null){
-            throw new Error("La publicación creada no pudo recuperarse.")
+                await connection.query(
+                    `
+                    INSERT INTO post_fraud_type (
+                        post_id,
+                        fraud_type_id
+                    )
+                    VALUES ?
+                    `,
+                    [values]
+                );
+            }
+            if (dto.evidences !== undefined && dto.evidences.length > 0) {
+                const [evidences] = await connection.query<RowDataPacket[]>(
+                    `
+                    SELECT id
+                    FROM post_evidence
+                    WHERE owner_id = ?
+                    AND id IN (?)
+                    `,
+                    [user_id, dto.evidences]
+                )
+
+                const found_ids = new Set(
+                    evidences.map(evidence => evidence.id),
+                );
+
+                const invalid_ids = dto.evidences.filter(
+                    evidence_id => !found_ids.has(evidence_id),
+                );
+
+                if (invalid_ids.length > 0) {
+                    throw new ForbiddenException(
+                        `Las evidencias [${invalid_ids.join(", ")}] no existen o no pertenecen al usuario.`,
+                    );
+                }
+
+
+                await connection.query(
+                    `
+                    UPDATE post_evidence
+                    SET post_id = ?
+                    WHERE id IN (?)
+                    AND owner_id = ?
+                    `,
+                    [post_id, dto.evidences, user_id],
+                );
+            }
+            await connection.commit();
+            const post = await this.findAdminById(post_id);
+            if(post === null){
+               throw new Error("La publicación creada no pudo recuperarse.")
+            }
+
+            return post;
+        } catch(error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
         }
-        return post;
     }
 
     private toPostEntity(
@@ -399,4 +461,18 @@ export class PostRepository{
         post.deleted_at = row.deleted_at;
         return post;
     }
+
+    private toEvidenceEntity(row: EvidenceRow): EvidenceEntity {
+            const entity = new EvidenceEntity();
+
+            entity.id = row.id;
+            entity.owner_id = row.owner_id;
+            entity.is_visible = row.is_visible;
+            entity.storage_path = row.storage_path;
+            entity.created_at = row.created_at;
+            entity.evidence_type_id = row.evidence_type_id;
+            entity.post_id = row.post_id;
+
+            return entity;
+        }
 }

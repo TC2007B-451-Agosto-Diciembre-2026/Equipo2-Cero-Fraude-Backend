@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth, ApiNotFoundResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../auth/auth.guard";
-import { ApiBadRequestResponse, ApiConflictResponse, ApiForbiddenResponse, ApiUnauthorizedResponse } from "../common/api-responses";
+import { ApiBadRequestResponse, ApiConflictResponse, ApiForbiddenResponse, ApiUnauthorizedResponse, ApiNotFoundResponse } from "../common/api-responses";
 import { FindPostsDto } from "./dto/requests/find-posts.dto";
 import { CurrentUser } from "../auth/current-user.decorator";
 import type { JwtPayload } from "../auth/jwt";
@@ -10,6 +10,7 @@ import { PostService } from "./post.service";
 import { ResponseDetailedPostDto } from "./dto/responses/response-detailed-post.dto";
 import { FindMyPostsDto } from "./dto/requests/find-my-posts.dto";
 import { CreatePostDto } from "./dto/requests/create-post.dto";
+import { ResponsePostDto } from "./dto/responses/response-post.dto";
 
 @ApiTags("posts")
 @ApiBearerAuth()
@@ -55,6 +56,23 @@ export class PostController {
         @CurrentUser() user: JwtPayload
     ): Promise<ResponsePostsDto> {
         return this.service.findMyPosts(query, user.sub);
+    }
+
+    @Get("homeview")
+    @ApiOperation({
+        summary: "Obtener una publicación para inicio",
+        description: "Obtiene una publicación de fraude para la pantalla de inicio de la aplicación."
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Información de la publicación.",
+        type: ResponsePostDto
+    })
+    @ApiUnauthorizedResponse()
+    @ApiNotFoundResponse()
+    findOne(
+    ): Promise<ResponsePostDto> {
+        return this.service.findOne();
     }
 
     @Get(":postId")
@@ -104,4 +122,13 @@ export class PostController {
     ): Promise<ResponseDetailedPostDto>{
         return this.service.createPost(dto, user.sub);
     }
+
+    /*@Patch()
+    @ApiOperation({
+
+    })
+    updatePost(
+        @CurrentUser() user: JwtPayload,
+        @Body() dto: UpdatePostDto
+    )*/
 }

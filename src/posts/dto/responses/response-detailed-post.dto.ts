@@ -59,8 +59,14 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
     })
     evidences: ResponseEvidenceDto[];
 
-    static fromEntity(post: PostEntity): ResponseDetailedPostDto {
-        const publicDto = ResponsePostDto.fromEntity(post);
+    static fromEntity(
+        post: PostEntity,
+        baseUrl: string
+    ): ResponseDetailedPostDto {
+        const publicDto = ResponsePostDto.fromEntity(
+            post,
+            baseUrl
+        );
         const dto = new ResponseDetailedPostDto();
 
         Object.assign(dto, publicDto);
@@ -72,7 +78,9 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
         dto.platform = post.platform;
         dto.fraudulent_email = post.fraudulent_email;
         dto.reactions = {"like": 0, "dislike": 0};
-        dto.evidences = post.evidences;
+        dto.evidences = post.evidences?.map(
+            evidence => ResponseEvidenceDto.fromEntity(evidence, baseUrl)
+        );
 
         return dto;
     }

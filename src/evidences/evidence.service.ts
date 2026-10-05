@@ -58,6 +58,9 @@ export class EvidenceService {
             expires_at,
         );
 
-        return ResponseEvidenceDto.fromEntity(evidence);
+        return ResponseEvidenceDto.fromEntity(
+            evidence,
+            ""
+        );
     }
 }

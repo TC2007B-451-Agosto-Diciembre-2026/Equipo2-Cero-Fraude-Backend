@@ -10,6 +10,7 @@ import { handleDuplicateError } from "../common/error-handler";
 import { FindPostsResult } from "./dto/responses/find-posts-result.dto";
 import { FindMyPostsDto } from "./dto/requests/find-my-posts.dto";
 import { PostEntity } from "./entities/post.entity";
+import { getLanUrl } from "../common/network";
 
 @Injectable()
 export class PostService {
@@ -33,7 +34,10 @@ export class PostService {
 
         const posts = new ResponsePostsDto();
         posts.data = result.posts.map(
-            post => ResponsePostDto.fromEntity(post)
+            post => ResponsePostDto.fromEntity(
+                post,
+                this.getBaseUrl()
+            )
         );
         const page = query.page ?? 1;
         const total_pages = Math.ceil(result.total / PAGE_SIZE);
@@ -60,7 +64,10 @@ export class PostService {
 
         const posts = new ResponsePostsDto();
         posts.data = result.posts.map(
-            post => ResponsePostDto.fromEntity(post)
+            post => ResponsePostDto.fromEntity(
+                post,
+                this.getBaseUrl()
+            )
         );
 
         posts.page = query.page ?? 1;
@@ -91,7 +98,22 @@ export class PostService {
         if(!post){
             throw new NotFoundException("Publicación no encontrada.");
         }
-        return ResponseDetailedPostDto.fromEntity(post);
+        return ResponseDetailedPostDto.fromEntity(
+            post,
+            this.getBaseUrl()
+        );
+    }
+
+    async findOne(): Promise<ResponsePostDto> {
+        let post: PostEntity | null;
+        post = await this.repository.findOne();
+        if(!post){
+            throw new NotFoundException("Publicación no encontrada.");
+        }
+        return ResponseDetailedPostDto.fromEntity(
+            post,
+            this.getBaseUrl()
+        );
     }
 
     async createPost(
@@ -111,10 +133,18 @@ export class PostService {
 
         try {
             const post = await this.repository.create(dto, user_id);
-            return ResponseDetailedPostDto.fromEntity(post);
+            return ResponseDetailedPostDto.fromEntity(
+                post,
+                this.getBaseUrl()
+            );
         } catch (error) {
             handleDuplicateError(error);
             throw error;
         }
+    }
+
+    private getBaseUrl(): string {
+        const port = Number(process.env.PORT ?? 3000);
+        return getLanUrl(port);
     }
 }

@@ -58,7 +58,10 @@ export class ResponsePostDto {
     })
     types: number[] | null;
 
-    static fromEntity(post: PostEntity): ResponsePostDto {
+    static fromEntity(
+        post: PostEntity,
+        baseUrl: string
+    ): ResponsePostDto {
         const dto = new ResponsePostDto();
 
         dto.id = post.id;
