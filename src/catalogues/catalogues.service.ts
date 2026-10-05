@@ -25,6 +25,7 @@ import { ResponseFraudTypeDto } from "./dto/responses/response-fraud-type.dto";
 import { ResponseModifiedFieldDto } from "./dto/responses/response-modified-field.dto";
 import { ResponseEvidenceTypeDto } from "./dto/responses/response-evidence-type.dto";
 import { ResponseAuthorityDto } from "./dto/responses/response-authority.dto";
+import { handleDuplicateError } from "../common/error-handler";
 
 @Injectable()
 export class CataloguesService {
@@ -47,7 +48,7 @@ export class CataloguesService {
             const reaction = await this.repository.createReaction(dto);
             return ResponseReactionTypeDto.fromEntity(reaction);
         } catch (error) {
-            this.handleDuplicateError(error);
+            handleDuplicateError(error);
             throw error;
         }
     }
@@ -69,7 +70,7 @@ export class CataloguesService {
             const category = await this.repository.createCategory(dto);
             return ResponseFraudCategoryDto.fromEntity(category);
         } catch (error) {
-            this.handleDuplicateError(error);
+            handleDuplicateError(error);
             throw error;
         }
     }
@@ -91,7 +92,7 @@ export class CataloguesService {
             const reason = await this.repository.createReportReason(dto);
             return ResponseReportReasonDto.fromEntity(reason);
         } catch (error) {
-            this.handleDuplicateError(error);
+            handleDuplicateError(error);
             throw error;
         }
     }
@@ -108,7 +109,7 @@ export class CataloguesService {
             const type = await this.repository.createType(dto);
             return ResponseFraudTypeDto.fromEntity(type);
         } catch (error) {
-            this.handleDuplicateError(error);
+            handleDuplicateError(error);
             throw error;
         }
     }
@@ -130,7 +131,7 @@ export class CataloguesService {
             const type = await this.repository.createEvidenceType(dto);
             return ResponseEvidenceTypeDto.fromEntity(type);
         } catch (error) {
-            this.handleDuplicateError(error);
+            handleDuplicateError(error);
             throw error;
         }
     }
@@ -147,7 +148,7 @@ export class CataloguesService {
             const authority = await this.repository.createAuthority(dto);
             return ResponseAuthorityDto.fromEntity(authority);
         } catch (error) {
-            this.handleDuplicateError(error);
+            handleDuplicateError(error);
             throw error;
         }
     }
@@ -169,20 +170,8 @@ export class CataloguesService {
 
             return ResponseAuthorityDto.fromEntity(authority);
         } catch (error) {
-            this.handleDuplicateError(error);
+            handleDuplicateError(error);
             throw error;
-        }
-    }
-
-    private handleDuplicateError(error: unknown): void {
-        if (
-            error instanceof Error &&
-            "code" in error &&
-            error.code === "ER_DUP_ENTRY"
-        ) {
-            throw new ConflictException(
-                "Un recurso con ese mismo valor ya existe."
-            );
         }
     }
 }

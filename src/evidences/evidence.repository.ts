@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { DB_POOL } from "../database/database.module";
 import { ResultSetHeader, RowDataPacket, type Pool } from "mysql2/promise";
-import { Evidence } from "./entities/evidence.entity";
+import { EvidenceEntity } from "./entities/evidence.entity";
 
 interface EvidenceRow extends RowDataPacket {
     id: number;
@@ -26,7 +26,7 @@ export class EvidenceRepository {
         storage_path: string,
         evidence_type_id: number,
         expires_at: Date
-    ): Promise<Evidence> {
+    ): Promise<EvidenceEntity> {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `
             INSERT INTO post_evidence (
@@ -50,7 +50,7 @@ export class EvidenceRepository {
 
     async findById(
         id: number
-    ): Promise<Evidence | null> {
+    ): Promise<EvidenceEntity | null> {
         const [rows] = await this.pool.execute<EvidenceRow[]>(
             `
             SELECT ${COLUMNS}
@@ -64,8 +64,8 @@ export class EvidenceRepository {
         return rows.length > 0 ? this.toEntity(rows[0]) : null;
     }
 
-    private toEntity(row: EvidenceRow): Evidence {
-        const entity = new Evidence();
+    private toEntity(row: EvidenceRow): EvidenceEntity {
+        const entity = new EvidenceEntity();
 
         entity.id = row.id;
         entity.owner_id = row.owner_id;

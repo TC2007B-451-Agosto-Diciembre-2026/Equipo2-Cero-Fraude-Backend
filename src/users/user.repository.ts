@@ -4,7 +4,7 @@ import type { Pool, RowDataPacket } from "mysql2/promise";
 import { DB_POOL } from "../database/database.module";
 import { FindUsersDto } from "./dto/requests/find-users.dto";
 import { PAGE_SIZE } from "../common/constants";
-import { AuthUserEntity } from "./entities/auth-user.entity";
+import { AuthUserEntity } from "../auth/entities/auth-user.entity";
 
 const COLUMNS = "id, username, email, created_at, is_active, role_id";
 const AUTH_COLUMNS = COLUMNS + ", password_hash";
@@ -116,6 +116,7 @@ export class UserRepository {
             SELECT ${AUTH_COLUMNS}
             FROM user
             WHERE id = ?
+            AND is_active = true
             `,
             [id],
         );
@@ -172,6 +173,7 @@ export class UserRepository {
             UPDATE user
             SET password_hash = ?
             WHERE id = ?
+            AND is_active = true
             `,
             [password_hash, id]
         );
@@ -195,7 +197,6 @@ function toAuthEntity(userRow: UserRow): AuthUserEntity {
     user.username = userRow.username;
     user.email = userRow.email;
     user.password_hash = userRow.password_hash;
-    user.created_at = userRow.created_at;
     user.is_active = userRow.is_active;
     user.role_id = userRow.role_id;
     return user;

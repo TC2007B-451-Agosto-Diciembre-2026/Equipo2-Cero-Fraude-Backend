@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Evidence } from "../entities/evidence.entity";
+import { EvidenceEntity } from "../entities/evidence.entity";
 
 export class ResponseEvidenceDto {
     @ApiProperty({
@@ -41,7 +41,7 @@ export class ResponseEvidenceDto {
     })
     expires_at: Date | null;
 
-    static fromEntity(evidence: Evidence): ResponseEvidenceDto {
+    static fromEntity(evidence: EvidenceEntity): ResponseEvidenceDto {
         const dto = new ResponseEvidenceDto();
 
         dto.id = evidence.id;

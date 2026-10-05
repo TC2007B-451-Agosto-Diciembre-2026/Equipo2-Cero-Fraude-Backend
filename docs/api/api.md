@@ -1,6 +1,6 @@
 # Documentación API Cero Fraude
 
-# Índice
+## Índice
 
 1. [Introducción](#1-introducción)
 
@@ -1160,27 +1160,18 @@ Obtener una página de publicaciones de fraude. Los usuarios pueden consultar la
 
 ##### Parámetros de query
 
-| Campo        | Tipo         | Obligatorio | Descripción                                                                                                         | Restringido |
-| ------------ | ------------ | ----------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
-| page         | Integer      | No          | Página de resultados a obtener. Comienza en 1.                                                                      | No          |
-| category     | Integer list | No          | IDs de las categorías asociadas a las publicaciones.                                                                | No          |
-| type         | Integer list | No          | IDs de los tipos asociados a las publicaciones.                                                                     | No          |
-| phone        | String       | No          | Teléfono asociado a la publicación.                                                                                 | No          |
-| url          | String       | No          | URL asociada a la publicación.                                                                                      | No          |
-| platform     | String       | No          | Plataforma asociada a la publicación.                                                                               | No          |
-| email        | String       | No          | Correo asociado a la publicación.                                                                                   | No          |
-| is-fraud     | Boolean      | No          | Indica si la publicación corresponde a un fraude confirmado.                                                        | No          |
-| state        | Integer list | No          | IDs de los estados de las publicaciones. Los estados no públicos están restringidos según los permisos del usuario. | Parcial     |
-| initial-date | String       | No          | Fecha inicial del periodo de publicación, en formato ISO 8601.                                                      | Sí          |
-| final-date   | String       | No          | Fecha final del periodo de publicación, en formato ISO 8601.                                                        | Sí          |
-| author       | UUID list    | No          | UUIDs de los usuarios que realizaron las publicaciones.                                                             | Sí          |
-| deleted      | Boolean      | No          | Indica si se deben consultar publicaciones eliminadas.                                                              | Sí          |
+| Campo     | Tipo         | Obligatorio | Descripción                                                                                                         | Restringido |
+| --------- | ------------ | ----------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
+| page      | Integer      | No          | Página de resultados a obtener. Comienza en 1.                                                                      | No          |
+| category  | Integer list | No          | IDs de las categorías asociadas a las publicaciones.                                                                | No          |
+| type      | Integer list | No          | IDs de los tipos asociados a las publicaciones.                                                                     | No          |
+| status_id | Integer list | No          | IDs de los estados de las publicaciones. Los estados no públicos están restringidos según los permisos del usuario. | Parcial     |
 
 ##### Respuestas
 
 * 200 OK
 
-Si la publicación tiene `is_anonymous` como verdadero, el `author` vendrá vacío. Para usuarios:
+Si la publicación tiene `is_anonymous` como verdadero, el `author` vendrá vacío.
 
 ```json
 {
@@ -1192,32 +1183,14 @@ Si la publicación tiene `is_anonymous` como verdadero, el `author` vendrá vac�
       "status_id": 5,
       "is_fraud": true,
       "published_at": "2026-09-22T09:58:43.123Z",
+	  "author": "Roberto",
       "category": 2,
       "types": [1, 2]
     }
-  ]
-}
-```
-
-Para administradores, se incluye `is_anonymous` y `deleted_at`:
-
-```json
-{
-  "data": [
-    {
-      "id": 1,
-      "title": "Ejemplo de publicación",
-      "description": "Descripción del posible fraude.",
-      "status_id": 5,
-      "is_fraud": true,
-      "published_at": "2026-09-22T09:58:43.123Z",
-      "author": "550e8400-e29b-41d4-a716-446655440000",
-      "category": 2,
-      "types": [1, 2],
-      "is_anonymous": false,
-      "deleted_at": null
-    }
-  ]
+  ],
+  "page": 1,
+  "total_pages": 3,
+  "total": 47
 }
 ```
 
@@ -1235,9 +1208,10 @@ Obtener una página de publicaciones de fraude del usuario solicitante.
 
 ##### Parámetros de query
 
-| Campo | Tipo    | Obligatorio | Descripción                                    | Restringido |
-| ----- | ------- | ----------- | ---------------------------------------------- | ----------- |
-| page  | Integer | No          | Página de resultados a obtener. Comienza en 1. | No          |
+| Campo    | Tipo    | Obligatorio | Descripción                                    |
+| -------- | ------- | ----------- | ---------------------------------------------- |
+| page     | Integer | No          | Página de resultados a obtener. Comienza en 1. |
+| is_draft | Boolean | Sí          | Sí buscar solo borradores o solo publicaciones |
 
 ##### Respuestas
 
@@ -1273,9 +1247,9 @@ Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones 
 
 ##### Parámetros de ruta
 
-| Campo  | Tipo    | Obligatorio | Descripción          |
-| ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
+| Campo  | Tipo    | Obligatorio | Descripción                                    |
+| ------ | ------- | ----------- | ---------------------------------------------- |
+| postId | Integer | Sí          | ID de la publicación                           |
 
 ##### Respuestas
 
@@ -1295,7 +1269,7 @@ Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones 
   "status_id": 5,
   "is_fraud": true,
   "published_at": "2026-09-22T09:58:43.123Z",
-  "author": "550e8400-e29b-41d4-a716-446655440000",
+  "author": "Roberto",
   "category": 2,
   "reactions": {
     "like": 45,
@@ -1328,7 +1302,7 @@ Para administradores, se incluye `is_anonymous` y `deleted_at`:
   "status_id": 5,
   "is_fraud": true,
   "published_at": "2026-09-22T09:58:43.123Z",
-  "author": "550e8400-e29b-41d4-a716-446655440000",
+  "author": "Roberto",
   "category": 2,
   "reactions": {
     "like": 45,
@@ -1380,9 +1354,9 @@ Las evidencias se suben previamente mediante `POST /evidences`. Ese endpoint cre
 | fraudulent_email | String       | No          | Correo electrónico relacionado con el posible fraude                 |
 | category         | Integer      | No          | ID de la categoría de la publicación                                 |
 | types            | Integer list | No          | IDs de los tipos de fraude asociados a la publicación                |
-| evidences        | String list  | No          | URLs de las evidencias previamente creadas mediante `/evidences`     |
+| evidences        | Integer list | No          | IDs de las evidencias previamente creadas mediante `/evidences`      |
 | is_anonymous     | Boolean      | No          | Indica si la identidad del autor debe mantenerse anónima al publicar |
-| state            | Integer      | Sí          | Estado inicial de la publicación                                     |
+| status_id        | Integer      | Sí          | Estado inicial de la publicación                                     |
 
 ##### Ejemplo de solicitud
 
@@ -1399,11 +1373,11 @@ Las evidencias se suben previamente mediante `POST /evidences`. Ese endpoint cre
   "category": 2,
   "types": [1],
   "evidences": [
-    "https://ejemplo.com/evidencia1.jpg",
-    "https://ejemplo.com/evidencia2.jpg"
+    1,
+    2
   ],
   "is_anonymous": true,
-  "state": 1
+  "status_id": 1
 }
 ```
 
@@ -1476,7 +1450,7 @@ Actualizar un borrador o publicación. El propietario puede actualizar un borrad
 | category         | Integer      | No          | Nueva categoría de la publicación          | No          |
 | types            | Integer list | No          | Tipos de fraude asociados a la publicación | No          |
 | is_anonymous     | Boolean      | No          | Indica si la publicación debe ser anónima  | No          |
-| state            | Integer      | No          | Nuevo estado de la publicación             | Sí          |
+| status_id        | Integer      | No          | Nuevo estado de la publicación             | Sí          |
 | is_fraud         | Boolean      | No          | Estado de confirmación del fraude          | Sí          |
 
 El campo de estado está sujeto a las siguientes reglas de transición:
@@ -1490,7 +1464,7 @@ El campo de estado está sujeto a las siguientes reglas de transición:
 
 El estado `REJECTED` es terminal y no puede utilizarse como origen de una nueva transición.
 
-El campo `state` no se considera un campo de actualización libre. Su valor está sujeto al estado actual de la publicación y a los permisos del usuario autenticado.
+El campo `status_id` no se considera un campo de actualización libre. Su valor está sujeto al estado actual de la publicación y a los permisos del usuario autenticado.
 
 Cuando `types` se incluye en la solicitud, representa la lista de tipos que quedará asociada a la publicación. Si el campo se omite, las asociaciones existentes no se modifican.
 
@@ -2393,8 +2367,8 @@ Obtener una página de registros de modificación.
 | affected-user | UUID    | No          | UUID del usuario afectado por la acción                                     |
 | post          | Integer | No          | ID de la publicación de fraude afectada por la acción                       |
 | evidence      | Integer | No          | ID de la evidencia afectada por la acción                                   |
-| initial-date  | String  | No          | Fecha inicial del periodo de creación de los registros, en formato ISO 8601 |
-| final-date    | String  | No          | Fecha final del periodo de creación de los registros, en formato ISO 8601   |
+| initial_date  | String  | No          | Fecha inicial del periodo de creación de los registros, en formato ISO 8601 |
+| final_date    | String  | No          | Fecha final del periodo de creación de los registros, en formato ISO 8601   |
 
 ##### Respuestas
 
@@ -2436,7 +2410,7 @@ Obtener una página de registros de modificación.
 
 Un registro de auditoría puede contener uno o varios cambios de campos. Cada elemento de `field_changes` representa un registro de `audit_field_change` y contiene el campo modificado, su valor anterior y su nuevo valor.
 
-El campo `created_at` representa la fecha y hora en que se creó el registro de auditoría. Los parámetros `initial-date` y `final-date` se utilizan únicamente como filtros para consultar registros dentro de un periodo determinado.
+El campo `created_at` representa la fecha y hora en que se creó el registro de auditoría. Los parámetros `initial_date` y `final_date` se utilizan únicamente como filtros para consultar registros dentro de un periodo determinado.
 
 Los campos `old_value` y `new_value` representan como texto el valor anterior y el nuevo valor del campo modificado.
 
