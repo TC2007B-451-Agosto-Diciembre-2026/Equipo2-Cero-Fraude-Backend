@@ -1160,12 +1160,12 @@ Obtener una página de publicaciones de fraude. Los usuarios pueden consultar la
 
 ##### Parámetros de query
 
-| Campo     | Tipo         | Obligatorio | Descripción                                                                                                         | Restringido |
-| --------- | ------------ | ----------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
-| page      | Integer      | No          | Página de resultados a obtener. Comienza en 1.                                                                      | No          |
-| category  | Integer list | No          | IDs de las categorías asociadas a las publicaciones.                                                                | No          |
-| type      | Integer list | No          | IDs de los tipos asociados a las publicaciones.                                                                     | No          |
-| status_id | Integer list | No          | IDs de los estados de las publicaciones. Los estados no públicos están restringidos según los permisos del usuario. | Parcial     |
+| Campo       | Tipo         | Obligatorio | Descripción                                                                                                         | Restringido |
+| ----------- | ------------ | ----------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
+| page        | Integer      | No          | Página de resultados a obtener. Comienza en 1.                                                                      | No          |
+| category_id | Integer list | No          | IDs de las categorías asociadas a las publicaciones.                                                                | No          |
+| type_id     | Integer list | No          | IDs de los tipos asociados a las publicaciones.                                                                     | No          |
+| status_id   | Integer list | No          | IDs de los estados de las publicaciones. Los estados no públicos están restringidos según los permisos del usuario. | Parcial     |
 
 ##### Respuestas
 
@@ -1396,22 +1396,33 @@ La secuencia esperada para agregar evidencias al crear una publicación es:
 ```json
 {
   "id": 1,
-  "title": "Producto falso en Marketplace",
-  "status_id": 1,
-  "is_fraud": false,
-  "author": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Ejemplo de publicación",
+  "description": "Descripción del posible fraude.",
+  "seller_name": "Vendedor Ejemplo",
+  "product": "Producto Ejemplo",
+  "phone_number": "8111234567",
+  "url": "https://ejemplo.com",
+  "platform": "Marketplace",
+  "fraudulent_email": "fraude@ejemplo.com",
+  "status_id": 5,
+  "is_fraud": true,
+  "published_at": "2026-09-22T09:58:43.123Z",
+  "author": "Roberto",
+  "category": 2,
+  "reactions": {
+    "like": 45,
+    "dislike": 50
+  },
   "evidences": [
     {
       "id": 1,
-      "url": "https://ejemplo.com/evidencia1.jpg",
-      "evidence_type": 1
-    },
-    {
-      "id": 2,
-      "url": "https://ejemplo.com/evidencia2.jpg",
+      "url": "https://ejemplo.com/evidencia.jpg",
       "evidence_type": 1
     }
-  ]
+  ],
+  "types": [1, 2],
+  "is_anonymous": false,
+  "deleted_at": null
 }
 ```
 
