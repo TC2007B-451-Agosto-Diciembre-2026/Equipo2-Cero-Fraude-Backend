@@ -86,7 +86,7 @@ export class AuthController {
     @ApiUnauthorizedResponse()
     refresh(
         @Body() dto: RefreshDto
-    ) : AccessTokenDto {
+    ) : Promise<AccessTokenDto> {
         return this.service.refresh(dto);
     }
 

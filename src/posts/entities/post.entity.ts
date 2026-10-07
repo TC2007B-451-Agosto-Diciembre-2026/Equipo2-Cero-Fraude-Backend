@@ -15,13 +15,13 @@ export class PostEntity{
     is_anonymous!: boolean;
     published_at: Date | null;
     deleted_at: Date | null;
-    author!: string;
+    author: string | null;
     category_id: number | null;
 
-    types: number[];
+    types: number[] = [];
     reactions: {
         like: number;
         dislike: number;
     };
-    evidences: EvidenceEntity[];
+    evidences: EvidenceEntity[] = [];
 }

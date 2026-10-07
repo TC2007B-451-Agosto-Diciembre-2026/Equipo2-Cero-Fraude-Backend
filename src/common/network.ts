@@ -16,3 +16,8 @@ export function getLanUrl(port: number): string {
 
     return `http://${interfaces[0]!.address}:${port}`;
 }
+
+export function getBaseUrl(): string {
+    const port = Number(process.env.PORT ?? 3000);
+    return getLanUrl(port);
+}

@@ -2,6 +2,8 @@ import { ApiProperty } from "@nestjs/swagger";
 import { PostEntity } from "../../entities/post.entity";
 import { ResponsePostDto } from "./response-post.dto";
 import { ResponseEvidenceDto } from "../../../evidences/dto/response-evidence.dto";
+import { ResponseCommentDto } from "../../../comments/dto/responses/response-comment.dto";
+import { ResponseAuthorityDto } from "../../../authorities/dto/responses/response-authority.dto";
 
 export class ResponseDetailedPostDto extends ResponsePostDto {
     @ApiProperty({
@@ -59,6 +61,19 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
     })
     evidences: ResponseEvidenceDto[];
 
+    @ApiProperty({
+        description: "Comentarios asociados a la publicación.",
+        type: [ResponseCommentDto]
+    })
+    comments: ResponseCommentDto[];
+
+    @ApiProperty({
+        description: "Autoridades asociadas a la publicación.",
+        type: [ResponseAuthorityDto]
+    })
+    authorities: ResponseAuthorityDto[];
+
+
     static fromEntity(
         post: PostEntity,
         baseUrl: string
@@ -78,10 +93,14 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
         dto.platform = post.platform;
         dto.fraudulent_email = post.fraudulent_email;
         dto.reactions = {"like": 0, "dislike": 0};
-        dto.evidences = post.evidences?.map(
-            evidence => ResponseEvidenceDto.fromEntity(evidence, baseUrl)
+        dto.evidences = (post.evidences ?? []).map(
+            evidence => ResponseEvidenceDto.fromEntity(
+                evidence,
+                baseUrl
+            )
         );
-
+        dto.comments = [];
+        dto.authorities = [];
         return dto;
     }
 }

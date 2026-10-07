@@ -2,8 +2,11 @@ import {
     IsArray,
     IsInt,
     IsOptional,
+    IsString,
     Max,
+    MaxLength,
     Min,
+    MinLength,
 } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
@@ -22,6 +25,18 @@ export class FindPostsDto {
     @Min(1)
     @Max(100)
     page?: number;
+
+    @ApiPropertyOptional({
+        description: "Texto a buscar en la información de la publicación.",
+        example: "iPhone",
+        minimum: 1,
+        maximum: 255,
+    })
+    @IsOptional()
+    @IsString()
+    @MinLength(1)
+    @MaxLength(255)
+    text?: string;
 
     @ApiPropertyOptional({
         description: "IDs de las categorías asociadas a las publicaciones.",
