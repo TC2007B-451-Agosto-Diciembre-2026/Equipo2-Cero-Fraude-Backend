@@ -165,9 +165,6 @@ export class UserRepository {
         password_hash: string,
     ): Promise<void> {
 
-        if(password_hash !== undefined) {
-        }
-
         await this.pool.execute(
             `
             UPDATE user

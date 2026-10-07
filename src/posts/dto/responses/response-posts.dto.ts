@@ -18,7 +18,7 @@ export class ResponsePostsDto {
     })
     total_pages: number;
     @ApiProperty({
-        description: "Número total de usuarios encontrados.",
+        description: "Número total de publicaciones encontradas.",
         example: 47,
     })
     total: number;

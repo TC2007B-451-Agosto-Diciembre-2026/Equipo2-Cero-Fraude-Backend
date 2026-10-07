@@ -29,9 +29,6 @@ export class AuthService {
     async register(
         dto: RegisterDto
     ): Promise<ValidAccessDto> {
-        if(dto.password.length < MINIMUM_PASSWORD_LENGTH){
-            throw new BadRequestException("La contraseña debe ser de 8 o más carácteres.")
-        }
         if(await this.repository.findByEmail(dto.email!)){
             throw new ConflictException("El usuario o correo ya están registrados.");
         }
@@ -79,15 +76,27 @@ export class AuthService {
         return ValidAccessDto.create(access_token, refresh_token);
     }
 
-    refresh(
+    async refresh(
         dto: RefreshDto
-    ): AccessTokenDto {
+    ): Promise<AccessTokenDto> {
         const payload = verify(dto.refresh_token!);
         if(!payload || payload.type !== "refresh") {
             throw new UnauthorizedException("Refresh token inválido.");
         }
+
+        const user = await this.user_repository.findById(payload.sub);
+
+        if(!user || !user.is_active){
+            throw new UnauthorizedException("Refresh token inválido");
+        }
+
         const access_token = sign(
-            { sub: payload.sub, email: payload.email, role_id: payload.role_id, type: "access" },
+            {
+                sub: user.id,
+                email: user.email,
+                role_id: user.role_id,
+                type: "access"
+            },
             ACCESS_TTL,
         );
         return AccessTokenDto.create(access_token);

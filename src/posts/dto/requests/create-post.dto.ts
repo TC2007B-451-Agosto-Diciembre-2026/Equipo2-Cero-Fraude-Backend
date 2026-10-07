@@ -1,4 +1,5 @@
 import {
+    ArrayUnique,
     IsArray,
     IsBoolean,
     IsEmail,
@@ -106,6 +107,7 @@ export class CreatePostDto {
     })
     @IsOptional()
     @IsArray()
+    @ArrayUnique()
     @IsInt({ each: true })
     @Min(1, { each: true })
     types?: number[];
@@ -120,7 +122,9 @@ export class CreatePostDto {
     })
     @IsOptional()
     @IsArray()
-    @IsUrl({}, { each: true })
+    @ArrayUnique()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
     evidences?: number[];
 
     @ApiPropertyOptional({

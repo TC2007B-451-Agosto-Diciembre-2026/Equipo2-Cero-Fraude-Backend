@@ -6,6 +6,7 @@ import { UpdateMeDto } from "./dto/requests/update-me.dto";
 import { FindUsersDto } from "./dto/requests/find-users.dto";
 import { ResponseUsersDto } from "./dto/responses/response-users.dto";
 import { PAGE_SIZE } from "../common/constants";
+import { handleDuplicateError } from "../common/error-handler";
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,13 @@ export class UserService {
     async findAll(
         query: FindUsersDto
     ): Promise<ResponseUsersDto> {
+
+        if(query.initial_date && query.final_date){
+            if(query.initial_date > query.final_date){
+                throw new BadRequestException("El rango de fecha solicitado es inválido.");
+            }
+        }
+
         const result = await this.repository.findAll(query);
 
         const page = query.page ?? 1;
@@ -43,21 +51,25 @@ export class UserService {
     async updateMe(
         id: string,
         dto: UpdateMeDto
-    ): Promise<ResponseUserDto> {
+    ): Promise<ResponseUserDto | null> {
         if(dto.username === undefined){
             throw new BadRequestException("Al menos un campo requerido.");
         }
+        try{
+            const user = await this.repository.updateById(
+                id,
+                { username: dto.username }
+            );
+            if(!user) {
+                throw new NotFoundException("Usuario no encontrado");
+            }
+            return ResponseUserDto.fromEntity(user);
 
-        const user = await this.repository.updateById(
-            id,
-            { username: dto.username }
-        );
-
-        if(!user) {
-            throw new NotFoundException("Usuario no encontrado");
+        }catch (error) {
+            handleDuplicateError(error);
         }
 
-        return ResponseUserDto.fromEntity(user);
+        return null;
     }
 
     async updateById(

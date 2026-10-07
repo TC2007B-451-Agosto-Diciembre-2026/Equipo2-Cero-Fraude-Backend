@@ -8,6 +8,7 @@ import { EvidenceRepository } from "./evidence.repository";
 @Module({
     imports: [DatabaseModule, AuthModule],
     controllers: [EvidenceController],
-    providers: [EvidenceService, EvidenceRepository]
+    providers: [EvidenceService, EvidenceRepository],
+    exports: [EvidenceRepository]
 })
 export class EvidenceModule {}

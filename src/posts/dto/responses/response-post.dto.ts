@@ -44,7 +44,7 @@ export class ResponsePostDto {
         description: "Nombre del autor.",
         example: "Roberto"
     })
-    author: string;
+    author: string | null;
 
     @ApiProperty({
         description: "Identificador de la categoría de la publicación.",
@@ -56,9 +56,12 @@ export class ResponsePostDto {
         description: "Lista de tipos de la publicación.",
         example: [1, 2]
     })
-    types: number[] | null;
+    types: number[];
 
-    static fromEntity(post: PostEntity): ResponsePostDto {
+    static fromEntity(
+        post: PostEntity,
+        baseUrl: string
+    ): ResponsePostDto {
         const dto = new ResponsePostDto();
 
         dto.id = post.id;

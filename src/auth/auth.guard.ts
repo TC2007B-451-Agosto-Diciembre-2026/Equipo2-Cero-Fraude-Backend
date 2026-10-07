@@ -11,7 +11,7 @@ export class AuthGuard implements CanActivate {
         }
         const payload = verify(header.slice("Bearer ".length));
         if(!payload || payload.type !== "access"){
-            throw new UnauthorizedException("Falta el token.");
+            throw new UnauthorizedException("Token inválido o expirado.");
         }
         req.user = payload;
         return true;

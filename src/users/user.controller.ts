@@ -123,7 +123,7 @@ export class UserController {
     updateMe(
         @CurrentUser() user: JwtPayload,
         @Body() dto: UpdateMeDto
-    ): Promise<ResponseUserDto>{
+    ): Promise<ResponseUserDto | null>{
         return this.service.updateMe(user.sub, dto);
     }
 

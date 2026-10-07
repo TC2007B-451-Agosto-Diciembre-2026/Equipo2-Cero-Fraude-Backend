@@ -18,7 +18,7 @@
 * 3.3. [Renovación del token de acceso](#33-renovación-del-token-de-acceso)
 * 3.4. [Cambiar contraseña](#34-cambiar-contraseña)
 
-1. [Catálogos](#4-catálogos)
+4. [Catálogos](#4-catálogos)
 
 * 4.1. [Roles](#41-roles)
 * 4.2. [Reacciones](#42-reacciones)
@@ -48,20 +48,18 @@
 * 6.5. [Actualizar una publicación](#65-actualizar-una-publicación)
 * 6.6. [Eliminar una publicación](#66-eliminar-una-publicación)
 
-7. [Reportes](#7-reportes)
+7. [Evidencias](#7-evidencias)
 
-* 7.1. [Obtener reportes](#71-obtener-reportes)
-* 7.2. [Obtener reportes de una publicación](#72-obtener-reportes-de-una-publicación)
-* 7.3. [Crear un reporte](#73-crear-un-reporte)
-* 7.4. [Eliminar un reporte](#74-eliminar-un-reporte)
+* 7.1. [Crear una evidencia](#71-crear-una-evidencia)
+* 7.2. [Actualizar una evidencia](#72-actualizar-una-evidencia)
+* 7.3. [Eliminar una evidencia](#73-eliminar-una-evidencia)
 
-8. [Evidencias](#8-evidencias)
+8. [Reportes](#8-reportes)
 
-* 8.1. [Obtener evidencias de una publicación](#81-obtener-evidencias-de-una-publicación)
-* 8.2. [Crear una evidencia](#82-crear-una-evidencia)
-* 8.3. [Asociar una evidencia a una publicación](#83-asociar-una-evidencia-a-una-publicación)
-* 8.4. [Actualizar una evidencia](#84-actualizar-una-evidencia)
-* 8.5. [Eliminar una evidencia](#85-eliminar-una-evidencia)
+* 8.1. [Obtener reportes](#81-obtener-reportes)
+* 8.2. [Obtener reportes de una publicación](#82-obtener-reportes-de-una-publicación)
+* 8.3. [Crear un reporte](#83-crear-un-reporte)
+* 8.4. [Eliminar un reporte](#84-eliminar-un-reporte)
 
 9. [Comentarios](#9-comentarios)
 
@@ -130,63 +128,61 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 
 ## 2. Resumen de Endpoints
 
-| Método | Endpoint                                  | Acceso                               |
-| ------ | ----------------------------------------- | ------------------------------------ |
-| POST   | `/auth/register`                          | Público                              |
-| POST   | `/auth/login`                             | Público                              |
-| POST   | `/auth/refresh`                           | Público                              |
-| PATCH  | `/auth/password`                          | Usuario                              |
-| GET    | `/roles`                                  | Administrador                        |
-| GET    | `/reactions`                              | Usuario                              |
-| POST   | `/reactions`                              | Administrador                        |
-| GET    | `/states`                                 | Usuario                              |
-| GET    | `/categories`                             | Usuario                              |
-| POST   | `/categories`                             | Administrador                        |
-| GET    | `/audit-actions`                          | Administrador                        |
-| GET    | `/report-reasons`                         | Usuario                              |
-| POST   | `/report-reasons`                         | Administrador                        |
-| GET    | `/types`                                  | Usuario                              |
-| POST   | `/types`                                  | Administrador                        |
-| GET    | `/modified-fields`                        | Administrador                        |
-| GET    | `/evidence-types`                         | Usuario                              |
-| POST   | `/evidence-types`                         | Administrador                        |
-| GET    | `/authorities`                            | Administrador                        |
-| POST   | `/authorities`                            | Administrador                        |
-| PATCH  | `/authorities/:authorityId`               | Administrador                        |
-| GET    | `/users`                                  | Administrador                        |
-| GET    | `/users/me`                               | Usuario                              |
-| GET    | `/users/:userId`                          | Administrador                        |
-| PATCH  | `/users/me`                               | Usuario                              |
-| PATCH  | `/users/:userId`                          | Administrador                        |
-| GET    | `/posts`                                  | Usuario, propietario o administrador |
-| GET    | `/posts/me`                               | Usuario                              |
-| GET    | `/posts/:postId`                          | Usuario, propietario o administrador |
-| POST   | `/posts`                                  | Usuario                              |
-| PATCH  | `/posts/:postId`                          | Propietario o administrador          |
-| DELETE | `/posts/:postId`                          | Propietario o administrador          |
-| GET    | `/reports`                                | Administrador                        |
-| GET    | `/posts/:postId/reports`                  | Administrador                        |
-| POST   | `/posts/:postId/reports`                  | Usuario                              |
-| DELETE | `/posts/:postId/reports/:reportId`        | Administrador                        |
-| GET    | `/posts/:postId/evidences`                | Usuario, propietario o administrador |
-| POST   | `/evidences`                              | Usuario                              |
-| POST   | `/posts/:postId/evidences`                | Propietario o administrador          |
-| PATCH  | `/posts/:postId/evidences/:evidenceId`    | Administrador                        |
-| DELETE | `/posts/:postId/evidences/:evidenceId`    | Propietario o administrador          |
-| GET    | `/comments`                               | Administrador                        |
-| POST   | `/posts/:postId/comments`                 | Administrador                        |
-| GET    | `/posts/:postId/comments`                 | Usuario                              |
-| GET    | `/posts/:postId/reactions`                | Usuario                              |
-| POST   | `/posts/:postId/reactions/:reactionId`    | Usuario                              |
-| DELETE | `/posts/:postId/reactions`                | Usuario                              |
-| GET    | `/types/:typeId/authorities`              | Administrador                        |
-| POST   | `/types/:typeId/authorities/:authorityId` | Administrador                        |
-| DELETE | `/types/:typeId/authorities/:authorityId` | Administrador                        |
-| GET    | `/posts/:postId/authorities`              | Usuario                              |
-| POST   | `/posts/:postId/authorities/:authorityId` | Administrador                        |
-| PATCH  | `/posts/:postId/authorities/:authorityId` | Administrador                        |
-| DELETE | `/posts/:postId/authorities/:authorityId` | Administrador                        |
-| GET    | `/audit-logs`                             | Administrador                        |
+| Método | Endpoint                                  | Acceso                               | Implementado |
+| ------ | ----------------------------------------- | ------------------------------------ | ------------ |
+| POST   | `/auth/register`                          | Público                              | Sí           |
+| POST   | `/auth/login`                             | Público                              | Sí           |
+| POST   | `/auth/refresh`                           | Público                              | Sí           |
+| PATCH  | `/auth/update-password`                   | Usuario                              | Sí           |
+| GET    | `/roles`                                  | Administrador                        | Sí           |
+| GET    | `/reactions`                              | Usuario                              | Sí           |
+| POST   | `/reactions`                              | Administrador                        | Sí           |
+| GET    | `/states`                                 | Usuario                              | Sí           |
+| GET    | `/categories`                             | Usuario                              | Sí           |
+| POST   | `/categories`                             | Administrador                        | Sí           |
+| GET    | `/audit-actions`                          | Administrador                        | Sí           |
+| GET    | `/report-reasons`                         | Usuario                              | Sí           |
+| POST   | `/report-reasons`                         | Administrador                        | Sí           |
+| GET    | `/types`                                  | Usuario                              | Sí           |
+| POST   | `/types`                                  | Administrador                        | Sí           |
+| GET    | `/modified-fields`                        | Administrador                        | Sí           |
+| GET    | `/evidence-types`                         | Usuario                              | Sí           |
+| POST   | `/evidence-types`                         | Administrador                        | Sí           |
+| GET    | `/authorities`                            | Administrador                        | Sí           |
+| POST   | `/authorities`                            | Administrador                        | Sí           |
+| PATCH  | `/authorities/:authorityId`               | Administrador                        | Sí           |
+| GET    | `/users`                                  | Administrador                        | Sí           |
+| GET    | `/users/me`                               | Usuario                              | Sí           |
+| GET    | `/users/:userId`                          | Administrador                        | Sí           |
+| PATCH  | `/users/me`                               | Usuario                              | Sí           |
+| PATCH  | `/users/:userId`                          | Administrador                        | Sí           |
+| GET    | `/posts`                                  | Usuario, propietario o administrador | Sí           |
+| GET    | `/posts/me`                               | Usuario                              | Sí           |
+| GET    | `/posts/:postId`                          | Usuario, propietario o administrador | Sí           |
+| POST   | `/posts`                                  | Usuario                              | Sí           |
+| PATCH  | `/posts/:postId`                          | Propietario o administrador          | Sí           |
+| DELETE | `/posts/:postId`                          | Propietario o administrador          | Sí           |
+| POST   | `/evidences`                              | Usuario                              | Sí           |
+| PATCH  | `/posts/:postId/evidences/:evidenceId`    | Administrador                        | Sí           |
+| DELETE | `/posts/:postId/evidences/:evidenceId`    | Propietario o administrador          | Sí           |
+| GET    | `/reports`                                | Administrador                        | No           |
+| GET    | `/posts/:postId/reports`                  | Administrador                        | No           |
+| POST   | `/posts/:postId/reports`                  | Usuario                              | No           |
+| DELETE | `/posts/:postId/reports/:reportId`        | Administrador                        | No           |
+| GET    | `/comments`                               | Administrador                        | No           |
+| POST   | `/posts/:postId/comments`                 | Administrador                        | No           |
+| GET    | `/posts/:postId/comments`                 | Usuario                              | No           |
+| GET    | `/posts/:postId/reactions`                | Usuario                              | No           |
+| POST   | `/posts/:postId/reactions/:reactionId`    | Usuario                              | No           |
+| DELETE | `/posts/:postId/reactions`                | Usuario                              | No           |
+| GET    | `/types/:typeId/authorities`              | Administrador                        | No           |
+| POST   | `/types/:typeId/authorities/:authorityId` | Administrador                        | No           |
+| DELETE | `/types/:typeId/authorities/:authorityId` | Administrador                        | No           |
+| GET    | `/posts/:postId/authorities`              | Usuario                              | No           |
+| POST   | `/posts/:postId/authorities/:authorityId` | Administrador                        | No           |
+| PATCH  | `/posts/:postId/authorities/:authorityId` | Administrador                        | No           |
+| DELETE | `/posts/:postId/authorities/:authorityId` | Administrador                        | No           |
+| GET    | `/audit-logs`                             | Administrador                        | No           |
 
 ## 3. Autenticación
 
@@ -212,7 +208,7 @@ Registro de un nuevo usuario.
 {
   "username": "andres123",
   "email": "andres123@correo.com",
-  "password": "secret"
+  "password": "supersecret123"
 }
 ```
 
@@ -250,7 +246,7 @@ Autentica a un usuario.
 ```json
 {
   "identifier": "andres123",
-  "password": "secret"
+  "password": "supersecret123"
 }
 ```
 
@@ -307,23 +303,25 @@ El endpoint se considera público porque no requiere un `access_token` previo.
 
 ### 3.4. Cambiar contraseña
 
-#### PATCH /auth/password
+#### PATCH /auth/update-password
 
-Cambiar la contraseña de usuario
+Cambiar la contraseña del usuario autenticado.
 
-**Acceso:** Público
+**Acceso:** Usuario
 
 ##### Body
 
-| Campo    | Tipo   | Obligatorio | Descripción                 |
-| -------- | ------ | ----------- | --------------------------- |
-| password | string | Sí          | Nueva contraseña de usuario |
+| Campo        | Tipo   | Obligatorio | Descripción                                         |
+| ------------ | ------ | ----------- | --------------------------------------------------- |
+| old_password | string | Sí          | Contraseña vieja del usuario. Mínimo 10 caracteres. |
+| new_password | string | Sí          | Nueva contraseña del usuario. Mínimo 10 caracteres. |
 
 ##### Ejemplo de solicitud
 
 ```json
 {
-  "password": "my_new_password_super_secret"
+  "old_password": "supersecret123",
+  "new_password": "my_new_password_super_secret"
 }
 ```
 
@@ -332,6 +330,7 @@ Cambiar la contraseña de usuario
 * 204 No Content
 * 400 Bad Request
 * 401 Unauthorized
+* 404 Not Found
 
 ## 4. Catálogos
 
@@ -615,7 +614,6 @@ Obtener las razones de reporte de una publicación de fraude del sistema.
 ```
 
 * 401 Unauthorized
-* 403 Forbidden
 
 #### POST /report-reasons
 
@@ -730,7 +728,7 @@ Crear un nuevo tipo de fraude del sistema.
 
 #### GET /modified-fields
 
-Obtener todos los campos modificados del sistema.
+Obtiene la lista de campos disponibles para los registros de auditoría.
 
 **Acceso:** Administrador
 
@@ -907,14 +905,14 @@ Modificar el nombre o descripción de una autoridad del sistema.
 
 | Campo       | Tipo    | Obligatorio | Descripción                    |
 | ----------- | ------- | ----------- | ------------------------------ |
-| authorityId | Integer | Sí          | ID de la autoridad a modificar |
+| authorityId | integer | Sí          | ID de la autoridad a modificar |
 
 ##### Body
 
 | Campo       | Tipo   | Obligatorio | Descripción                                                                      |
 | ----------- | ------ | ----------- | -------------------------------------------------------------------------------- |
-| name        | String | Condicional | Nombre de la autoridad. `name` o `description` deben venir en la solicitud.      |
-| description | String | Condicional | Descripción de la autoridad. `name` o `description` deben venir en la solicitud. |
+| name        | string | Condicional | Nombre de la autoridad. `name` o `description` deben venir en la solicitud.      |
+| description | string | Condicional | Descripción de la autoridad. `name` o `description` deben venir en la solicitud. |
 
 ##### Ejemplo de solicitud
 
@@ -942,6 +940,7 @@ Modificar el nombre o descripción de una autoridad del sistema.
 * 401 Unauthorized
 * 403 Forbidden
 * 404 Not Found
+* 409 Conflict
 
 ## 5. Usuarios
 
@@ -957,11 +956,13 @@ Obtener una página de usuarios.
 
 | Campo        | Tipo    | Obligatorio | Descripción                                                                |
 | ------------ | ------- | ----------- | -------------------------------------------------------------------------- |
-| page         | Integer | No          | Página de resultados a obtener. Comienza en 1.                             |
-| is_active    | Boolean | No          | Si la cuenta de usuario está activa o no.                                  |
-| role_id      | Integer | No          | Rol del usuario.                                                           |
-| initial_date | String  | No          | Fecha inicial de la creación de la cuenta de usuario, en formato ISO 8601. |
-| final_date   | String  | No          | Fecha final de la creación de la cuenta de usuario, en formato ISO 8601.   |
+| page         | integer | No          | Página de resultados a obtener. Comienza en 1.                             |
+| is_active    | boolean | No          | Si la cuenta de usuario está activa o no.                                  |
+| role_id      | integer | No          | Rol del usuario.                                                           |
+| initial_date | string  | No          | Fecha inicial de la creación de la cuenta de usuario, en formato ISO 8601. |
+| final_date   | string  | No          | Fecha final de la creación de la cuenta de usuario, en formato ISO 8601.   |
+
+Los filtros pueden combinarse. Cuando se proporcionan varios, todos deben cumplirse.
 
 ##### Respuestas
 
@@ -1003,7 +1004,7 @@ Obtener la información del usuario.
 
 ```json
 {
-  "id": 1,
+  "id": "550e8400-e29b-41d4-a716-446655440000",
   "username": "andres123",
   "email": "andres123@correo.com",
   "created_at": "2026-09-22T09:58:43.123Z",
@@ -1043,6 +1044,7 @@ Obtener la información de un usuario.
 }
 ```
 
+* 400 Bad Request
 * 401 Unauthorized
 * 403 Forbidden
 * 404 Not Found
@@ -1059,13 +1061,13 @@ Modificar el nombre de usuario.
 
 | Campo    | Tipo   | Obligatorio | Descripción        |
 | -------- | ------ | ----------- | ------------------ |
-| username | String | No          | Nombre del usuario |
+| username | string | No          | Nombre del usuario |
 
 ##### Ejemplo de solicitud
 
 ```json
 {
-  "username": "Andres1234",
+  "username": "Andres1234"
 }
 ```
 
@@ -1086,12 +1088,13 @@ Modificar el nombre de usuario.
 
 * 400 Bad Request
 * 401 Unauthorized
+* 409 Conflict
 
 ### 5.5. Modificar un usuario
 
 #### PATCH /users/:userId
 
-Modificar los datos de un usuario.
+Modificar el estado de la cuenta o el rol de un usuario.
 
 **Acceso:** Administrador
 
@@ -1105,8 +1108,8 @@ Modificar los datos de un usuario.
 
 | Campo     | Tipo    | Obligatorio | Descripción                     |
 | --------- | ------- | ----------- | ------------------------------- |
-| is_active | Boolean | No          | Estado de la cuenta del usuario |
-| role_id   | Integer | No          | Rol del usuario                 |
+| is_active | boolean | No          | Estado de la cuenta del usuario |
+| role_id   | integer | No          | Rol del usuario                 |
 
 ##### Ejemplo de solicitud
 
@@ -1148,7 +1151,7 @@ Una publicación puede pasar por los siguientes estados:
 * **VALIDATED:** la publicación ya fue revisada para determinar si corresponde a un fraude.
 * **REJECTED:** la publicación contiene contenido inválido o basura y no debe continuar en el flujo normal. Estas publicaciones pueden eliminarse posteriormente. Este estado es terminal y no puede regresar a otro estado.
 
-La revisión permite que el contenido sea modificado antes de hacerse visible cuando sea necesario. El estado `is_fraud` se determina durante la validación.
+La revisión permite que el contenido sea modificado antes de hacerse visible cuando sea necesario. El estado `is_fraud` se determina durante la validación. Para administradores, el autor se mantiene visible aunque `is_anonymous` sea verdadero.
 
 ### 6.1. Obtener publicaciones
 
@@ -1160,12 +1163,13 @@ Obtener una página de publicaciones de fraude. Los usuarios pueden consultar la
 
 ##### Parámetros de query
 
-| Campo       | Tipo         | Obligatorio | Descripción                                                                                                         | Restringido |
-| ----------- | ------------ | ----------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
-| page        | Integer      | No          | Página de resultados a obtener. Comienza en 1.                                                                      | No          |
-| category_id | Integer list | No          | IDs de las categorías asociadas a las publicaciones.                                                                | No          |
-| type_id     | Integer list | No          | IDs de los tipos asociados a las publicaciones.                                                                     | No          |
-| status_id   | Integer list | No          | IDs de los estados de las publicaciones. Los estados no públicos están restringidos según los permisos del usuario. | Parcial     |
+| Campo     | Tipo         | Obligatorio | Descripción                                                                                                         | Restringido |
+| --------- | ------------ | ----------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
+| page      | integer      | No          | Página de resultados a obtener. Comienza en 1.                                                                      | No          |
+| text      | string       | No          | Texto que se buscará en la información de la publicación.                                                           | No          |
+| category  | integer list | No          | IDs de las categorías asociadas a las publicaciones.                                                                | No          |
+| type      | integer list | No          | IDs de los tipos asociados a las publicaciones.                                                                     | No          |
+| status_id | integer list | No          | IDs de los estados de las publicaciones. Los estados no públicos están restringidos según los permisos del usuario. | Parcial     |
 
 ##### Respuestas
 
@@ -1196,7 +1200,6 @@ Si la publicación tiene `is_anonymous` como verdadero, el `author` vendrá vac�
 
 * 400 Bad Request
 * 401 Unauthorized
-* 403 Forbidden
 
 ### 6.2. Obtener mis publicaciones
 
@@ -1210,8 +1213,8 @@ Obtener una página de publicaciones de fraude del usuario solicitante.
 
 | Campo    | Tipo    | Obligatorio | Descripción                                    |
 | -------- | ------- | ----------- | ---------------------------------------------- |
-| page     | Integer | No          | Página de resultados a obtener. Comienza en 1. |
-| is_draft | Boolean | Sí          | Sí buscar solo borradores o solo publicaciones |
+| page     | integer | No          | Página de resultados a obtener. Comienza en 1. |
+| is_draft | boolean | Sí          | Sí buscar solo borradores o solo publicaciones |
 
 ##### Respuestas
 
@@ -1230,7 +1233,10 @@ Obtener una página de publicaciones de fraude del usuario solicitante.
       "category": 2,
       "types": [1, 2]
     }
-  ]
+  ],
+  "page": 1,
+  "total_pages": 3,
+  "total": 47
 }
 ```
 
@@ -1241,7 +1247,7 @@ Obtener una página de publicaciones de fraude del usuario solicitante.
 
 #### GET /posts/:postId
 
-Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones públicas, mientras que el propietario puede consultar sus borradores y el administrador puede consultar publicaciones no publicadas.
+Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones públicas, mientras que el propietario puede consultar sus borradores. El administrador puede consultar publicaciones independientemente de su estado, incluyendo publicaciones eliminadas.
 
 **Acceso:** Usuario, propietario o administrador
 
@@ -1249,7 +1255,7 @@ Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones 
 
 | Campo  | Tipo    | Obligatorio | Descripción                                    |
 | ------ | ------- | ----------- | ---------------------------------------------- |
-| postId | Integer | Sí          | ID de la publicación                           |
+| postId | integer | Sí          | ID de la publicación                           |
 
 ##### Respuestas
 
@@ -1271,6 +1277,7 @@ Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones 
   "published_at": "2026-09-22T09:58:43.123Z",
   "author": "Roberto",
   "category": 2,
+  "types": [1, 2],
   "reactions": {
     "like": 45,
     "dislike": 50
@@ -1279,10 +1286,18 @@ Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones 
     {
       "id": 1,
       "url": "https://ejemplo.com/evidencia.jpg",
-      "evidence_type": 1
+      "evidence_type_id": 1
     }
   ],
-  "types": [1, 2]
+  "comments": [
+	  {
+		"id": 1,
+		"text": "esto es un comentario",
+		"author_id": "{UUID}",
+		"published_at": "2026-09-22T09:58:43.123Z"
+	  }
+  ],
+  "authorities": [1, 2]
 }
 ```
 
@@ -1304,6 +1319,7 @@ Para administradores, se incluye `is_anonymous` y `deleted_at`:
   "published_at": "2026-09-22T09:58:43.123Z",
   "author": "Roberto",
   "category": 2,
+  "types": [1, 2],
   "reactions": {
     "like": 45,
     "dislike": 50
@@ -1312,10 +1328,18 @@ Para administradores, se incluye `is_anonymous` y `deleted_at`:
     {
       "id": 1,
       "url": "https://ejemplo.com/evidencia.jpg",
-      "evidence_type": 1
+      "evidence_type_id": 1
     }
   ],
-  "types": [1, 2],
+  "comments": [
+	  {
+		"id": 1,
+		"text": "esto es un comentario",
+		"author_id": "{UUID}",
+		"published_at": "2026-09-22T09:58:43.123Z"
+	  }
+  ],
+  "authorities": [1, 2],
   "is_anonymous": false,
   "deleted_at": null
 }
@@ -1336,27 +1360,27 @@ Crear una publicación de fraude.
 
 La publicación puede ser creada como borrador o enviada para revisión. La categoría, los tipos de fraude y las evidencias se asocian durante la creación de la publicación.
 
-Una publicación puede guardarse como `DRAFT` aunque no tenga descripción ni evidencia. Sin embargo, cuando se envía para revisión, debe contar con una descripción o al menos una evidencia.
+Una publicación puede guardarse como `DRAFT` aunque no tenga descripción ni evidencia. Sin embargo, cuando se envía para revisión, debe contar con una descripción.
 
-Las evidencias se suben previamente mediante `POST /evidences`. Ese endpoint crea la evidencia y devuelve su URL. Al crear la publicación, el cliente puede enviar la lista de URLs de las evidencias que desea asociar. De esta manera, `POST /posts` no vuelve a subir los archivos, sino que utiliza las evidencias previamente creadas.
+Las evidencias se suben previamente mediante `POST /evidences`. Ese endpoint crea la evidencia y devuelve su ID. Al crear la publicación, el cliente puede enviar la lista de IDs de las evidencias que desea asociar. De esta manera, `POST /posts` no vuelve a subir los archivos, sino que utiliza las evidencias previamente creadas.
 
 ##### Body
 
 | Campo            | Tipo         | Obligatorio | Descripción                                                          |
 | ---------------- | ------------ | ----------- | -------------------------------------------------------------------- |
-| title            | String       | No          | Título de la publicación                                             |
-| description      | String       | No          | Descripción del fraude                                               |
-| seller_name      | String       | No          | Nombre del vendedor relacionado con el fraude                        |
-| product          | String       | No          | Producto relacionado con el fraude                                   |
-| phone_number     | String       | No          | Teléfono relacionado con el fraude                                   |
-| url              | String       | No          | URL relacionada con el fraude                                        |
-| platform         | String       | No          | Plataforma donde ocurrió el posible fraude                           |
-| fraudulent_email | String       | No          | Correo electrónico relacionado con el posible fraude                 |
-| category         | Integer      | No          | ID de la categoría de la publicación                                 |
-| types            | Integer list | No          | IDs de los tipos de fraude asociados a la publicación                |
-| evidences        | Integer list | No          | IDs de las evidencias previamente creadas mediante `/evidences`      |
-| is_anonymous     | Boolean      | No          | Indica si la identidad del autor debe mantenerse anónima al publicar |
-| status_id        | Integer      | Sí          | Estado inicial de la publicación                                     |
+| title            | string       | No          | Título de la publicación                                             |
+| description      | string       | No          | Descripción del fraude                                               |
+| seller_name      | string       | No          | Nombre del vendedor relacionado con el fraude                        |
+| product          | string       | No          | Producto relacionado con el fraude                                   |
+| phone_number     | string       | No          | Teléfono relacionado con el fraude                                   |
+| url              | string       | No          | URL relacionada con el fraude                                        |
+| platform         | string       | No          | Plataforma donde ocurrió el posible fraude                           |
+| fraudulent_email | string       | No          | Correo electrónico relacionado con el posible fraude                 |
+| category         | integer      | No          | ID de la categoría de la publicación                                 |
+| types            | integer list | No          | IDs de los tipos de fraude asociados a la publicación                |
+| evidences        | integer list | No          | IDs de las evidencias previamente creadas mediante `/evidences`      |
+| is_anonymous     | boolean      | No          | Indica si la identidad del autor debe mantenerse anónima al publicar |
+| status_id        | integer      | Sí          | Estado inicial de la publicación                                     |
 
 ##### Ejemplo de solicitud
 
@@ -1384,9 +1408,9 @@ Las evidencias se suben previamente mediante `POST /evidences`. Ese endpoint cre
 La secuencia esperada para agregar evidencias al crear una publicación es:
 
 1. El cliente utiliza `POST /evidences` para subir cada archivo.
-2. Cada solicitud devuelve la URL de la evidencia creada.
-3. El cliente reúne las URLs de las evidencias que desea asociar.
-4. El cliente envía esas URLs en el campo `evidences` de `POST /posts`.
+2. Cada solicitud devuelve la ID de la evidencia creada.
+3. El cliente reúne las IDs de las evidencias que desea asociar.
+4. El cliente envía esas IDs en el campo `evidences` de `POST /posts`.
 5. La API crea la publicación y asocia las evidencias indicadas.
 
 ##### Respuestas
@@ -1416,27 +1440,25 @@ La secuencia esperada para agregar evidencias al crear una publicación es:
   "evidences": [
     {
       "id": 1,
-      "url": "https://ejemplo.com/evidencia.jpg",
-      "evidence_type": 1
+	  "url": "http://localhost:3000/uploads/550e8400-e29b-41d4-a716-446655440000.jpg",
+      "evidence_type_id": 1,
+      "post_id": 1
     }
   ],
-  "types": [1, 2],
-  "is_anonymous": false,
-  "deleted_at": null
+  "types": [1, 2]
 }
 ```
 
 * 400 Bad Request
 * 401 Unauthorized
 * 403 Forbidden
-* 404 Not Found
 * 409 Conflict
 
 ### 6.5. Actualizar una publicación
 
 #### PATCH /posts/:postId
 
-Actualizar un borrador o publicación. El propietario puede actualizar un borrador. El administrador puede actualizar una publicación.
+Actualiza una publicación existente. El propietario puede modificar únicamente sus publicaciones en estado `DRAFT`. El administrador puede modificar publicaciones en cualquier estado excepto `DRAFT`.
 
 **Acceso:** Propietario o administrador
 
@@ -1444,25 +1466,26 @@ Actualizar un borrador o publicación. El propietario puede actualizar un borrad
 
 | Campo  | Tipo    | Obligatorio | Descripción                      |
 | ------ | ------- | ----------- | -------------------------------- |
-| postId | Integer | Sí          | ID de la publicación a modificar |
+| postId | integer | Sí          | ID de la publicación a modificar |
 
 ##### Body
 
-| Campo            | Tipo         | Obligatorio | Descripción                                | Restringido |
-| ---------------- | ------------ | ----------- | ------------------------------------------ | ----------- |
-| title            | String       | No          | Título de la publicación                   | No          |
-| description      | String       | No          | Descripción del fraude                     | No          |
-| seller_name      | String       | No          | Nombre del vendedor                        | No          |
-| product          | String       | No          | Producto relacionado                       | No          |
-| phone_number     | String       | No          | Teléfono relacionado                       | No          |
-| url              | String       | No          | URL relacionada                            | No          |
-| platform         | String       | No          | Plataforma relacionada                     | No          |
-| fraudulent_email | String       | No          | Correo relacionado con el fraude           | No          |
-| category         | Integer      | No          | Nueva categoría de la publicación          | No          |
-| types            | Integer list | No          | Tipos de fraude asociados a la publicación | No          |
-| is_anonymous     | Boolean      | No          | Indica si la publicación debe ser anónima  | No          |
-| status_id        | Integer      | No          | Nuevo estado de la publicación             | Sí          |
-| is_fraud         | Boolean      | No          | Estado de confirmación del fraude          | Sí          |
+| Campo            | Tipo         | Obligatorio | Descripción                                |
+| ---------------- | ------------ | ----------- | ------------------------------------------ |
+| title            | string       | No          | Título de la publicación                   |
+| description      | string       | No          | Descripción del fraude                     |
+| seller_name      | string       | No          | Nombre del vendedor                        |
+| product          | string       | No          | Producto relacionado                       |
+| phone_number     | string       | No          | Teléfono relacionado                       |
+| url              | string       | No          | URL relacionada                            |
+| platform         | string       | No          | Plataforma relacionada                     |
+| fraudulent_email | string       | No          | Correo relacionado con el fraude           |
+| category         | integer      | No          | Nueva categoría de la publicación          |
+| types            | integer list | No          | Tipos de fraude asociados a la publicación |
+| evidences        | integer list | No          | Evidencias a asociar con la publicación    |
+| is_anonymous     | boolean      | No          | Indica si la publicación debe ser anónima  |
+| status_id        | integer      | No          | Nuevo estado de la publicación             |
+| is_fraud         | boolean      | No          | Estado de confirmación del fraude          |
 
 El campo de estado está sujeto a las siguientes reglas de transición:
 
@@ -1471,15 +1494,20 @@ El campo de estado está sujeto a las siguientes reglas de transición:
 | DRAFT         | UPLOADED     | Propietario            |
 | UPLOADED      | PUBLISHED    | Administrador          |
 | UPLOADED      | REJECTED     | Administrador          |
+| PUBLISHED     | REJECTED     | Administrador          |
 | PUBLISHED     | VALIDATED    | Administrador          |
 
 El estado `REJECTED` es terminal y no puede utilizarse como origen de una nueva transición.
 
-El campo `status_id` no se considera un campo de actualización libre. Su valor está sujeto al estado actual de la publicación y a los permisos del usuario autenticado.
+El propietario únicamente puede establecer `status_id` en `UPLOADED`. El administrador no puede establecer una publicación en `DRAFT` o `UPLOADED` mediante este endpoint.
 
-Cuando `types` se incluye en la solicitud, representa la lista de tipos que quedará asociada a la publicación. Si el campo se omite, las asociaciones existentes no se modifican.
+Al realizar la transición `DRAFT → UPLOADED`, la publicación debe tener una descripción no vacía. La descripción puede encontrarse previamente almacenada en la publicación o proporcionarse en la misma solicitud.
 
-Las evidencias se gestionan mediante los endpoints de evidencias. Para agregar una evidencia existente a una publicación se utiliza `POST /posts/:postId/evidences`.
+Cuando `evidences` se incluye en la solicitud, representa la lista completa de evidencias que quedará asociada a la publicación. Si `evidences` se omite, las asociaciones existentes no se modifican.
+
+Para un propietario, las evidencias proporcionadas deben pertenecer al usuario autenticado y no estar asociadas a otra publicación.
+
+Un administrador puede asociar evidencias independientemente de su propietario, siempre que no estén asociadas a otra publicación y que sean evidencias válidas y no eliminadas.
 
 `is_fraud` solo puede ser modificado por un administrador al transicionar una publicación con estado `PUBLISHED` a `VALIDATED`.
 
@@ -1489,6 +1517,8 @@ Las evidencias se gestionan mediante los endpoints de evidencias. Para agregar u
 {
   "title": "Producto falso confirmado",
   "description": "Se actualiza la información de la publicación.",
+  "types": [1, 3],
+  "evidences": [2, 5],
   "is_anonymous": true
 }
 ```
@@ -1504,8 +1534,23 @@ Las evidencias se gestionan mediante los endpoints de evidencias. Para agregar u
   "description": "Se actualiza la información de la publicación.",
   "status_id": 2,
   "is_fraud": true,
-  "author": "550e8400-e29b-41d4-a716-446655440000",
-  "category": 2
+  "published_at": "2026-09-22T09:58:43.123Z",
+  "author": "Roberto",
+  "category": 2,
+  "types": [1, 3],
+  "seller_name": "Vendedor Ejemplo",
+  "product": "iPhone 17 Pro",
+  "phone_number": "8111234567",
+  "url": "https://ejemplo.com",
+  "platform": "Marketplace",
+  "fraudulent_email": "fraude@ejemplo.com",
+  "reactions": {
+    "like": 0,
+    "dislike": 0
+  },
+  "evidences": [],
+  "comments": [],
+  "authorities": []
 }
 ```
 
@@ -1530,7 +1575,7 @@ La eliminación de una publicación es lógica, por lo que el registro puede con
 
 | Campo  | Tipo    | Obligatorio | Descripción                   |
 | ------ | ------- | ----------- | ----------------------------- |
-| postId | Integer | Sí          | ID de la publicación a borrar |
+| postId | integer | Sí          | ID de la publicación a borrar |
 
 ##### Respuestas
 
@@ -1539,11 +1584,138 @@ La eliminación de una publicación es lógica, por lo que el registro puede con
 * 403 Forbidden
 * 404 Not Found
 
-## 7. Reportes
+
+## 7. Evidencias
+
+Una evidencia representa información que respalda una publicación de fraude. Las evidencias pueden existir independientemente de una publicación y posteriormente asociarse a ella.
+
+El `evidence_type_id` identifica el formato o tipo de evidencia mediante el catálogo `/evidence-types`. El evidence type esta fijo a `1`.
+
+Las evidencias se suben mediante `POST /evidences`. Este endpoint crea el registro de la evidencia y devuelve la ID que posteriormente puede utilizarse para asociarla a una publicación.
+
+Al crear una publicación mediante `POST /posts`, el cliente puede enviar una lista de las IDs de evidencias previamente creadas para asociarlas directamente a la publicación.
+
+### 7.1. Crear una evidencia
+#### POST /evidences
+
+Crear una evidencia que inicialmente no está asociada a una publicación.
+
+**Acceso:** Usuario
+
+La evidencia se crea mediante la subida de un archivo. Una vez creada, el endpoint devuelve su URL e ID. La ID puede utilizarse posteriormente en `POST /posts` para asociar la evidencia durante la creación de una publicación. El archivo debe tener un tipo MIME permitido y no superar el tamaño máximo de 10 MB.
+
+##### Body
+
+La solicitud utiliza `multipart/form-data`.
+
+| Campo         | Tipo    | Obligatorio | Descripción              |
+| ------------- | ------- | ----------- | ------------------------ |
+| file          | File    | Sí          | Archivo a subir          |
+
+##### Ejemplo de solicitud
+
+```text
+Content-Type: multipart/form-data
+
+file: evidencia.jpg
+```
+
+##### Respuestas
+
+* 201 Created
+
+```json
+{
+  "id": 2,
+  "url": "...",
+  "evidence_type_id": 1,
+  "post_id": null,
+  "created_at": "2026-09-29T20:30:00.000Z",
+  "expires_at": "2026-10-29T20:30:00.000Z"
+}
+```
+
+* 400 Bad Request
+* 401 Unauthorized
+
+
+### 7.2. Actualizar una evidencia
+
+#### PATCH /posts/:postId/evidences/:evidenceId
+
+Actualizar el estado `is_visible` de una evidencia.
+
+**Acceso:** Administrador
+
+##### Parámetros de ruta
+
+| Campo      | Tipo    | Obligatorio | Descripción          |
+| ---------- | ------- | ----------- | -------------------- |
+| postId     | integer | Sí          | ID de la publicación |
+| evidenceId | integer | Sí          | ID de la evidencia   |
+
+##### Body
+
+| Campo      | Tipo    | Obligatorio | Descripción                       |
+| ---------- | ------- | ----------- | --------------------------------- |
+| is_visible | boolean | Sí          | Indica si la evidencia es visible |
+
+##### Ejemplo de solicitud
+
+```json
+{
+  "is_visible": true
+}
+```
+
+##### Respuestas
+
+* 200 OK
+
+```json
+{
+  "id": 2,
+  "url": "https://ejemplo.com/evidencia2.jpg",
+  "evidence_type_id": 1,
+  "post": 1,
+  "is_visible": true
+}
+```
+
+* 400 Bad Request
+* 401 Unauthorized
+* 403 Forbidden
+* 404 Not Found
+
+### 7.3. Eliminar una evidencia
+
+#### DELETE /posts/:postId/evidences/:evidenceId
+
+Borrar una evidencia de una publicación.
+
+**Acceso:** Propietario o administrador
+
+El propietario puede eliminar evidencias mientras la publicación se encuentre en estado `DRAFT` o `UPLOADED`. El administrador puede eliminar evidencias cuando la publicación se encuentre en estado `UPLOADED`, `PUBLISHED` o `VALIDATED`. No se permite modificar evidencias de una publicación `PUBLISHED` o `VALIDATED` al propietario.
+
+##### Parámetros de ruta
+
+| Campo      | Tipo    | Obligatorio | Descripción          |
+| ---------- | ------- | ----------- | -------------------- |
+| postId     | integer | Sí          | ID de la publicación |
+| evidenceId | integer | Sí          | ID de la evidencia   |
+
+##### Respuestas
+
+* 204 No Content
+* 401 Unauthorized
+* 403 Forbidden
+* 404 Not Found
+
+## 8. Reportes
 
 Los reportes permiten que los usuarios informen sobre publicaciones de fraude. Su consulta y eliminación son operaciones de administración.
 
-### 7.1. Obtener reportes
+### 8.1. Obtener reportes
 
 #### GET /reports
 
@@ -1555,7 +1727,7 @@ Obtener una página de reportes realizados sobre publicaciones.
 
 | Campo | Tipo    | Obligatorio | Descripción                                    |
 | ----- | ------- | ----------- | ---------------------------------------------- |
-| page  | Integer | No          | Página de resultados a obtener. Comienza en 1. |
+| page  | integer | No          | Página de resultados a obtener. Comienza en 1. |
 
 ##### Respuestas
 
@@ -1586,7 +1758,7 @@ Si no existen reportes en la página solicitada:
 * 401 Unauthorized
 * 403 Forbidden
 
-### 7.2. Obtener reportes de una publicación
+### 8.2. Obtener reportes de una publicación
 
 #### GET /posts/:postId/reports
 
@@ -1598,13 +1770,13 @@ Obtener los reportes realizados sobre una publicación.
 
 | Campo  | Tipo    | Obligatorio | Descripción          |
 | ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
+| postId | integer | Sí          | ID de la publicación |
 
 ##### Parámetros de query
 
 | Campo | Tipo    | Obligatorio | Descripción                                    |
 | ----- | ------- | ----------- | ---------------------------------------------- |
-| page  | Integer | No          | Página de resultados a obtener. Comienza en 1. |
+| page  | integer | No          | Página de resultados a obtener. Comienza en 1. |
 
 ##### Respuestas
 
@@ -1628,7 +1800,7 @@ Obtener los reportes realizados sobre una publicación.
 * 403 Forbidden
 * 404 Not Found
 
-### 7.3. Crear un reporte
+### 8.3. Crear un reporte
 
 #### POST /posts/:postId/reports
 
@@ -1640,14 +1812,14 @@ Crear un reporte sobre una publicación.
 
 | Campo  | Tipo    | Obligatorio | Descripción                                |
 | ------ | ------- | ----------- | ------------------------------------------ |
-| postId | Integer | Sí          | ID de la publicación que se desea reportar |
+| postId | integer | Sí          | ID de la publicación que se desea reportar |
 
 ##### Body
 
 | Campo         | Tipo    | Obligatorio | Descripción                                             |
 | ------------- | ------- | ----------- | ------------------------------------------------------- |
-| information   | String  | No          | Información adicional que explica el motivo del reporte |
-| report_reason | Integer | Sí          | ID de la razón por la que se reporta la publicación     |
+| information   | string  | No          | Información adicional que explica el motivo del reporte |
+| report_reason | integer | Sí          | ID de la razón por la que se reporta la publicación     |
 
 `information` es opcional. La razón del reporte se determina mediante `report_reason`.
 
@@ -1686,7 +1858,7 @@ También es válida una solicitud sin información adicional:
 * 401 Unauthorized
 * 404 Not Found
 
-### 7.4. Eliminar un reporte
+### 8.4. Eliminar un reporte
 
 #### DELETE /posts/:postId/reports/:reportId
 
@@ -1698,8 +1870,8 @@ Borrar un reporte de una publicación.
 
 | Campo    | Tipo    | Obligatorio | Descripción          |
 | -------- | ------- | ----------- | -------------------- |
-| postId   | Integer | Sí          | ID de la publicación |
-| reportId | Integer | Sí          | ID del reporte       |
+| postId   | integer | Sí          | ID de la publicación |
+| reportId | integer | Sí          | ID del reporte       |
 
 ##### Respuestas
 
@@ -1708,227 +1880,6 @@ Borrar un reporte de una publicación.
 * 403 Forbidden
 * 404 Not Found
 
-## 8. Evidencias
-
-Una evidencia representa información que respalda una publicación de fraude. Las evidencias pueden existir independientemente de una publicación y posteriormente asociarse a ella.
-
-El `evidence_type` identifica el formato o tipo de evidencia mediante el catálogo `/evidence-types`.
-
-Las evidencias se suben mediante `POST /evidences`. Este endpoint crea el registro de la evidencia y devuelve la URL que posteriormente puede utilizarse para asociarla a una publicación.
-
-Al crear una publicación mediante `POST /posts`, el cliente puede enviar una lista de las URLs de evidencias previamente creadas para asociarlas directamente a la publicación.
-
-Las evidencias también pueden asociarse después de crear una publicación mediante `POST /posts/:postId/evidences`, por ejemplo, cuando una evidencia anterior fue eliminada o necesita ser agregada posteriormente.
-
-### 8.1. Obtener evidencias de una publicación
-
-#### GET /posts/:postId/evidences
-
-Obtener las evidencias asociadas a una publicación.
-
-**Acceso:** Usuario, propietario o administrador
-
-##### Parámetros de ruta
-
-| Campo  | Tipo    | Obligatorio | Descripción          |
-| ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
-
-##### Respuestas
-
-* 200 OK
-
-```json
-[
-  {
-    "id": 1,
-    "url": "https://ejemplo.com/evidencia.jpg",
-    "evidence_type": 1
-  }
-]
-```
-
-Las respuestas para administradores incluyen información adicional de la evidencia:
-
-```json
-[
-  {
-    "id": 1,
-    "url": "https://ejemplo.com/evidencia.jpg",
-    "evidence_type": 1,
-    "is_visible": true,
-    "created_at": "2026-09-22T10:00:00.000Z",
-    "deleted_at": null
-  }
-]
-```
-
-* 401 Unauthorized
-* 403 Forbidden
-* 404 Not Found
-
-### 8.2. Crear una evidencia
-#### POST /evidences
-
-Crear una evidencia que inicialmente no está asociada a una publicación.
-
-**Acceso:** Usuario
-
-La evidencia se crea mediante la subida de un archivo. Una vez creada, el endpoint devuelve su URL. Esta URL puede utilizarse posteriormente en `POST /posts` para asociar la evidencia durante la creación de una publicación, o mediante `POST /posts/:postId/evidences` para asociarla después.
-
-##### Body
-
-La solicitud utiliza `multipart/form-data`.
-
-| Campo         | Tipo    | Obligatorio | Descripción              |
-| ------------- | ------- | ----------- | ------------------------ |
-| file          | File    | Sí          | Archivo a subir          |
-| evidence_type | Integer | No          | ID del tipo de evidencia |
-
-##### Ejemplo de solicitud
-
-```text
-Content-Type: multipart/form-data
-
-file: evidencia.jpg
-evidence_type: 1
-```
-
-##### Respuestas
-
-* 201 Created
-
-```json
-{
-  "id": 2,
-  "url": "https://ejemplo.com/evidencia2.jpg",
-  "evidence_type": 1
-}
-```
-
-* 400 Bad Request
-* 401 Unauthorized
-
-### 8.3. Asociar una evidencia a una publicación
-
-#### POST /posts/:postId/evidences
-
-Asociar una evidencia existente a una publicación.
-
-**Acceso:** Propietario o administrador
-
-El propietario puede asociar evidencias mientras la publicación se encuentre en estado `DRAFT` o `UPLOADED`. El administrador puede asociar evidencias cuando la publicación se encuentre en estado `UPLOADED`, `PUBLISHED` o `VALIDATED`. No se permite asociar evidencias cuando la publicación se encuentra en `DRAFT` para administradores.
-
-##### Parámetros de ruta
-
-| Campo  | Tipo    | Obligatorio | Descripción          |
-| ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
-
-##### Body
-
-| Campo      | Tipo    | Obligatorio | Descripción                  |
-| ---------- | ------- | ----------- | ---------------------------- |
-| evidenceId | Integer | Sí          | ID de la evidencia a asociar |
-
-##### Ejemplo de solicitud
-
-```json
-{
-  "evidenceId": 2
-}
-```
-
-##### Respuestas
-
-* 201 Created
-
-```json
-{
-  "id": 2,
-  "url": "https://ejemplo.com/evidencia2.jpg",
-  "evidence_type": 1,
-  "post": 1
-}
-```
-
-* 400 Bad Request
-* 401 Unauthorized
-* 403 Forbidden
-* 404 Not Found
-* 409 Conflict
-
-### 8.4. Actualizar una evidencia
-
-#### PATCH /posts/:postId/evidences/:evidenceId
-
-Actualizar el estado `is_visible` de una evidencia.
-
-**Acceso:** Administrador
-
-##### Parámetros de ruta
-
-| Campo      | Tipo    | Obligatorio | Descripción          |
-| ---------- | ------- | ----------- | -------------------- |
-| postId     | Integer | Sí          | ID de la publicación |
-| evidenceId | Integer | Sí          | ID de la evidencia   |
-
-##### Body
-
-| Campo      | Tipo    | Obligatorio | Descripción                       |
-| ---------- | ------- | ----------- | --------------------------------- |
-| is_visible | Boolean | Sí          | Indica si la evidencia es visible |
-
-##### Ejemplo de solicitud
-
-```json
-{
-  "is_visible": true
-}
-```
-
-##### Respuestas
-
-* 200 OK
-
-```json
-{
-  "id": 2,
-  "url": "https://ejemplo.com/evidencia2.jpg",
-  "evidence_type": 1,
-  "post": 1,
-  "is_visible": true
-}
-```
-
-* 400 Bad Request
-* 401 Unauthorized
-* 403 Forbidden
-* 404 Not Found
-
-### 8.5. Eliminar una evidencia
-
-#### DELETE /posts/:postId/evidences/:evidenceId
-
-Borrar una evidencia de una publicación.
-
-**Acceso:** Propietario o administrador
-
-El propietario puede eliminar evidencias mientras la publicación se encuentre en estado `DRAFT` o `UPLOADED`. El administrador puede eliminar evidencias cuando la publicación se encuentre en estado `UPLOADED`, `PUBLISHED` o `VALIDATED`. No se permite modificar evidencias de una publicación `PUBLISHED` o `VALIDATED` al propietario.
-
-##### Parámetros de ruta
-
-| Campo      | Tipo    | Obligatorio | Descripción          |
-| ---------- | ------- | ----------- | -------------------- |
-| postId     | Integer | Sí          | ID de la publicación |
-| evidenceId | Integer | Sí          | ID de la evidencia   |
-
-##### Respuestas
-
-* 204 No Content
-* 401 Unauthorized
-* 403 Forbidden
-* 404 Not Found
 
 ## 9. Comentarios
 
@@ -1948,7 +1899,7 @@ Obtener todos los comentarios del sistema.
 
 | Campo | Tipo    | Obligatorio | Descripción                                    |
 | ----- | ------- | ----------- | ---------------------------------------------- |
-| page  | Integer | No          | Página de resultados a obtener. Comienza en 1. |
+| page  | integer | No          | Página de resultados a obtener. Comienza en 1. |
 
 ##### Respuestas
 
@@ -1981,13 +1932,13 @@ Crear un comentario sobre una publicación.
 
 | Campo  | Tipo    | Obligatorio | Descripción          |
 | ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
+| postId | integer | Sí          | ID de la publicación |
 
 ##### Body
 
 | Campo | Tipo   | Obligatorio | Descripción              |
 | ----- | ------ | ----------- | ------------------------ |
-| text  | String | Sí          | Contenido del comentario |
+| text  | string | Sí          | Contenido del comentario |
 
 ##### Ejemplo de solicitud
 
@@ -2026,7 +1977,7 @@ Obtener todos los comentarios de una publicación.
 
 | Campo  | Tipo    | Obligatorio | Descripción          |
 | ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
+| postId | integer | Sí          | ID de la publicación |
 
 ##### Respuestas
 
@@ -2063,7 +2014,7 @@ Obtener la cantidad de reacciones por tipo de reacción de una publicación.
 
 | Campo  | Tipo    | Obligatorio | Descripción          |
 | ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
+| postId | integer | Sí          | ID de la publicación |
 
 ##### Respuestas
 
@@ -2091,8 +2042,8 @@ Crear una reacción a una publicación o reemplazar la reacción existente del u
 
 | Campo      | Tipo    | Obligatorio | Descripción          |
 | ---------- | ------- | ----------- | -------------------- |
-| postId     | Integer | Sí          | ID de la publicación |
-| reactionId | Integer | Sí          | ID de la reacción    |
+| postId     | integer | Sí          | ID de la publicación |
+| reactionId | integer | Sí          | ID de la reacción    |
 
 ##### Respuestas
 
@@ -2122,7 +2073,7 @@ Borrar la reacción del usuario a una publicación.
 
 | Campo  | Tipo    | Obligatorio | Descripción          |
 | ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
+| postId | integer | Sí          | ID de la publicación |
 
 ##### Respuestas
 
@@ -2146,7 +2097,7 @@ Obtener las autoridades asociadas a un tipo de fraude.
 
 | Campo  | Tipo    | Obligatorio | Descripción           |
 | ------ | ------- | ----------- | --------------------- |
-| typeId | Integer | Sí          | ID del tipo de fraude |
+| typeId | integer | Sí          | ID del tipo de fraude |
 
 ##### Respuestas
 
@@ -2179,8 +2130,8 @@ Asociar una autoridad a un tipo de fraude.
 
 | Campo       | Tipo    | Obligatorio | Descripción           |
 | ----------- | ------- | ----------- | --------------------- |
-| typeId      | Integer | Sí          | ID del tipo de fraude |
-| authorityId | Integer | Sí          | ID de la autoridad    |
+| typeId      | integer | Sí          | ID del tipo de fraude |
+| authorityId | integer | Sí          | ID de la autoridad    |
 
 ##### Respuestas
 
@@ -2211,8 +2162,8 @@ Desasociar una autoridad de un tipo de fraude.
 
 | Campo       | Tipo    | Obligatorio | Descripción           |
 | ----------- | ------- | ----------- | --------------------- |
-| typeId      | Integer | Sí          | ID del tipo de fraude |
-| authorityId | Integer | Sí          | ID de la autoridad    |
+| typeId      | integer | Sí          | ID del tipo de fraude |
+| authorityId | integer | Sí          | ID de la autoridad    |
 
 ##### Respuestas
 
@@ -2233,7 +2184,7 @@ Obtener las autoridades asociadas a una publicación.
 
 | Campo  | Tipo    | Obligatorio | Descripción          |
 | ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
+| postId | integer | Sí          | ID de la publicación |
 
 ##### Respuestas
 
@@ -2266,8 +2217,8 @@ Asociar una autoridad a una publicación. Las autoridades finales solo pueden as
 
 | Campo       | Tipo    | Obligatorio | Descripción                             |
 | ----------- | ------- | ----------- | --------------------------------------- |
-| postId      | Integer | Sí          | ID de la publicación                    |
-| authorityId | Integer | Sí          | ID de la autoridad que se desea asociar |
+| postId      | integer | Sí          | ID de la publicación                    |
+| authorityId | integer | Sí          | ID de la autoridad que se desea asociar |
 
 La prioridad se asigna automáticamente al realizar la asociación. El cliente no necesita enviar una prioridad en esta solicitud.
 
@@ -2301,14 +2252,14 @@ Cambiar la prioridad de una autoridad asociada a una publicación.
 
 | Campo       | Tipo    | Obligatorio | Descripción                             |
 | ----------- | ------- | ----------- | --------------------------------------- |
-| postId      | Integer | Sí          | ID de la publicación                    |
-| authorityId | Integer | Sí          | ID de la autoridad actualmente asociada |
+| postId      | integer | Sí          | ID de la publicación                    |
+| authorityId | integer | Sí          | ID de la autoridad actualmente asociada |
 
 ##### Body
 
 | Campo    | Tipo    | Obligatorio | Descripción                     |
 | -------- | ------- | ----------- | ------------------------------- |
-| priority | Integer | Sí          | Nueva prioridad de la autoridad |
+| priority | integer | Sí          | Nueva prioridad de la autoridad |
 
 ##### Ejemplo de solicitud
 
@@ -2347,7 +2298,7 @@ Quitar una autoridad asociada a una publicación.
 
 | Campo  | Tipo    | Obligatorio | Descripción          |
 | ------ | ------- | ----------- | -------------------- |
-| postId | Integer | Sí          | ID de la publicación |
+| postId | integer | Sí          | ID de la publicación |
 
 ##### Respuestas
 
@@ -2372,14 +2323,14 @@ Obtener una página de registros de modificación.
 
 | Campo         | Tipo    | Obligatorio | Descripción                                                                 |
 | ------------- | ------- | ----------- | --------------------------------------------------------------------------- |
-| page          | Integer | No          | Página de resultados a obtener. Comienza en 1.                              |
-| audit-action  | Integer | No          | ID de la acción de auditoría                                                |
+| page          | integer | No          | Página de resultados a obtener. Comienza en 1.                              |
+| audit-action  | integer | No          | ID de la acción de auditoría                                                |
 | performed-by  | UUID    | No          | UUID del administrador que realizó la acción                                |
 | affected-user | UUID    | No          | UUID del usuario afectado por la acción                                     |
-| post          | Integer | No          | ID de la publicación de fraude afectada por la acción                       |
-| evidence      | Integer | No          | ID de la evidencia afectada por la acción                                   |
-| initial_date  | String  | No          | Fecha inicial del periodo de creación de los registros, en formato ISO 8601 |
-| final_date    | String  | No          | Fecha final del periodo de creación de los registros, en formato ISO 8601   |
+| post          | integer | No          | ID de la publicación de fraude afectada por la acción                       |
+| evidence      | integer | No          | ID de la evidencia afectada por la acción                                   |
+| initial_date  | string  | No          | Fecha inicial del periodo de creación de los registros, en formato ISO 8601 |
+| final_date    | string  | No          | Fecha final del periodo de creación de los registros, en formato ISO 8601   |
 
 ##### Respuestas
 

@@ -16,8 +16,11 @@ export class ResponseAdminPostDto extends ResponseDetailedPostDto {
     })
     deleted_at: string | null;
 
-    /*static fromEntity(post: PostEntity): ResponseAdminPostDto {
-        const publicDto = ResponseDetailedPostDto.fromEntity(post);
+    static fromEntity(
+        post: PostEntity,
+        baseUrl: string
+    ): ResponseAdminPostDto {
+        const publicDto = ResponseDetailedPostDto.fromEntity(post, baseUrl);
         const dto = new ResponseAdminPostDto();
 
         Object.assign(dto, publicDto);
@@ -25,5 +28,5 @@ export class ResponseAdminPostDto extends ResponseDetailedPostDto {
         dto.is_anonymous = post.is_anonymous;
         dto.deleted_at = post.deleted_at?.toISOString() ?? null;
         return dto;
-    }*/
+    }
 }
