@@ -5,11 +5,15 @@ import type { Pool } from "mysql2/promise";
 
 export const DB_POOL = "DB_POOL";
 
+// temporal
+const DATABASE_URL = 'mysql://root:root@localhost:3306/cero_fraude';
+
+
 @Module({
     providers: [{
         provide: DB_POOL,
         inject: [ConfigService],
-        useFactory: (configService: ConfigService) => {
+        /*useFactory: (configService: ConfigService) => {
             return createPool({
                 host: configService.get<string>("DB_HOST"),
                 port: configService.get<number>("DB_PORT"),
@@ -17,7 +21,12 @@ export const DB_POOL = "DB_POOL";
                 password: configService.get<string>("DB_PASSWORD"),
                 database: configService.get<string>("DB_NAME")
             });
-        },
+
+        },*/
+        useFactory: () => {
+        console.log('Conectando a ' + DATABASE_URL);
+        return createPool({ uri: DATABASE_URL });
+      },
     },],
     exports: [DB_POOL],
 })

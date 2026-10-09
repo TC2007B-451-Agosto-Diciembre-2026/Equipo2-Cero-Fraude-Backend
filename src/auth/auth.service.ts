@@ -30,10 +30,12 @@ export class AuthService {
         dto: RegisterDto
     ): Promise<ValidAccessDto> {
         if(await this.repository.findByEmail(dto.email!)){
-            throw new ConflictException("El usuario o correo ya están registrados.");
+            //throw new ConflictException("El usuario o correo ya están registrados.");
+            throw new ConflictException("El correo ya está registrado!");
         }
         if(await this.repository.findByUsername(dto.username!)){
-            throw new ConflictException("El usuario o correo ya están registrados.");
+            //throw new ConflictException("El usuario o correo ya están registrados.");
+            throw new ConflictException("El usuario ya está registrado!");
         }
         const user = new AuthUserEntity();
         user.username = dto.username;
@@ -67,7 +69,8 @@ export class AuthService {
         const valid_password = await bcrypt.compare(dto.password, user.password_hash);
 
         if (!valid_password || !user.is_active) {
-            throw new UnauthorizedException("Credenciales inválidas.");
+            //throw new UnauthorizedException("Credenciales inválidas.");
+            throw new UnauthorizedException("La contraseña es inválida o el usuario esta bloqueado del sistema.")
         }
 
         const claims = { sub: user.id!, email: user.email! };

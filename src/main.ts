@@ -13,9 +13,10 @@ async function bootstrap() {
 
     app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads/' });
 
-    app.enableCors({
+    /*app.enableCors({
         origin: "http://localhost:5173",
-    })
+    })*/
+   app.enableCors()
     app.useGlobalPipes(new ValidationPipe({
         transform: true, whitelist: true
     }));
@@ -26,13 +27,7 @@ async function bootstrap() {
         "API REST de la aplicación Cero Fraude",
         )
         .setVersion("1.0")
-        .addBearerAuth(
-        {
-            type: "http",
-            scheme: "bearer",
-            bearerFormat: "JWT"
-        }
-        )
+        .addBearerAuth()
         .build();
     const document = SwaggerModule.createDocument(app, config);
     if (process.env.NODE_ENV !== "production") {
