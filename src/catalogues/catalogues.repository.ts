@@ -69,13 +69,13 @@ export class CatalogueRepository {
     ): Promise<ReactionTypeEntity> {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `INSERT INTO reaction_type (name, code)
-            VALUES (${dto.name}, ${dto.code})`
+            VALUES ('${dto.name}', '${dto.code}')`
         );
 
         const [rows] = await this.pool.query<CatalogueRow[]>(
             `SELECT ${STANDARD_COLUMNS}
             FROM reaction_type
-            WHERE id = ${result.insertId}`
+            WHERE id = '${result.insertId}'`
             /*`SELECT ${STANDARD_COLUMNS}
             FROM reaction_type
             WHERE id = ?`,
@@ -107,7 +107,7 @@ export class CatalogueRepository {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `
             INSERT INTO fraud_category (name, code)
-            VALUES(${dto.name}, ${dto.code})
+            VALUES('${dto.name}', '${dto.code}')
             `
             /*`INSERT INTO fraud_category (name, code)
             VALUES (?, ?)`,

@@ -21,7 +21,7 @@ export class AuthRepository {
     async findByEmail(email: string): Promise<AuthUserEntity | undefined> {
         // temporal
         const [rows] = await this.pool.query<AuthUserRow[]>(
-            `SELECT ${email}
+            `SELECT '${email}'
             FROM user
             WHERE email = ?
             AND is_active = true
@@ -43,7 +43,7 @@ export class AuthRepository {
             `
             SELECT ${COLUMNS}
             FROM user
-            WHERE username = ${username}
+            WHERE username = '${username}'
             AND is_active = true
             `
             /*`
