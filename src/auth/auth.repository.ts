@@ -19,22 +19,14 @@ export class AuthRepository {
     constructor(@Inject(DB_POOL) private readonly pool: Pool) {}
 
     async findByEmail(email: string): Promise<AuthUserEntity | undefined> {
-        // temporal
         const [rows] = await this.pool.query<AuthUserRow[]>(
-            `SELECT '${email}'
-            FROM user
-            WHERE email = ?
-            AND is_active = true
-            `
-        );
-        /*const [rows] = await this.pool.query<AuthUserRow[]>(
             `SELECT ${COLUMNS}
             FROM user
             WHERE email = ?
             AND is_active = true
             `
             ,[email],
-        );*/
+        );
         return rows.length > 0 ? toEntity(rows[0]) : undefined;
     }
 
@@ -43,16 +35,10 @@ export class AuthRepository {
             `
             SELECT ${COLUMNS}
             FROM user
-            WHERE username = '${username}'
-            AND is_active = true
-            `
-            /*`
-            SELECT ${COLUMNS}
-            FROM user
             WHERE username = ?
             AND is_active = true
             `
-            ,[username],*/
+            ,[username],
         );
 
         return rows.length > 0 ? toEntity(rows[0]) : undefined;

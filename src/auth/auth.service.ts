@@ -16,7 +16,6 @@ import { ACCESS_TTL, MINIMUM_PASSWORD_LENGTH, REFRESH_TTL } from "../common/cons
 import { UpdatePasswordDto } from "./dto/requests/update-password.dto";
 import { UserRepository } from "../users/user.repository";
 import { AccessTokenDto } from "./dto/responses/access-token.dto";
-import { createHash } from 'node:crypto';
 
 const bcrypt = require("bcrypt");
 
@@ -31,18 +30,15 @@ export class AuthService {
         dto: RegisterDto
     ): Promise<ValidAccessDto> {
         if(await this.repository.findByEmail(dto.email!)){
-            //throw new ConflictException("El usuario o correo ya están registrados.");
-            throw new ConflictException("El correo ya está registrado!");
+            throw new ConflictException("El usuario o correo ya están registrados.");
         }
         if(await this.repository.findByUsername(dto.username!)){
-            //throw new ConflictException("El usuario o correo ya están registrados.");
-            throw new ConflictException("El usuario ya está registrado!");
+            throw new ConflictException("El usuario o correo ya están registrados.");
         }
         const user = new AuthUserEntity();
         user.username = dto.username;
         user.email = dto.email;
-        //user.password_hash = await bcrypt.hash(dto.password!, 10);
-        user.password_hash = hash(dto.password!);
+        user.password_hash = await bcrypt.hash(dto.password!, 10);
         user.role_id = 1;
         const auth_user = await this.repository.save(user);
         user.id = auth_user.id;
@@ -71,8 +67,7 @@ export class AuthService {
         const valid_password = await bcrypt.compare(dto.password, user.password_hash);
 
         if (!valid_password || !user.is_active) {
-            //throw new UnauthorizedException("Credenciales inválidas.");
-            throw new UnauthorizedException("La contraseña es inválida o el usuario esta bloqueado del sistema.")
+            throw new UnauthorizedException("Credenciales inválidas.");
         }
 
         const claims = { sub: user.id!, email: user.email! };
@@ -153,8 +148,4 @@ export class AuthService {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     }
-}
-
-function hash(password: string): string {
-    return createHash('sha256').update(password).digest('hex');
 }

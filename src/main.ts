@@ -6,17 +6,15 @@ import type { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { join } from 'node:path';
 import { AppModule } from "./app.module";
-import { networkInterfaces } from "node:os";
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads/' });
 
-    /*app.enableCors({
+    app.enableCors({
         origin: "http://localhost:5173",
-    })*/
-   app.enableCors()
+    })
     app.useGlobalPipes(new ValidationPipe({
         transform: true, whitelist: true
     }));
