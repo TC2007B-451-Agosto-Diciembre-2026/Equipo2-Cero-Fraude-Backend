@@ -70,7 +70,7 @@ export class ResponsePostDto {
         dto.status_id = post.status_id;
         dto.is_fraud = post.is_fraud;
         dto.published_at = post.published_at?.toISOString() ?? null;
-        dto.author = post.author;
+        dto.author = post.author ?? null;
         dto.category = post.category_id;
         dto.types = post.types;
 
