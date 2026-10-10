@@ -43,10 +43,16 @@ export class AuthRepository {
             `
             SELECT ${COLUMNS}
             FROM user
+            WHERE username = ${username}
+            AND is_active = true
+            `
+            /*`
+            SELECT ${COLUMNS}
+            FROM user
             WHERE username = ?
             AND is_active = true
             `
-            ,[username],
+            ,[username],*/
         );
 
         return rows.length > 0 ? toEntity(rows[0]) : undefined;
