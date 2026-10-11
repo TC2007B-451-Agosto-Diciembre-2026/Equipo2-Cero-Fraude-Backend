@@ -9,7 +9,8 @@ import {
     MinLength,
 } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
+import { ToArray } from "../../../common/to-array";
 
 export class FindPostsDto {
     @ApiPropertyOptional({
@@ -44,8 +45,9 @@ export class FindPostsDto {
         type: [Number],
     })
     @IsOptional()
-    @IsArray()
+    @ToArray()
     @Type(() => Number)
+    @IsArray()
     @IsInt({ each: true })
     @Min(1, { each: true })
     category?: number[];
@@ -56,8 +58,9 @@ export class FindPostsDto {
         type: [Number],
     })
     @IsOptional()
-    @IsArray()
+    @ToArray()
     @Type(() => Number)
+    @IsArray()
     @IsInt({ each: true })
     @Min(1, { each: true })
     type?: number[];
@@ -68,8 +71,9 @@ export class FindPostsDto {
         type: [Number],
     })
     @IsOptional()
-    @IsArray()
+    @ToArray()
     @Type(() => Number)
+    @IsArray()
     @IsInt({ each: true })
     @Min(1, { each: true })
     status_id?: number[];

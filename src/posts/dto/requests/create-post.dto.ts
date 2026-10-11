@@ -11,6 +11,7 @@ import {
     Min,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ToArray } from "../../../common/to-array";
 
 export class CreatePostDto {
     @ApiPropertyOptional({
@@ -106,6 +107,7 @@ export class CreatePostDto {
         type: [Number],
     })
     @IsOptional()
+    @ToArray()
     @IsArray()
     @ArrayUnique()
     @IsInt({ each: true })
@@ -121,6 +123,7 @@ export class CreatePostDto {
         type: [Number],
     })
     @IsOptional()
+    @ToArray()
     @IsArray()
     @ArrayUnique()
     @IsInt({ each: true })
