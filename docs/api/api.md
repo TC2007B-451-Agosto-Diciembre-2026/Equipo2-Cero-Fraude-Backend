@@ -1476,6 +1476,7 @@ Actualiza una publicación existente. El propietario puede modificar únicamente
 | is_anonymous     | boolean      | No          | Indica si la publicación debe ser anónima  |
 | status_id        | integer      | No          | Nuevo estado de la publicación             |
 | is_fraud         | boolean      | No          | Estado de confirmación del fraude          |
+| authorities         | integer list      | No          | Autoridades a asociar con la publicación          |
 
 El campo de estado está sujeto a las siguientes reglas de transición:
 
@@ -1500,6 +1501,8 @@ Para un propietario, las evidencias proporcionadas deben pertenecer al usuario a
 Un administrador puede asociar evidencias independientemente de su propietario, siempre que no estén asociadas a otra publicación y que sean evidencias válidas y no eliminadas.
 
 `is_fraud` solo puede ser modificado por un administrador al transicionar una publicación con estado `PUBLISHED` a `VALIDATED`.
+
+`authorities` solo puede ser modificado por un administrador cuando una publicación está en `VALIDATED` e `is_fraud` es verdadero.
 
 ##### Ejemplo de solicitud
 
