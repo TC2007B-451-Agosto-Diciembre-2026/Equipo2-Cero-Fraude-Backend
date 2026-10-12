@@ -1,5 +1,6 @@
 import { ApiPropertyOptional, PartialType } from "@nestjs/swagger";
-import { IsBoolean, IsOptional} from "class-validator";
+import { IsBoolean, IsOptional, ArrayUnique, IsArray, IsInt, Min} from "class-validator";
+import { ToArray } from "../../../common/to-array";
 import { CreatePostDto } from "./create-post.dto";
 
 export class UpdatePostDto extends PartialType(CreatePostDto){
@@ -10,4 +11,20 @@ export class UpdatePostDto extends PartialType(CreatePostDto){
     @IsOptional()
     @IsBoolean()
     is_fraud?: boolean;
+
+    @ApiPropertyOptional({
+            description: "IDs de las autoridades asignadas al post.",
+            example: [
+                1,
+                2,
+            ],
+            type: [Number],
+        })
+    @IsOptional()
+    @ArrayUnique()
+    @ToArray()
+    @IsArray()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    authorities?: number[];
 }
