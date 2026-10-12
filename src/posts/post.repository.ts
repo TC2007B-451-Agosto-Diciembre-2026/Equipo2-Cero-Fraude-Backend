@@ -10,6 +10,7 @@ import { DerivedFindPostsDto } from "./dto/requests/derived-find-posts.dto";
 import { UpdatePostDto } from "./dto/requests/update-post.dto";
 import { DeletedPostResult } from "./dto/requests/deleted-post-results.dto";
 import { DeletedEvidenceResult } from "./dto/requests/deleted-evidence-result.dto";
+import { AuthorityEntity } from "../catalogues/entities/authority.entity";
 
 const POST_COLUMNS =
     "fp.id, fp.title, fp.description, fp.status_id," +
@@ -38,6 +39,9 @@ const CREATE_COLUMNS =
     "title, description, seller_name, product, phone_number, url," +
     "platform, fraudulent_email, status_id, is_anonymous,"+
     "author_id, category_id";
+
+const AUTHORITY_COLUMNS = 
+    "a.id, a.name, a.code, a.description"
 
 interface PostRow extends RowDataPacket {
     id: number;
@@ -85,6 +89,13 @@ interface TypeRow extends RowDataPacket {
 
 interface CountRow extends RowDataPacket {
     total: number;
+}
+
+interface AuthorityRow extends RowDataPacket {
+    id: number;
+    name: string;
+    code: string;
+    description: string;
 }
 
 @Injectable()
@@ -224,8 +235,9 @@ export class PostRepository{
             FROM fraud_post fp
             INNER JOIN user u ON u.id = fp.author_id
             WHERE fp.id = ?
+            AND fp.status_id != ?
             `,
-            [post_id]
+            [post_id, DRAFT_STATUS_ID]
         );
         if(rows.length === 0){
             return null;
@@ -251,13 +263,50 @@ export class PostRepository{
 
         // const [reactionRows]
         // const [commentRows]
-        // const [authorityRows]
 
         const post = this.toAdminPostEntity(rows[0]);
         post.types = typeRows.map(row => row.fraud_type_id);
         post.evidences = evidenceRows.map(row =>
             this.toEvidenceEntity(row)
         );
+
+        if (post.status_id === VALIDATED_STATUS_ID) {
+            const [authorityRows] = await this.pool.query<AuthorityRow[]>(
+                `
+                SELECT ${AUTHORITY_COLUMNS}
+                FROM post_authority pa
+                INNER JOIN authority a
+                ON a.id = pa.authority_id
+                WHERE pa.post_id = ?
+                ORDER BY pa.priority ASC
+                `,
+                [post_id],
+            );
+
+            post.authorities = authorityRows.map(row =>
+                this.toAuthorityEntity(row)
+            );
+
+        } else if (post.status_id === PUBLISHED_STATUS_ID) {
+            const [authorityRows] = await this.pool.query<AuthorityRow[]>(
+                `
+                SELECT DISTINCT ${AUTHORITY_COLUMNS}
+                FROM post_fraud_type pft
+                INNER JOIN fraud_type_authority fta
+                ON fta.fraud_type_id = pft.fraud_type_id
+                INNER JOIN authority a
+                ON a.id = fta.authority_id
+                WHERE pft.post_id = ?
+                ORDER BY a.name
+                `,
+                [post_id],
+            );
+
+            post.authorities = authorityRows.map(row =>
+                this.toAuthorityEntity(row)
+            );
+        }
+
         return post;
     }
 
@@ -306,8 +355,20 @@ export class PostRepository{
 
         // const [reactionRows]
         // const [commentRows]
-        // const [authorityRows]
 
+        const [authorityRows] = await this.pool.query<AuthorityRow[]>(
+            `
+            SELECT ${AUTHORITY_COLUMNS}
+            FROM post_authority pa
+            INNER JOIN authority a
+            ON a.id = pa.authority_id
+            WHERE pa.post_id = ?
+            AND ? = ${VALIDATED_STATUS_ID}
+            ORDER BY pa.priority ASC
+            `,
+            [post_id, rows[0].status_id],
+        );
+    
         const post = this.toDetailedPostEntity(rows[0]);
         if(post.is_anonymous){
             post.author = null;
@@ -317,6 +378,10 @@ export class PostRepository{
         post.evidences = evidenceRows.map(row =>
             this.toEvidenceEntity(row)
         );
+        post.authorities = authorityRows.map(row =>
+            this.toAuthorityEntity(row)
+        );
+
         return post;
     }
 
@@ -619,6 +684,57 @@ export class PostRepository{
                 }
             }
 
+            if (dto.authorities !== undefined) {
+                if (dto.authorities.length > 0) {
+                    const placeholders = dto.authorities
+                        .map(() => "?")
+                        .join(", ");
+
+                    const [rows] = await connection.execute<RowDataPacket[]>(
+                        `
+                        SELECT id
+                        FROM authority
+                        WHERE id IN (${placeholders})
+                        `,
+                        dto.authorities
+                    );
+
+                    if (rows.length !== dto.authorities.length){
+                        throw new BadRequestException(
+                            "Una o más autoridades no existen."
+                        )
+                    }
+                }
+
+                await connection.execute(
+                    `
+                    DELETE FROM post_authority
+                    WHERE post_id = ?
+                    `,
+                    [post_id]
+                );
+
+                if(dto.authorities.length > 0){
+                    const values = dto.authorities.flatMap((authority_id, index) => [
+                        post_id,
+                        authority_id,
+                        index + 1
+                    ]);
+
+                    const placeholders = dto.authorities
+                        .map(() => "(?, ?, ?)")
+                        .join(", ");
+                    
+                    await connection.execute(
+                        `
+                        INSERT INTO post_authority (post_id, authority_id, priority)
+                        VALUES ${placeholders}
+                        `,
+                        values
+                    );
+                }
+            }
+
             const [rows] = await connection.execute<AdminPostRow[]>(
                 `SELECT ${ADMIN_POST_DETAILED_COLUMNS},
                         ${USER_COLUMN}
@@ -638,7 +754,7 @@ export class PostRepository{
 
             await connection.commit();
 
-            return post;
+            return this.findAdminById(post_id);
         } catch (error) {
             await connection.rollback();
             throw error;
@@ -930,16 +1046,27 @@ export class PostRepository{
     }
 
     private toEvidenceEntity(row: EvidenceRow): EvidenceEntity {
-            const entity = new EvidenceEntity();
+        const entity = new EvidenceEntity();
 
-            entity.id = row.id;
-            entity.owner_id = row.owner_id;
-            entity.is_visible = row.is_visible;
-            entity.storage_path = row.storage_path;
-            entity.created_at = row.created_at;
-            entity.evidence_type_id = row.evidence_type_id;
-            entity.post_id = row.post_id;
+        entity.id = row.id;
+        entity.owner_id = row.owner_id;
+        entity.is_visible = row.is_visible;
+        entity.storage_path = row.storage_path;
+        entity.created_at = row.created_at;
+        entity.evidence_type_id = row.evidence_type_id;
+        entity.post_id = row.post_id;
 
-            return entity;
-        }
+        return entity;
+    }
+
+    private toAuthorityEntity(row: AuthorityRow): AuthorityEntity {
+        const entity = new AuthorityEntity();
+
+        entity.id = row.id
+        entity.name = row.name
+        entity.code = row.code
+        entity.description = row.description
+
+        return entity
+    }
 }

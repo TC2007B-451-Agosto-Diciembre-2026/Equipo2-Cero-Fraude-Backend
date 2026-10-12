@@ -3,7 +3,6 @@ import { PostEntity } from "../../entities/post.entity";
 import { ResponsePostDto } from "./response-post.dto";
 import { ResponseEvidenceDto } from "../../../evidences/dto/response-evidence.dto";
 import { ResponseCommentDto } from "../../../comments/dto/responses/response-comment.dto";
-import { ResponseAuthorityDto } from "../../../authorities/dto/responses/response-authority.dto";
 
 export class ResponseDetailedPostDto extends ResponsePostDto {
     @ApiProperty({
@@ -68,11 +67,10 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
     comments: ResponseCommentDto[];
 
     @ApiProperty({
-        description: "Autoridades asociadas a la publicación.",
-        type: [ResponseAuthorityDto]
+        description: "IDs de las autoridades asociadas a la publicación.",
+        example: [1, 2]
     })
-    authorities: ResponseAuthorityDto[];
-
+    authorities: number[];
 
     static fromEntity(
         post: PostEntity,
@@ -100,7 +98,9 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
             )
         );
         dto.comments = [];
-        dto.authorities = [];
+        dto.authorities = (post.authorities ?? []).map(
+            authority => authority.id
+        );
         return dto;
     }
 }

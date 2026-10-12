@@ -127,3 +127,19 @@ INSERT INTO authority (name, code, description) VALUES
  
 ('CONDUSEF', 'CONDUSEF',
  'Brinda orientación y apoyo en asuntos relacionados con productos, servicios e instituciones financieras.');
+
+-- ===================================
+--  FRAUD TYPE AUTHORITIES
+-- ===================================
+
+INSERT INTO fraud_type_authority (fraud_type_id, authority_id)
+SELECT ft.id, a.id
+FROM fraud_type ft
+JOIN authority a
+WHERE
+(ft.code = 'FAKE_PROD' AND a.code = 'PROFECO')
+OR (ft.code = 'BAD_PRICE' AND a.code = 'PROFECO')
+OR (ft.code = 'FAKE_PROMO' AND a.code = 'PROFECO')
+OR (ft.code = 'FAKE_SELL' AND a.code IN ('PROFECO', 'POL_CIB'))
+OR (ft.code = 'FAKE_STORE' AND a.code IN ('PROFECO', 'POL_CIB'))
+OR (ft.code = 'BRAND_IMP' AND a.code = 'POL_CIB');

@@ -176,7 +176,7 @@ export class PostService {
         }
 
         if(user_role === USER_ROLE_ID){
-            if(dto.is_fraud !== undefined || dto.status_id === PUBLISHED_STATUS_ID || dto.status_id === REJECTED_STATUS_ID || dto.status_id === VALIDATED_STATUS_ID){
+            if(dto.is_fraud !== undefined || dto.status_id === PUBLISHED_STATUS_ID || dto.status_id === REJECTED_STATUS_ID || dto.status_id === VALIDATED_STATUS_ID || dto.authorities !== undefined){
                 throw new ForbiddenException("Campo inválido.");
             }
         }
@@ -230,6 +230,12 @@ export class PostService {
             }
             if(dto.description?.trim() === ""){
                 throw new BadRequestException("Campo inválido.");
+            }
+            if(dto.authorities !== undefined && !(post_to_update.status_id === PUBLISHED_STATUS_ID && dto.status_id === VALIDATED_STATUS_ID)) {
+                throw new ForbiddenException("Campo inválido.");
+            }
+            if(dto.authorities !== undefined && dto.authorities.length > 0 && dto.is_fraud !== true){
+                throw new BadRequestException("No se pueden asignar autoridades a una publicación que no es fraude.");
             }
         }
         if(user_role === USER_ROLE_ID){
