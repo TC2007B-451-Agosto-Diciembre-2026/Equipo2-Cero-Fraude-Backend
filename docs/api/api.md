@@ -63,9 +63,8 @@
 
 9. [Comentarios](#9-comentarios)
 
-* 9.1. [Obtener comentarios](#91-obtener-comentarios)
-* 9.2. [Crear un comentario](#92-crear-un-comentario)
-* 9.3. [Obtener comentarios de una publicación](#93-obtener-comentarios-de-una-publicación)
+* 9.1. [Crear un comentario](#91-crear-un-comentario)
+* 9.2. [Actualizar un comentario](#92-actualizar-un-comentario)
 
 10. [Reacciones](#10-reacciones)
 
@@ -159,9 +158,7 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | GET    | `/posts/:postId/reports`                  | Administrador                        | No           |
 | POST   | `/posts/:postId/reports`                  | Usuario                              | No           |
 | DELETE | `/posts/:postId/reports/:reportId`        | Administrador                        | No           |
-| GET    | `/comments`                               | Administrador                        | No           |
 | POST   | `/posts/:postId/comments`                 | Administrador                        | No           |
-| GET    | `/posts/:postId/comments`                 | Usuario                              | No           |
 | GET    | `/posts/:postId/reactions`                | Usuario                              | No           |
 | POST   | `/posts/:postId/reactions/:reactionId`    | Usuario                              | No           |
 | DELETE | `/posts/:postId/reactions`                | Usuario                              | No           |
@@ -169,9 +166,6 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | POST   | `/types/:typeId/authorities/:authorityId` | Administrador                        | No           |
 | DELETE | `/types/:typeId/authorities/:authorityId` | Administrador                        | No           |
 | GET    | `/posts/:postId/authorities`              | Usuario                              | No           |
-| POST   | `/posts/:postId/authorities/:authorityId` | Administrador                        | No           |
-| PATCH  | `/posts/:postId/authorities/:authorityId` | Administrador                        | No           |
-| DELETE | `/posts/:postId/authorities/:authorityId` | Administrador                        | No           |
 | GET    | `/audit-logs`                             | Administrador                        | No           |
 
 ## 3. Autenticación
@@ -1276,22 +1270,27 @@ Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones 
     {
       "id": 1,
       "url": "https://ejemplo.com/evidencia.jpg",
-      "evidence_type_id": 1
+      "evidence_type_id": 1,
+      "post_id": 1,
+      "created_at": "2026-10-11T21:55:55.000Z"
     }
   ],
   "comments": [
 	  {
-		"id": 1,
-		"text": "esto es un comentario",
-		"author_id": "{UUID}",
-		"published_at": "2026-09-22T09:58:43.123Z"
+		{
+      "id": 1,
+      "user": "Equipo de Cero Fraude",
+      "post": 1,
+      "text": "Se recomienda verificar la identidad del vendedor.",
+      "created_at": "2026-10-12T09:00:00.000Z"
+    }
 	  }
   ],
   "authorities": [1, 2]
 }
 ```
 
-Para administradores, se incluye `is_anonymous` y `deleted_at`:
+Para administradores, se incluye `is_anonymous` y `deleted_at`, asi como el campo `is_visible` en ambos `evidences` y `comments`:
 
 ```json
 {
@@ -1318,15 +1317,20 @@ Para administradores, se incluye `is_anonymous` y `deleted_at`:
     {
       "id": 1,
       "url": "https://ejemplo.com/evidencia.jpg",
-      "evidence_type_id": 1
+      "evidence_type_id": 1,
+      "post_id": 1,
+      "created_at": "2026-10-11T21:55:55.000Z",
+      "is_visible": 1
     }
   ],
   "comments": [
 	  {
-		"id": 1,
-		"text": "esto es un comentario",
-		"author_id": "{UUID}",
-		"published_at": "2026-09-22T09:58:43.123Z"
+      "id": 1,
+      "user": "admin",
+      "post": 1,
+      "text": "Se recomienda verificar la identidad del vendedor.",
+      "created_at": "2026-10-12T18:32:23.000Z",
+      "is_visible": 1
 	  }
   ],
   "authorities": [1, 2],
@@ -1880,40 +1884,7 @@ Los comentarios están destinados a los administradores para registrar informaci
 
 Las confirmaciones o reacciones de los usuarios se representan mediante las reacciones de la publicación.
 
-### 9.1. Obtener comentarios
-
-#### GET /comments
-
-Obtener todos los comentarios del sistema.
-
-**Acceso:** Administrador
-
-##### Parámetros de query
-
-| Campo | Tipo    | Obligatorio | Descripción                                    |
-| ----- | ------- | ----------- | ---------------------------------------------- |
-| page  | integer | No          | Página de resultados a obtener. Comienza en 1. |
-
-##### Respuestas
-
-* 200 OK
-
-```json
-{
-  "data": [
-    {
-      "user": "550e8400-e29b-41d4-a716-446655440000",
-      "post": 1,
-      "text": "La publicación fue revisada y validada."
-    }
-  ]
-}
-```
-
-* 401 Unauthorized
-* 403 Forbidden
-
-### 9.2. Crear un comentario
+### 9.1. Crear un comentario
 
 #### POST /posts/:postId/comments
 
@@ -1947,9 +1918,11 @@ Crear un comentario sobre una publicación.
 
 ```json
 {
-  "user": "550e8400-e29b-41d4-a716-446655440000",
-  "post": 1,
-  "text": "La publicación fue revisada por un administrador."
+  "id": 1,
+  "user": "Equipo de Cero Fraude",
+  "post": 15,
+  "text": "Se recomienda verificar la identidad del vendedor.",
+  "created_at": "2026-10-12T09:00:00.000Z"
 }
 ```
 
@@ -1958,35 +1931,53 @@ Crear un comentario sobre una publicación.
 * 403 Forbidden
 * 404 Not Found
 
-### 9.3. Obtener comentarios de una publicación
+### 9.2. Actualizar un comentario
 
-#### GET /posts/:postId/comments
+#### PATCH /posts/:postId/comments/:commentId
 
-Obtener todos los comentarios de una publicación.
+Actualizar el estado `is_visible` de un comentario.
 
-**Acceso:** Usuario
+**Acceso:** Administrador
 
 ##### Parámetros de ruta
 
-| Campo  | Tipo    | Obligatorio | Descripción          |
-| ------ | ------- | ----------- | -------------------- |
-| postId | integer | Sí          | ID de la publicación |
+| Campo      | Tipo    | Obligatorio | Descripción          |
+| ---------- | ------- | ----------- | -------------------- |
+| postId     | integer | Sí          | ID de la publicación |
+| commentId  | integer | Sí          | ID del comentario   |
+
+##### Body
+
+| Campo      | Tipo    | Obligatorio | Descripción                       |
+| ---------- | ------- | ----------- | --------------------------------- |
+| is_visible | boolean | Sí          | Indica si el comentario es visible |
+
+##### Ejemplo de solicitud
+
+```json
+{
+  "is_visible": true
+}
+```
 
 ##### Respuestas
 
 * 200 OK
 
 ```json
-[
-  {
-    "user": "550e8400-e29b-41d4-a716-446655440000",
-    "post": 1,
-    "text": "La publicación fue revisada y validada."
-  }
-]
+{
+  "id": 1,
+  "user": "admin",
+  "post": 56,
+  "text": "Se recomienda verificar la identidad del vendedor.",
+  "created_at": "2026-10-12T18:32:23.000Z",
+  "is_visible": true
+}
 ```
 
+* 400 Bad Request
 * 401 Unauthorized
+* 403 Forbidden
 * 404 Not Found
 
 ## 10. Reacciones
