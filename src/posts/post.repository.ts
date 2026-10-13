@@ -11,6 +11,8 @@ import { UpdatePostDto } from "./dto/requests/update-post.dto";
 import { DeletedPostResult } from "./dto/requests/deleted-post-results.dto";
 import { DeletedEvidenceResult } from "./dto/requests/deleted-evidence-result.dto";
 import { AuthorityEntity } from "../catalogues/entities/authority.entity";
+import { CreateCommentDto } from "./dto/requests/create-comment.dto";
+import { CommentEntity } from "./entities/comment.entity";
 
 const POST_COLUMNS =
     "fp.id, fp.title, fp.description, fp.status_id," +
@@ -42,6 +44,10 @@ const CREATE_COLUMNS =
 
 const AUTHORITY_COLUMNS = 
     "a.id, a.name, a.code, a.description"
+
+const COMMENT_COLUMNS = 
+    "pc.id, pc.is_visible, pc.content, pc.created_at, pc.updated_at,"+
+    "pc.author_id, pc.post_id, "
 
 interface PostRow extends RowDataPacket {
     id: number;
@@ -96,6 +102,17 @@ interface AuthorityRow extends RowDataPacket {
     name: string;
     code: string;
     description: string;
+}
+
+interface CommentRow extends RowDataPacket {
+    id: number;
+    is_visible: boolean;
+    content: string;
+    created_at: Date;
+    updated_at: Date | null;
+    author_id: string;
+    author_name: string;
+    post_id: number;
 }
 
 @Injectable()
@@ -229,9 +246,13 @@ export class PostRepository{
     async findAdminById(
         post_id: number
     ): Promise<PostEntity | null> {
+
+        const COLUMNS = ADMIN_POST_DETAILED_COLUMNS + ", " + USER_COLUMN;
+        
+
         const [rows] = await this.pool.query<AdminPostRow[]>(
             `
-            SELECT ${ADMIN_POST_DETAILED_COLUMNS}
+            SELECT ${COLUMNS}
             FROM fraud_post fp
             INNER JOIN user u ON u.id = fp.author_id
             WHERE fp.id = ?
@@ -262,12 +283,25 @@ export class PostRepository{
         );
 
         // const [reactionRows]
-        // const [commentRows]
+        const [commentRows] = await this.pool.query<CommentRow[]>(
+            `
+            SELECT ${COMMENT_COLUMNS}
+            u.username AS author_name
+            FROM post_comment pc
+            JOIN user u ON pc.author_id = u.id
+            WHERE pc.post_id = ?
+            ORDER BY pc.created_at ASC, pc.id ASC
+            `,
+            [post_id]
+        )
 
         const post = this.toAdminPostEntity(rows[0]);
         post.types = typeRows.map(row => row.fraud_type_id);
         post.evidences = evidenceRows.map(row =>
             this.toEvidenceEntity(row)
+        );
+        post.comments = commentRows.map(row =>
+            this.toCommentEntity(row)
         );
 
         if (post.status_id === VALIDATED_STATUS_ID) {
@@ -354,7 +388,17 @@ export class PostRepository{
         );
 
         // const [reactionRows]
-        // const [commentRows]
+        const [commentRows] = await this.pool.query<CommentRow[]>(
+            `
+            SELECT ${COMMENT_COLUMNS}
+            'Equipo de Cero Fraude' AS author_name
+            FROM post_comment pc
+            WHERE pc.post_id = ?
+            AND pc.is_visible = TRUE
+            ORDER BY pc.created_at ASC, pc.id ASC
+            `,
+            [post_id]
+        )
 
         const [authorityRows] = await this.pool.query<AuthorityRow[]>(
             `
@@ -370,13 +414,16 @@ export class PostRepository{
         );
     
         const post = this.toDetailedPostEntity(rows[0]);
-        if(post.is_anonymous){
+        if(rows[0].is_anonymous){
             post.author = null;
         }
 
         post.types = typeRows.map(row => row.fraud_type_id);
         post.evidences = evidenceRows.map(row =>
             this.toEvidenceEntity(row)
+        );
+        post.comments = commentRows.map(row =>
+            this.toCommentEntity(row)
         );
         post.authorities = authorityRows.map(row =>
             this.toAuthorityEntity(row)
@@ -985,6 +1032,68 @@ export class PostRepository{
         }
     }
 
+    async createComment(
+        post_id: number,
+        author_id: string,
+        dto: CreateCommentDto
+    ): Promise<CommentEntity> {
+        const [result] = await this.pool.execute<ResultSetHeader>(
+            `
+            INSERT INTO post_comment (content, author_id, post_id)
+            VALUES (?, ?, ?)
+            `,
+            [dto.text, author_id, post_id]
+        );
+
+        const [rows] = await this.pool.execute<CommentRow[]>(
+            `
+            SELECT ${COMMENT_COLUMNS}
+            u.username AS author_name
+            FROM post_comment pc
+            JOIN user u ON pc.author_id = u.id
+            WHERE pc.id = ?
+            `,
+            [result.insertId]
+        );
+
+        if (rows.length === 0) {
+            throw new Error("El comentario creado no pudo recuperarse.");
+        }
+
+        return this.toCommentEntity(rows[0]);
+    }
+
+    async updatePostComment(
+        post_id: number,
+        comment_id: number,
+        is_visible: boolean
+    ): Promise<CommentEntity | null> {
+        const [rows] = await this.pool.query<CommentRow[]>(
+            `
+            SELECT ${COMMENT_COLUMNS}
+            u.username AS author_name
+            FROM post_comment pc
+            JOIN user u ON pc.author_id = u.id
+            WHERE pc.id = ?
+            `,
+            [comment_id],
+        );
+
+        if(rows.length === 0){
+            throw new NotFoundException("El comentario no existe o su acceso no está permitido.")
+        }
+        await this.pool.execute<ResultSetHeader>(
+            `
+            UPDATE post_comment
+            SET is_visible = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ? AND post_id = ?
+            `,
+            [is_visible, comment_id, post_id],
+        )
+        rows[0].is_visible = is_visible;
+        return this.toCommentEntity(rows[0]);
+    }
+
     private toPostEntity(
         row: PostRow,
         types: number[] = []
@@ -1057,6 +1166,21 @@ export class PostRepository{
         entity.post_id = row.post_id;
 
         return entity;
+    }
+
+    private toCommentEntity(row: CommentRow): CommentEntity {
+        const comment = new CommentEntity();
+
+        comment.id = row.id;
+        comment.is_visible = row.is_visible;
+        comment.content = row.content;
+        comment.created_at = row.created_at;
+        comment.updated_at = row.updated_at;
+        comment.author_id = row.author_id;
+        comment.author_name = row.author_name;
+        comment.post_id = row.post_id;
+
+        return comment;
     }
 
     private toAuthorityEntity(row: AuthorityRow): AuthorityEntity {

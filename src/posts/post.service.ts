@@ -18,6 +18,9 @@ import { UpdatePostDto } from "./dto/requests/update-post.dto";
 import { EvidenceService } from "../evidences/evidence.service";
 import { DeletedEvidenceResult } from "./dto/requests/deleted-evidence-result.dto";
 import { DeletedPostResult } from "./dto/requests/deleted-post-results.dto";
+import { CreateCommentDto } from "./dto/requests/create-comment.dto";
+import { ResponseCommentDto } from "./dto/responses/response-comment.dto";
+import { ResponseAdminCommentDto } from "./dto/responses/response-admin-comment.dto";
 
 @Injectable()
 export class PostService {
@@ -309,5 +312,41 @@ export class PostService {
         }
 
         await this.evidence_service.deleteFile(evidence.storage_path);
+    }
+
+    async createComment(
+        post_id: number,
+        user_id: string,
+        dto: CreateCommentDto
+    ): Promise<ResponseCommentDto> {
+        const post = await this.repository.findAdminById(post_id);
+
+        if(post === null){
+            throw new NotFoundException("La publicación no existe.");
+        }
+
+        if(post.status_id !== PUBLISHED_STATUS_ID && post.status_id !== VALIDATED_STATUS_ID){
+            throw new BadRequestException("Solo se pueden comentar publicaciones publicadas o validadas.");
+        }
+
+        const comment = await this.repository.createComment(post_id, user_id, dto);
+
+        return ResponseCommentDto.fromEntity(comment, getBaseUrl());
+    }
+
+    async updatePostComment(
+        post_id: number,
+        comment_id: number,
+        is_visible: boolean
+    ): Promise<ResponseAdminCommentDto | null>{
+        const comment = await this.repository.updatePostComment(post_id, comment_id, is_visible);
+
+        if(comment === null){
+            return null;
+        }
+
+        return ResponseAdminCommentDto.fromEntity(
+            comment, getBaseUrl()
+        );
     }
 }

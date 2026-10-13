@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../auth/auth.guard";
 import { ApiBadRequestResponse, ApiConflictResponse, ApiForbiddenResponse, ApiUnauthorizedResponse, ApiNotFoundResponse, ApiNoContentResponse } from "../common/api-responses";
 import { FindPostsDto } from "./dto/requests/find-posts.dto";
@@ -18,6 +18,9 @@ import { ADMIN_ROLE_ID } from "../common/constants";
 import { ResponseEvidenceDto } from "../evidences/dto/response-evidence.dto";
 import { UpdatePostDto } from "./dto/requests/update-post.dto";
 import { UpdatePostEvidenceDto } from "./dto/requests/update-post-evidence.dto";
+import { ResponseCommentDto } from "./dto/responses/response-comment.dto";
+import { CreateCommentDto } from "./dto/requests/create-comment.dto";
+import { UpdateCommentDto } from "./dto/requests/update-comment.dto";
 
 @ApiTags("posts")
 @ApiBearerAuth()
@@ -229,5 +232,70 @@ export class PostController {
         @CurrentUser() user: JwtPayload
     ): Promise<void> {
         return this.service.deletePostEvidence(postId, evidence_id, user.sub, user.role_id);
+    }
+
+    @Post(":postId/comments")
+    @ApiOperation({
+        summary: "Crear un comentario en una publicación",
+        description: "Permite a un administrador agregar un comentario público a una publicación publicada o validada.",
+    })
+    @ApiParam({
+        name: "postId",
+        description: "ID de la publicación",
+        type: Number,
+        example: 4,
+    })
+    @ApiCreatedResponse({
+        description: "Comentario creado correctamente",
+        type: ResponseCommentDto,
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiNotFoundResponse()
+    @UseGuards(RolesGuard)
+    @Roles(ADMIN_ROLE_ID)
+    createComment(
+        @Param("postId", ParseIntPipe) postId: number,
+        @Body() dto: CreateCommentDto,
+        @CurrentUser() user: JwtPayload
+    ): Promise<ResponseCommentDto>{
+        return this.service.createComment(postId, user.sub, dto);
+    }
+
+    @Patch(":postId/comments/:commentId")
+    @ApiOperation({
+        summary: "Actualizar un comentario de una publicación",
+        description: "Actualizar el estado is_visible de un comentario."
+    })
+    @ApiParam({
+        name: "postId",
+        description: "ID de la publicación.",
+        type: Number,
+        example: 4
+    })
+    @ApiParam({
+        name: "commentId",
+        description: "ID del comentario.",
+        type: Number,
+        example: 4
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Comentario actualizads correctamente.",
+        type: ResponseCommentDto
+    })
+    @ApiBadRequestResponse()
+    @ApiUnauthorizedResponse()
+    @ApiForbiddenResponse()
+    @ApiNotFoundResponse()
+    @UseGuards(RolesGuard)
+    @Roles(ADMIN_ROLE_ID)
+    updatePostComment(
+        @Param("postId", ParseIntPipe) postId: number,
+        @Param("commentId", ParseIntPipe) comment_id: number,
+        @Body() dto: UpdateCommentDto
+    ): Promise<ResponseCommentDto | null> {
+        return this.service.updatePostComment(postId, comment_id, dto.is_visible);
     }
 }

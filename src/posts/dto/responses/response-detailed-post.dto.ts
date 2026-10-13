@@ -2,7 +2,8 @@ import { ApiProperty } from "@nestjs/swagger";
 import { PostEntity } from "../../entities/post.entity";
 import { ResponsePostDto } from "./response-post.dto";
 import { ResponseEvidenceDto } from "../../../evidences/dto/response-evidence.dto";
-import { ResponseCommentDto } from "../../../comments/dto/responses/response-comment.dto";
+import { ResponseCommentDto } from "./response-comment.dto";
+import { getBaseUrl } from "../../../common/network";
 
 export class ResponseDetailedPostDto extends ResponsePostDto {
     @ApiProperty({
@@ -97,7 +98,12 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
                 baseUrl
             )
         );
-        dto.comments = [];
+        dto.comments = (post.comments ?? []).map(
+            comment => ResponseCommentDto.fromEntity(
+                comment,
+                baseUrl
+            )
+        );
         dto.authorities = (post.authorities ?? []).map(
             authority => authority.id
         );
