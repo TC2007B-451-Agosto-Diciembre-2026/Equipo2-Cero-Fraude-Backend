@@ -1,5 +1,6 @@
 import { EvidenceEntity } from "../../evidences/entities/evidence.entity";
 import { AuthorityEntity } from "../../catalogues/entities/authority.entity";
+import { CommentEntity } from "./comment.entity";
 
 export class PostEntity{
     id!: number;
@@ -25,5 +26,6 @@ export class PostEntity{
         dislike: number;
     };
     evidences: EvidenceEntity[] = [];
+    comments: CommentEntity[] = [];
     authorities: AuthorityEntity[] = [];
 }
