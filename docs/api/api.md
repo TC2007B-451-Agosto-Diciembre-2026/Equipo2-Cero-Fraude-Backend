@@ -1738,18 +1738,27 @@ Obtener una página de reportes realizados sobre publicaciones.
       "user": "550e8400-e29b-41d4-a716-446655440000",
       "post": 1
     }
-  ]
+  ],
+  "page": 1,
+  "total_pages": 3,
+  "total": 47
 }
 ```
+
+Los reportes se ordenan del más reciente al más antiguo.
 
 Si no existen reportes en la página solicitada:
 
 ```json
 {
-  "data": []
+  "data": [],
+  "page": 4,
+  "total_pages": 3,
+  "total": 47
 }
 ```
 
+* 400 Bad Request
 * 401 Unauthorized
 * 403 Forbidden
 
@@ -1787,10 +1796,16 @@ Obtener los reportes realizados sobre una publicación.
       "user": "550e8400-e29b-41d4-a716-446655440000",
       "post": 1
     }
-  ]
+  ],
+  "page": 1,
+  "total_pages": 2,
+  "total": 34
 }
 ```
 
+Los reportes se ordenan del más reciente al más antiguo. `total` es el número de reportes de la publicación.
+
+* 400 Bad Request
 * 401 Unauthorized
 * 403 Forbidden
 * 404 Not Found
@@ -1816,7 +1831,9 @@ Crear un reporte sobre una publicación.
 | information   | string  | No          | Información adicional que explica el motivo del reporte |
 | report_reason | integer | Sí          | ID de la razón por la que se reporta la publicación     |
 
-`information` es opcional. La razón del reporte se determina mediante `report_reason`.
+`information` es opcional y admite un máximo de 1000 caracteres. La razón del reporte se determina mediante `report_reason`.
+
+Solo se pueden reportar publicaciones con estado `PUBLISHED` o `VALIDATED` que no hayan sido eliminadas. Un usuario no puede reportar sus propias publicaciones y solo puede reportar una vez cada publicación.
 
 ##### Ejemplo de solicitud
 
@@ -1849,9 +1866,13 @@ También es válida una solicitud sin información adicional:
 }
 ```
 
-* 400 Bad Request
+Si no se envía `information`, la respuesta la devuelve como `null`.
+
+* 400 Bad Request: el cuerpo no es válido o la razón de reporte no existe.
 * 401 Unauthorized
-* 404 Not Found
+* 403 Forbidden: la publicación pertenece al usuario autenticado.
+* 404 Not Found: la publicación no existe o no es visible para el usuario.
+* 409 Conflict: el usuario ya reportó esta publicación.
 
 ### 8.4. Eliminar un reporte
 
