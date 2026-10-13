@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { PostEntity } from "../../entities/post.entity";
 import { ResponseDetailedPostDto } from "./response-detailed-post.dto";
+import { ResponseAdminEvidenceDto } from "../../../evidences/dto/response-admin-evidence.dto";
+import { ResponseAdminCommentDto } from "./response-admin-comment.dto";
 
 export class ResponseAdminPostDto extends ResponseDetailedPostDto {
     @ApiProperty({
@@ -24,6 +26,20 @@ export class ResponseAdminPostDto extends ResponseDetailedPostDto {
         const dto = new ResponseAdminPostDto();
 
         Object.assign(dto, publicDto);
+
+        dto.evidences = (post.evidences ?? []).map(
+            evidence => ResponseAdminEvidenceDto.fromEntity(
+                evidence,
+                baseUrl
+            )
+        );
+
+        dto.comments = (post.comments ?? []).map(
+            comment => ResponseAdminCommentDto.fromEntity(
+                comment,
+                baseUrl
+            )
+        );
 
         dto.is_anonymous = post.is_anonymous;
         dto.deleted_at = post.deleted_at?.toISOString() ?? null;
