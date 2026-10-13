@@ -1276,15 +1276,13 @@ Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones 
     }
   ],
   "comments": [
-	  {
-		{
-          "id": 1,
-          "user": "Equipo de Cero Fraude",
-          "post": 1,
-          "text": "Se recomienda verificar la identidad del vendedor.",
-          "created_at": "2026-10-12T09:00:00.000Z"
-        }
-	  }
+    {
+      "id": 1,
+      "user": "Equipo de Cero Fraude",
+      "post": 1,
+      "text": "Se recomienda verificar la identidad del vendedor.",
+      "created_at": "2026-10-12T09:00:00.000Z"
+    }
   ],
   "authorities": [1, 2]
 }
@@ -1324,14 +1322,14 @@ Para administradores, se incluye `is_anonymous` y `deleted_at`, asi como el camp
     }
   ],
   "comments": [
-	  {
-          "id": 1,
-          "user": "admin",
-          "post": 1,
-          "text": "Se recomienda verificar la identidad del vendedor.",
-          "created_at": "2026-10-12T18:32:23.000Z",
-          "is_visible": 1
-	  }
+    {
+      "id": 1,
+      "user": "admin",
+      "post": 1,
+      "text": "Se recomienda verificar la identidad del vendedor.",
+      "created_at": "2026-10-12T18:32:23.000Z",
+      "is_visible": 1
+    }
   ],
   "authorities": [1, 2],
   "is_anonymous": false,
