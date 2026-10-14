@@ -7,12 +7,13 @@ import { EvidenceModule } from "./evidences/evidence.module";
 import { PostModule } from "./posts/post.module";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
+import { ReportModule } from "./reports/report.module";
 
 @Module({
     imports: [ConfigModule.forRoot({
         isGlobal: true,
     }),
-    AuthModule, CataloguesModule ,UserModule, PostModule ,EvidenceModule],
+    AuthModule, CataloguesModule ,UserModule, PostModule ,EvidenceModule ,ReportModule],
 // temporal
     controllers: [AppController],
     providers: [AppService]
