@@ -8,6 +8,9 @@ import { ReportRepository } from "./report.repository";
 import { CreateReportDto } from "./dto/requests/create-report.dto";
 import { ResponseReportDto } from "./dto/responses/response-report.dto";
 import { handleDuplicateError } from "../common/error-handler";
+import { FindReportsDto } from "./dto/requests/find-reports.dto";
+import { ResponseReportsDto } from "./dto/responses/response-reports.dto";
+import { PAGE_SIZE } from "../common/constants";
 
 @Injectable()
 export class ReportService {
@@ -49,5 +52,44 @@ export class ReportService {
             handleDuplicateError(error);
             throw error;
         }
+    }
+
+    async findAll(query: FindReportsDto): Promise<ResponseReportsDto> {
+        return this.findPage(query.page ?? 1);
+    }
+
+    async findByPost(
+        post_id: number,
+        query: FindReportsDto,
+    ): Promise<ResponseReportsDto> {
+        const postExists = await this.repository.postExists(post_id);
+        if (!postExists) {
+            throw new NotFoundException("Publicación no encontrada.");
+        }
+
+        return this.findPage(query.page ?? 1, post_id);
+    }
+
+    async delete(post_id: number, report_id: number): Promise<void> {
+        const deleted = await this.repository.delete(post_id, report_id);
+        if (!deleted) {
+            throw new NotFoundException("El reporte a eliminar no existe.");
+        }
+    }
+
+    private async findPage(
+        page: number,
+        post_id?: number,
+    ): Promise<ResponseReportsDto> {
+        const result = await this.repository.findAll(page, post_id);
+
+        return {
+            data: result.reports.map((report) =>
+                ResponseReportDto.fromEntity(report),
+            ),
+            page: page,
+            total_pages: Math.ceil(result.total / PAGE_SIZE),
+            total: result.total,
+        };
     }
 }

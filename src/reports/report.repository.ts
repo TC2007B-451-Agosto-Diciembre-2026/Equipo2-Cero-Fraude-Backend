@@ -2,7 +2,11 @@ import { Inject, Injectable } from "@nestjs/common";
 import type { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { DB_POOL } from "../database/database.module";
 import { ReportEntity } from "./entities/report.entity";
-import { PUBLISHED_STATUS_ID, VALIDATED_STATUS_ID } from "../common/constants";
+import {
+    PAGE_SIZE,
+    PUBLISHED_STATUS_ID,
+    VALIDATED_STATUS_ID,
+} from "../common/constants";
 
 const COLUMNS =
     "id, details, created_at, report_reason_id, reporter_id, post_id";
@@ -22,6 +26,15 @@ interface PostAuthorRow extends RowDataPacket {
 
 interface IdRow extends RowDataPacket {
     id: number;
+}
+
+interface CountRow extends RowDataPacket {
+    total: number;
+}
+
+interface FindReportsResult {
+    reports: ReportEntity[];
+    total: number;
 }
 
 @Injectable()
@@ -88,6 +101,70 @@ export class ReportRepository {
         );
 
         return rows.length > 0 ? toEntity(rows[0]) : null;
+    }
+
+    async findAll(page: number, post_id?: number): Promise<FindReportsResult> {
+        const offset = (page - 1) * PAGE_SIZE;
+
+        let where = "";
+        const values: number[] = [];
+
+        if (post_id !== undefined) {
+            where = "WHERE post_id = ?";
+            values.push(post_id);
+        }
+
+        const [countRows] = await this.pool.query<CountRow[]>(
+            `
+            SELECT COUNT(*) AS total
+            FROM post_report
+            ${where}
+            `,
+            values,
+        );
+
+        const [rows] = await this.pool.query<ReportRow[]>(
+            `
+            SELECT ${COLUMNS}
+            FROM post_report
+            ${where}
+            ORDER BY created_at DESC, id DESC
+            LIMIT ?
+            OFFSET ?
+            `,
+            [...values, PAGE_SIZE, offset],
+        );
+
+        return {
+            reports: rows.map(toEntity),
+            total: countRows[0].total,
+        };
+    }
+
+    async postExists(post_id: number): Promise<boolean> {
+        const [rows] = await this.pool.query<IdRow[]>(
+            `
+            SELECT id
+            FROM fraud_post
+            WHERE id = ?
+            `,
+            [post_id],
+        );
+
+        return rows.length > 0;
+    }
+
+    async delete(post_id: number, report_id: number): Promise<boolean> {
+        const [result] = await this.pool.execute<ResultSetHeader>(
+            `
+            DELETE FROM post_report
+            WHERE id = ?
+            AND post_id = ?
+            `,
+            [report_id, post_id],
+        );
+
+        return result.affectedRows > 0;
     }
 }
 
