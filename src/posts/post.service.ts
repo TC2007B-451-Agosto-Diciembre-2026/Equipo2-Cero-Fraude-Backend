@@ -243,7 +243,8 @@ export class PostService {
         }
         if(user_role === USER_ROLE_ID){
             if(dto.status_id === UPLOADED_STATUS_ID){
-                if((dto.description === undefined || dto.description.trim() === "") && (post_to_update.description === null || post_to_update.description.trim() === "")) {
+                const description = dto.description !== undefined ? dto.description : post_to_update.description;
+                if(!description?.trim()) {
                     throw new BadRequestException("Es requerido al menos una descripción para publicar una publicación.");
                 }
             }

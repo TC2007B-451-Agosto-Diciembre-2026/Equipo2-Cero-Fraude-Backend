@@ -801,7 +801,10 @@ export class PostRepository{
 
             await connection.commit();
 
-            return this.findAdminById(post_id);
+            if (user_role === ADMIN_ROLE_ID) {
+                return this.findAdminById(post_id);
+            }
+            return this.findVisibleToUser(post_id, user_id);
         } catch (error) {
             await connection.rollback();
             throw error;
