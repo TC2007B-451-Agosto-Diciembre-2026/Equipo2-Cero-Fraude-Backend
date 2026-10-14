@@ -154,10 +154,10 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | POST   | `/evidences`                              | Usuario                              | Sí           |
 | PATCH  | `/posts/:postId/evidences/:evidenceId`    | Administrador                        | Sí           |
 | DELETE | `/posts/:postId/evidences/:evidenceId`    | Propietario o administrador          | Sí           |
-| GET    | `/reports`                                | Administrador                        | No           |
-| GET    | `/posts/:postId/reports`                  | Administrador                        | No           |
-| POST   | `/posts/:postId/reports`                  | Usuario                              | No           |
-| DELETE | `/posts/:postId/reports/:reportId`        | Administrador                        | No           |
+| GET    | `/reports`                                | Administrador                        | Sí           |
+| GET    | `/posts/:postId/reports`                  | Administrador                        | Sí           |
+| POST   | `/posts/:postId/reports`                  | Usuario                              | Sí           |
+| DELETE | `/posts/:postId/reports/:reportId`        | Administrador                        | Sí           |
 | POST   | `/posts/:postId/comments`                 | Administrador                        | No           |
 | GET    | `/posts/:postId/reactions`                | Usuario                              | No           |
 | POST   | `/posts/:postId/reactions/:reactionId`    | Usuario                              | No           |
