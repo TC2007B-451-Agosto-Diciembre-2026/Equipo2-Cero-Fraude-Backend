@@ -18,6 +18,8 @@ export function getLanUrl(port: number): string {
 }
 
 export function getBaseUrl(): string {
+    return "";
+
     const port = Number(process.env.PORT ?? 3000);
     return getLanUrl(port);
 }
