@@ -145,7 +145,15 @@ export class AuthService {
     isValidEmail(
         email: string
     ): boolean {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (email.length === 0 || email.length > 254) {
+            return false;
+        }
+        if (email !== email.trim()){
+            return false;
+        }
+
+        const regex = /^[^@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     }
 }
