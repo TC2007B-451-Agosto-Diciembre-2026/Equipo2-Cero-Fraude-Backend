@@ -42,10 +42,10 @@ const CREATE_COLUMNS =
     "platform, fraudulent_email, status_id, is_anonymous,"+
     "author_id, category_id";
 
-const AUTHORITY_COLUMNS = 
+const AUTHORITY_COLUMNS =
     "a.id, a.name, a.code, a.description"
 
-const COMMENT_COLUMNS = 
+const COMMENT_COLUMNS =
     "pc.id, pc.is_visible, pc.content, pc.created_at, pc.updated_at,"+
     "pc.author_id, pc.post_id, "
 
@@ -248,7 +248,7 @@ export class PostRepository{
     ): Promise<PostEntity | null> {
 
         const COLUMNS = ADMIN_POST_DETAILED_COLUMNS + ", " + USER_COLUMN;
-        
+
 
         const [rows] = await this.pool.query<AdminPostRow[]>(
             `
@@ -412,7 +412,7 @@ export class PostRepository{
             `,
             [post_id, rows[0].status_id],
         );
-    
+
         const post = this.toDetailedPostEntity(rows[0]);
         if(rows[0].is_anonymous){
             post.author = null;
@@ -517,7 +517,7 @@ export class PostRepository{
                 );
             }
             await connection.commit();
-            const post = await this.findAdminById(post_id);
+            const post = await this.findVisibleToUser(post_id, user_id);
             if(post === null){
                throw new Error("La publicación creada no pudo recuperarse.")
             }
@@ -771,7 +771,7 @@ export class PostRepository{
                     const placeholders = dto.authorities
                         .map(() => "(?, ?, ?)")
                         .join(", ");
-                    
+
                     await connection.execute(
                         `
                         INSERT INTO post_authority (post_id, authority_id, priority)
