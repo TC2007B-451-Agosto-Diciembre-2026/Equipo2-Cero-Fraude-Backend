@@ -8,12 +8,13 @@ import { PostModule } from "./posts/post.module";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
 import { ReportModule } from "./reports/report.module";
+import { ReactionModule } from "./reactions/reaction.module";
 
 @Module({
     imports: [ConfigModule.forRoot({
         isGlobal: true,
     }),
-    AuthModule, CataloguesModule ,UserModule, PostModule ,EvidenceModule ,ReportModule],
+    AuthModule, CataloguesModule ,UserModule, PostModule ,EvidenceModule ,ReportModule ,ReactionModule],
 // temporal
     controllers: [AppController],
     providers: [AppService]

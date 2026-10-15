@@ -1,6 +1,7 @@
 import { EvidenceEntity } from "../../evidences/entities/evidence.entity";
 import { AuthorityEntity } from "../../catalogues/entities/authority.entity";
 import { CommentEntity } from "./comment.entity";
+import { ReactionSummaryEntity } from "../../reactions/entities/reaction-summary.entity";
 
 export class PostEntity{
     id!: number;
@@ -21,10 +22,7 @@ export class PostEntity{
     category_id: number | null;
 
     types: number[] = [];
-    reactions: {
-        like: number;
-        dislike: number;
-    };
+    reactions: ReactionSummaryEntity = new ReactionSummaryEntity();
     evidences: EvidenceEntity[] = [];
     comments: CommentEntity[] = [];
     authorities: AuthorityEntity[] = [];
