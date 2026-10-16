@@ -159,9 +159,9 @@ La API utiliza códigos de estado HTTP para indicar el resultado de cada solicit
 | POST   | `/posts/:postId/reports`                  | Usuario                              | Sí           |
 | DELETE | `/posts/:postId/reports/:reportId`        | Administrador                        | Sí           |
 | POST   | `/posts/:postId/comments`                 | Administrador                        | No           |
-| GET    | `/posts/:postId/reactions`                | Usuario                              | No           |
-| POST   | `/posts/:postId/reactions/:reactionId`    | Usuario                              | No           |
-| DELETE | `/posts/:postId/reactions`                | Usuario                              | No           |
+| GET    | `/posts/:postId/reactions`                | Usuario                              | Sí           |
+| POST   | `/posts/:postId/reactions/:reactionId`    | Usuario                              | Sí           |
+| DELETE | `/posts/:postId/reactions`                | Usuario                              | Sí           |
 | GET    | `/types/:typeId/authorities`              | Administrador                        | No           |
 | POST   | `/types/:typeId/authorities/:authorityId` | Administrador                        | No           |
 | DELETE | `/types/:typeId/authorities/:authorityId` | Administrador                        | No           |
@@ -1264,7 +1264,8 @@ Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones 
   "types": [1, 2],
   "reactions": {
     "like": 45,
-    "dislike": 50
+    "dislike": 50,
+    "user_reaction": 1
   },
   "evidences": [
     {
@@ -1288,6 +1289,8 @@ Obtener una publicación de fraude. Los usuarios pueden consultar publicaciones 
 }
 ```
 
+`reactions` contiene la cantidad de reacciones `LIKE` y `DISLIKE` de la publicación, así como `user_reaction`, el ID de la reacción del usuario autenticado sobre la publicación, o `null` si no ha reaccionado. Ver [Reacciones](#10-reacciones).
+
 Para administradores, se incluye `is_anonymous` y `deleted_at`, asi como el campo `is_visible` en ambos `evidences` y `comments`:
 
 ```json
@@ -1309,7 +1312,8 @@ Para administradores, se incluye `is_anonymous` y `deleted_at`, asi como el camp
   "types": [1, 2],
   "reactions": {
     "like": 45,
-    "dislike": 50
+    "dislike": 50,
+    "user_reaction": null
   },
   "evidences": [
     {
@@ -1427,7 +1431,8 @@ La secuencia esperada para agregar evidencias al crear una publicación es:
   "category": 2,
   "reactions": {
     "like": 45,
-    "dislike": 50
+    "dislike": 50,
+    "user_reaction": null
   },
   "evidences": [
     {
@@ -1541,7 +1546,8 @@ Un administrador puede asociar evidencias independientemente de su propietario, 
   "fraudulent_email": "fraude@ejemplo.com",
   "reactions": {
     "like": 0,
-    "dislike": 0
+    "dislike": 0,
+    "user_reaction": null
   },
   "evidences": [],
   "comments": [],
@@ -2001,15 +2007,17 @@ Actualizar el estado `is_visible` de un comentario.
 
 ## 10. Reacciones
 
-Cada usuario puede tener como máximo una reacción sobre una publicación. La reacción puede ser `LIKE` o `DISLIKE`.
+Cada usuario puede tener como máximo una reacción sobre una publicación. La reacción puede ser `LIKE` o `DISLIKE`, identificadas por su ID en el catálogo de [Reacciones](#42-reacciones).
 
 Si el usuario ya tiene una reacción y envía otra mediante `POST`, la reacción existente se reemplaza por la nueva. Para eliminar su reacción, utiliza `DELETE`.
+
+Solo se puede reaccionar a publicaciones con estado `PUBLISHED` o `VALIDATED` que no hayan sido eliminadas. Un usuario no puede reaccionar a sus propias publicaciones.
 
 ### 10.1. Obtener reacciones
 
 #### GET /posts/:postId/reactions
 
-Obtener la cantidad de reacciones por tipo de reacción de una publicación.
+Obtener la cantidad de reacciones por tipo de reacción de una publicación y la reacción del usuario autenticado.
 
 **Acceso:** Usuario
 
@@ -2026,10 +2034,26 @@ Obtener la cantidad de reacciones por tipo de reacción de una publicación.
 ```json
 {
   "like": 45,
-  "dislike": 50
+  "dislike": 50,
+  "user_reaction": 1
 }
 ```
 
+`user_reaction` es el ID de la reacción del usuario autenticado sobre la publicación, o `null` si no ha reaccionado. Permite mostrar la reacción del usuario al volver a abrir la publicación.
+
+Si la publicación no tiene reacciones:
+
+```json
+{
+  "like": 0,
+  "dislike": 0,
+  "user_reaction": null
+}
+```
+
+La misma información se incluye en el campo `reactions` de [GET /posts/:postId](#63-obtener-una-publicación).
+
+* 400 Bad Request
 * 401 Unauthorized
 * 404 Not Found
 
@@ -2060,8 +2084,11 @@ Crear una reacción a una publicación o reemplazar la reacción existente del u
 }
 ```
 
+Si el usuario ya tenía una reacción sobre la publicación, la respuesta contiene la nueva reacción.
+
 * 400 Bad Request
 * 401 Unauthorized
+* 403 Forbidden
 * 404 Not Found
 
 ### 10.3. Eliminar una reacción
@@ -2081,6 +2108,7 @@ Borrar la reacción del usuario a una publicación.
 ##### Respuestas
 
 * 204 No Content
+* 400 Bad Request
 * 401 Unauthorized
 * 404 Not Found
 

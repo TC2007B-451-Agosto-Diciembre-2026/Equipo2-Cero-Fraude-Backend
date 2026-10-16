@@ -13,3 +13,5 @@ export const REJECTED_STATUS_ID = 3;
 export const PUBLISHED_STATUS_ID = 4;
 export const VALIDATED_STATUS_ID = 5;
 export const MAX_REPORT_INFORMATION_LENGTH = 1000;
+export const LIKE_REACTION_ID = 1;
+export const DISLIKE_REACTION_ID = 2;

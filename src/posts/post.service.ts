@@ -114,7 +114,7 @@ export class PostService {
     ): Promise<ResponseDetailedPostDto | ResponseAdminPostDto> {
         let post: PostEntity | null;
         if(user_role === ADMIN_ROLE_ID){
-            post = await this.repository.findAdminById(post_id);
+            post = await this.repository.findAdminById(post_id, user_id);
         } else if(user_role === USER_ROLE_ID){
             post = await this.repository.findVisibleToUser(post_id, user_id);
         } else{

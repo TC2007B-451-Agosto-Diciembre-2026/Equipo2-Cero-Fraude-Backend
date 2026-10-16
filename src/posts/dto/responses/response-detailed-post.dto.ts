@@ -4,6 +4,7 @@ import { ResponsePostDto } from "./response-post.dto";
 import { ResponseEvidenceDto } from "../../../evidences/dto/response-evidence.dto";
 import { ResponseCommentDto } from "./response-comment.dto";
 import { getBaseUrl } from "../../../common/network";
+import { ResponseReactionSummaryDto } from "../../../reactions/dto/responses/response-reaction-summary.dto";
 
 export class ResponseDetailedPostDto extends ResponsePostDto {
     @ApiProperty({
@@ -43,17 +44,10 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
     fraudulent_email: string | null;
 
     @ApiProperty({
-        description: "Cantidad de reacciones de la publicación.",
-        example: {
-            like: 45,
-            dislike: 50,
-        },
+        description: "Cantidad de reacciones de la publicación y reacción del usuario autenticado.",
+        type: ResponseReactionSummaryDto
     })
-
-    reactions: {
-        like: number;
-        dislike: number;
-    };
+    reactions: ResponseReactionSummaryDto;
 
     @ApiProperty({
         description: "Evidencias asociadas a la publicación.",
@@ -91,7 +85,7 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
         dto.url = post.url;
         dto.platform = post.platform;
         dto.fraudulent_email = post.fraudulent_email;
-        dto.reactions = {"like": 0, "dislike": 0};
+        dto.reactions = ResponseReactionSummaryDto.fromEntity(post.reactions);
         dto.evidences = (post.evidences ?? []).map(
             evidence => ResponseEvidenceDto.fromEntity(
                 evidence,

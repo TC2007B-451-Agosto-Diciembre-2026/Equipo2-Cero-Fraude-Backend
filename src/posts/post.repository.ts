@@ -13,6 +13,7 @@ import { DeletedEvidenceResult } from "./dto/requests/deleted-evidence-result.dt
 import { AuthorityEntity } from "../catalogues/entities/authority.entity";
 import { CreateCommentDto } from "./dto/requests/create-comment.dto";
 import { CommentEntity } from "./entities/comment.entity";
+import { ReactionRepository } from "../reactions/reaction.repository";
 
 const POST_COLUMNS =
     "fp.id, fp.title, fp.description, fp.status_id," +
@@ -117,7 +118,10 @@ interface CommentRow extends RowDataPacket {
 
 @Injectable()
 export class PostRepository{
-    constructor(@Inject(DB_POOL) private readonly pool: Pool) {}
+    constructor(
+        @Inject(DB_POOL) private readonly pool: Pool,
+        private readonly reaction_repository: ReactionRepository
+    ) {}
 
     async findAll(
         query: DerivedFindPostsDto,
@@ -244,7 +248,8 @@ export class PostRepository{
     }
 
     async findAdminById(
-        post_id: number
+        post_id: number,
+        user_id: string | null = null
     ): Promise<PostEntity | null> {
 
         const COLUMNS = ADMIN_POST_DETAILED_COLUMNS + ", " + USER_COLUMN;
@@ -282,7 +287,6 @@ export class PostRepository{
             [post_id],
         );
 
-        // const [reactionRows]
         const [commentRows] = await this.pool.query<CommentRow[]>(
             `
             SELECT ${COMMENT_COLUMNS}
@@ -303,6 +307,7 @@ export class PostRepository{
         post.comments = commentRows.map(row =>
             this.toCommentEntity(row)
         );
+        post.reactions = await this.reaction_repository.findSummary(post_id, user_id);
 
         if (post.status_id === VALIDATED_STATUS_ID) {
             const [authorityRows] = await this.pool.query<AuthorityRow[]>(
@@ -387,7 +392,6 @@ export class PostRepository{
             [post_id],
         );
 
-        // const [reactionRows]
         const [commentRows] = await this.pool.query<CommentRow[]>(
             `
             SELECT ${COMMENT_COLUMNS}
@@ -425,6 +429,7 @@ export class PostRepository{
         post.comments = commentRows.map(row =>
             this.toCommentEntity(row)
         );
+        post.reactions = await this.reaction_repository.findSummary(post_id, user_id);
         post.authorities = authorityRows.map(row =>
             this.toAuthorityEntity(row)
         );
@@ -802,7 +807,7 @@ export class PostRepository{
             await connection.commit();
 
             if (user_role === ADMIN_ROLE_ID) {
-                return this.findAdminById(post_id);
+                return this.findAdminById(post_id, user_id);
             }
             return this.findVisibleToUser(post_id, user_id);
         } catch (error) {
