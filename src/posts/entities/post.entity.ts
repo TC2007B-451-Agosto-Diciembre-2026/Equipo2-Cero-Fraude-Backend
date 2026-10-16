@@ -3,7 +3,7 @@ import { AuthorityEntity } from "../../catalogues/entities/authority.entity";
 import { CommentEntity } from "./comment.entity";
 import { ReactionSummaryEntity } from "../../reactions/entities/reaction-summary.entity";
 
-export class PostEntity{
+export class PostEntity {
     id!: number;
     title: string | null;
     description: string | null;

@@ -4,10 +4,8 @@ export function getLanUrl(port: number): string {
     const interfaces = Object.values(networkInterfaces())
         .flat()
         .filter(
-            network =>
-                network &&
-                network.family === "IPv4" &&
-                !network.internal
+            (network) =>
+                network && network.family === "IPv4" && !network.internal
         );
 
     if (interfaces.length === 0) {

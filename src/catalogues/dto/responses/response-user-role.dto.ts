@@ -4,19 +4,19 @@ import { UserRoleEntity } from "../../entities/user-role.entity";
 export class ResponseUserRoleDto {
     @ApiProperty({
         description: "Identificador del rol.",
-        example: 1,
+        example: 1
     })
     id!: number;
 
     @ApiProperty({
         description: "Nombre del rol.",
-        example: "administrador",
+        example: "administrador"
     })
     name!: string;
 
     @ApiProperty({
         description: "Código del rol.",
-        example: "ADMIN",
+        example: "ADMIN"
     })
     code!: string;
 

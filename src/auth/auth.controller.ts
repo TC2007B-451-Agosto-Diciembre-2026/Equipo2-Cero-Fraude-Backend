@@ -36,20 +36,18 @@ export class AuthController {
 
     @Post("register")
     @HttpCode(201)
-     @ApiOperation({
+    @ApiOperation({
         summary: "Registrar usuario",
         description: "Registra un nuevo usuario."
     })
     @ApiResponse({
         status: 201,
         description: "Usuario registrado correctamente.",
-        type: ValidAccessDto,
+        type: ValidAccessDto
     })
     @ApiBadRequestResponse()
     @ApiConflictResponse()
-    register(
-        @Body() dto: RegisterDto
-    ): Promise<ValidAccessDto> {
+    register(@Body() dto: RegisterDto): Promise<ValidAccessDto> {
         return this.service.register(dto);
     }
 
@@ -66,16 +64,15 @@ export class AuthController {
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
-    login(
-        @Body() dto: LoginDto
-    ): Promise<ValidAccessDto> {
+    login(@Body() dto: LoginDto): Promise<ValidAccessDto> {
         return this.service.login(dto);
     }
     @Post("refresh")
     @HttpCode(200)
     @ApiOperation({
         summary: "Actualizar token de acceso",
-        description: "Genera un nuevo token de acceso utilizando un token de actualización válido.",
+        description:
+            "Genera un nuevo token de acceso utilizando un token de actualización válido."
     })
     @ApiResponse({
         status: 200,
@@ -84,9 +81,7 @@ export class AuthController {
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
-    refresh(
-        @Body() dto: RefreshDto
-    ) : Promise<AccessTokenDto> {
+    refresh(@Body() dto: RefreshDto): Promise<AccessTokenDto> {
         return this.service.refresh(dto);
     }
 

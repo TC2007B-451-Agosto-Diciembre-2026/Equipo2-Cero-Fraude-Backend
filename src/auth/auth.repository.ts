@@ -24,21 +24,23 @@ export class AuthRepository {
             FROM user
             WHERE email = ?
             AND is_active = true
-            `
-            ,[email],
+            `,
+            [email]
         );
         return rows.length > 0 ? toEntity(rows[0]) : undefined;
     }
 
-    async findByUsername(username: string): Promise<AuthUserEntity | undefined> {
+    async findByUsername(
+        username: string
+    ): Promise<AuthUserEntity | undefined> {
         const [rows] = await this.pool.query<AuthUserRow[]>(
             `
             SELECT ${COLUMNS}
             FROM user
             WHERE username = ?
             AND is_active = true
-            `
-            ,[username],
+            `,
+            [username]
         );
 
         return rows.length > 0 ? toEntity(rows[0]) : undefined;

@@ -7,7 +7,7 @@ import {
     DISLIKE_REACTION_ID,
     LIKE_REACTION_ID,
     PUBLISHED_STATUS_ID,
-    VALIDATED_STATUS_ID,
+    VALIDATED_STATUS_ID
 } from "../common/constants";
 
 const COLUMNS = "user_id, post_id, reaction_type_id";
@@ -37,7 +37,7 @@ export class ReactionRepository {
     constructor(@Inject(DB_POOL) private readonly pool: Pool) {}
 
     async findPostForReaction(
-        post_id: number,
+        post_id: number
     ): Promise<{ author_id: string } | null> {
         const [rows] = await this.pool.query<PostAuthorRow[]>(
             `
@@ -47,7 +47,7 @@ export class ReactionRepository {
             AND status_id IN (${PUBLISHED_STATUS_ID}, ${VALIDATED_STATUS_ID})
             AND deleted_at IS NULL
             `,
-            [post_id],
+            [post_id]
         );
 
         return rows.length > 0 ? { author_id: rows[0].author_id } : null;
@@ -60,7 +60,7 @@ export class ReactionRepository {
             FROM reaction_type
             WHERE id = ?
             `,
-            [reaction_type_id],
+            [reaction_type_id]
         );
 
         return rows.length > 0;
@@ -68,7 +68,7 @@ export class ReactionRepository {
 
     async findSummary(
         post_id: number,
-        user_id: string | null,
+        user_id: string | null
     ): Promise<ReactionSummaryEntity> {
         const [rows] = await this.pool.query<ReactionSummaryRow[]>(
             `
@@ -79,7 +79,7 @@ export class ReactionRepository {
             FROM post_reaction
             WHERE post_id = ?
             `,
-            [LIKE_REACTION_ID, DISLIKE_REACTION_ID, user_id, post_id],
+            [LIKE_REACTION_ID, DISLIKE_REACTION_ID, user_id, post_id]
         );
 
         const summary = new ReactionSummaryEntity();
@@ -93,7 +93,7 @@ export class ReactionRepository {
     async upsert(
         user_id: string,
         post_id: number,
-        reaction_type_id: number,
+        reaction_type_id: number
     ): Promise<ReactionEntity> {
         await this.pool.execute<ResultSetHeader>(
             `
@@ -101,7 +101,7 @@ export class ReactionRepository {
             VALUES (?, ?, ?)
             ON DUPLICATE KEY UPDATE reaction_type_id = ?
             `,
-            [user_id, post_id, reaction_type_id, reaction_type_id],
+            [user_id, post_id, reaction_type_id, reaction_type_id]
         );
 
         const reaction = await this.findByUserAndPost(user_id, post_id);
@@ -111,7 +111,7 @@ export class ReactionRepository {
 
     async findByUserAndPost(
         user_id: string,
-        post_id: number,
+        post_id: number
     ): Promise<ReactionEntity | null> {
         const [rows] = await this.pool.query<ReactionRow[]>(
             `
@@ -120,7 +120,7 @@ export class ReactionRepository {
             WHERE user_id = ?
             AND post_id = ?
             `,
-            [user_id, post_id],
+            [user_id, post_id]
         );
 
         return rows.length > 0 ? toEntity(rows[0]) : null;
@@ -133,7 +133,7 @@ export class ReactionRepository {
             WHERE user_id = ?
             AND post_id = ?
             `,
-            [user_id, post_id],
+            [user_id, post_id]
         );
 
         return result.affectedRows > 0;

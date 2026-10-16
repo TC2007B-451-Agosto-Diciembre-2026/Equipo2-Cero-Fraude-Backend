@@ -4,13 +4,13 @@ import { EvidenceTypeEntity } from "../../entities/evidence-type.entity";
 export class ResponseEvidenceTypeDto {
     @ApiProperty({
         description: "Identificador del tipo de evidencia.",
-        example: 1,
+        example: 1
     })
     id!: number;
 
     @ApiProperty({
         description: "Nombre del tipo de evidencia.",
-        example: "Imagen",
+        example: "Imagen"
     })
     name!: string;
 

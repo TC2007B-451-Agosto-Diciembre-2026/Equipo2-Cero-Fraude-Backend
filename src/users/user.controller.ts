@@ -6,7 +6,7 @@ import {
     ParseUUIDPipe,
     Patch,
     Query,
-    UseGuards,
+    UseGuards
 } from "@nestjs/common";
 
 import { UserService } from "./user.service";
@@ -57,9 +57,7 @@ export class UserController {
     @ApiForbiddenResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    findAll(
-        @Query() query: FindUsersDto
-    ): Promise<ResponseUsersDto> {
+    findAll(@Query() query: FindUsersDto): Promise<ResponseUsersDto> {
         return this.service.findAll(query);
     }
 
@@ -74,9 +72,7 @@ export class UserController {
         type: ResponseUserDto
     })
     @ApiUnauthorizedResponse()
-    findMe(
-        @CurrentUser() user: JwtPayload
-    ): Promise<ResponseUserDto> {
+    findMe(@CurrentUser() user: JwtPayload): Promise<ResponseUserDto> {
         return this.service.findById(user.sub);
     }
 
@@ -123,14 +119,15 @@ export class UserController {
     updateMe(
         @CurrentUser() user: JwtPayload,
         @Body() dto: UpdateMeDto
-    ): Promise<ResponseUserDto | null>{
+    ): Promise<ResponseUserDto | null> {
         return this.service.updateMe(user.sub, dto);
     }
 
     @Patch(":userId")
     @ApiOperation({
         summary: "Modificar un usuario",
-        description: "Modifica el estado de la cuenta o el rol de un usuario mediante su UUID."
+        description:
+            "Modifica el estado de la cuenta o el rol de un usuario mediante su UUID."
     })
     @ApiResponse({
         status: 200,

@@ -4,19 +4,19 @@ import { FraudTypeEntity } from "../../entities/fraud-type.entity";
 export class ResponseFraudTypeDto {
     @ApiProperty({
         description: "Identificador del tipo de fraude.",
-        example: 1,
+        example: 1
     })
     id!: number;
 
     @ApiProperty({
         description: "Nombre del tipo de fraude.",
-        example: "Producto falso",
+        example: "Producto falso"
     })
     name!: string;
 
     @ApiProperty({
         description: "Código del tipo de fraude.",
-        example: "FAKE_PROD",
+        example: "FAKE_PROD"
     })
     code!: string;
 

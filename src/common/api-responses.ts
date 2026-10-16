@@ -24,7 +24,8 @@ export function ApiUnauthorizedResponse() {
 export function ApiForbiddenResponse() {
     return ApiResponse({
         status: 403,
-        description: "El usuario no tiene permisos para realizar esta operación."
+        description:
+            "El usuario no tiene permisos para realizar esta operación."
     });
 }
 
@@ -38,6 +39,7 @@ export function ApiNotFoundResponse() {
 export function ApiConflictResponse() {
     return ApiResponse({
         status: 409,
-        description: "La solicitud entra en conflicto con el estado actual del recurso."
+        description:
+            "La solicitud entra en conflicto con el estado actual del recurso."
     });
 }

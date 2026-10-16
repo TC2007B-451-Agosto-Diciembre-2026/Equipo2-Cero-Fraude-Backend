@@ -5,7 +5,7 @@ export class UpdatePasswordDto {
     @ApiProperty({
         description: "Contraseña del usuario.",
         example: "supersecret123",
-        minLength: 10,
+        minLength: 10
     })
     @IsString()
     @MinLength(10)
@@ -14,7 +14,7 @@ export class UpdatePasswordDto {
     @ApiProperty({
         description: "Contraseña del usuario.",
         example: "IWillNotBeHackedsaoinOI12oiub",
-        minLength: 10,
+        minLength: 10
     })
     @IsString()
     @MinLength(10)

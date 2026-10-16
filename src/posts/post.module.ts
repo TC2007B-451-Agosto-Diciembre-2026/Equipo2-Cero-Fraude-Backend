@@ -10,6 +10,6 @@ import { ReactionModule } from "../reactions/reaction.module";
 @Module({
     imports: [DatabaseModule, EvidenceModule, ReactionModule],
     controllers: [PostController],
-    providers: [PostService, PostRepository, EvidenceService],
+    providers: [PostService, PostRepository, EvidenceService]
 })
 export class PostModule {}

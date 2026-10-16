@@ -8,7 +8,7 @@ import {
     IsString,
     IsUrl,
     MaxLength,
-    Min,
+    Min
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { ToArray } from "../../../common/to-array";
@@ -17,7 +17,7 @@ export class CreatePostDto {
     @ApiPropertyOptional({
         description: "Título de la publicación.",
         example: "Estafa en venta de consola.",
-        maxLength: 100,
+        maxLength: 100
     })
     @IsOptional()
     @IsString()
@@ -26,7 +26,7 @@ export class CreatePostDto {
 
     @ApiPropertyOptional({
         description: "Descripción del fraude.",
-        example: "El vendedor recibió el pago pero nunca envió el producto.",
+        example: "El vendedor recibió el pago pero nunca envió el producto."
     })
     @IsOptional()
     @IsString()
@@ -35,7 +35,7 @@ export class CreatePostDto {
     @ApiPropertyOptional({
         description: "Nombre del vendedor relacionado con el fraude.",
         example: "Juan Pérez",
-        maxLength: 100,
+        maxLength: 100
     })
     @IsOptional()
     @IsString()
@@ -45,7 +45,7 @@ export class CreatePostDto {
     @ApiPropertyOptional({
         description: "Producto relacionado con el fraude.",
         example: "PlayStation 5",
-        maxLength: 100,
+        maxLength: 100
     })
     @IsOptional()
     @IsString()
@@ -55,7 +55,7 @@ export class CreatePostDto {
     @ApiPropertyOptional({
         description: "Teléfono relacionado con el fraude.",
         example: "5512345678",
-        maxLength: 25,
+        maxLength: 25
     })
     @IsOptional()
     @IsString()
@@ -65,7 +65,7 @@ export class CreatePostDto {
     @ApiPropertyOptional({
         description: "URL relacionada con el fraude.",
         example: "https://example.com/producto",
-        maxLength: 255,
+        maxLength: 255
     })
     @IsOptional()
     @IsUrl()
@@ -75,7 +75,7 @@ export class CreatePostDto {
     @ApiPropertyOptional({
         description: "Plataforma donde ocurrió el posible fraude.",
         example: "Facebook Marketplace",
-        maxLength: 100,
+        maxLength: 100
     })
     @IsOptional()
     @IsString()
@@ -85,7 +85,7 @@ export class CreatePostDto {
     @ApiPropertyOptional({
         description: "Correo electrónico relacionado con el posible fraude.",
         example: "fraude@example.com",
-        maxLength: 255,
+        maxLength: 255
     })
     @IsOptional()
     @IsEmail()
@@ -94,7 +94,7 @@ export class CreatePostDto {
 
     @ApiPropertyOptional({
         description: "ID de la categoría de la publicación.",
-        example: 1,
+        example: 1
     })
     @IsOptional()
     @IsInt()
@@ -104,7 +104,7 @@ export class CreatePostDto {
     @ApiPropertyOptional({
         description: "IDs de los tipos de fraude asociados a la publicación.",
         example: [1, 3],
-        type: [Number],
+        type: [Number]
     })
     @IsOptional()
     @ToArray()
@@ -115,12 +115,10 @@ export class CreatePostDto {
     types?: number[];
 
     @ApiPropertyOptional({
-        description: "IDs de las evidencias previamente creadas mediante /evidences.",
-        example: [
-            1,
-            2,
-        ],
-        type: [Number],
+        description:
+            "IDs de las evidencias previamente creadas mediante /evidences.",
+        example: [1, 2],
+        type: [Number]
     })
     @IsOptional()
     @ToArray()
@@ -131,9 +129,10 @@ export class CreatePostDto {
     evidences?: number[];
 
     @ApiPropertyOptional({
-        description: "Indica si la identidad del autor debe mantenerse anónima al publicar.",
+        description:
+            "Indica si la identidad del autor debe mantenerse anónima al publicar.",
         example: true,
-        default: false,
+        default: false
     })
     @IsOptional()
     @IsBoolean()
@@ -141,7 +140,7 @@ export class CreatePostDto {
 
     @ApiProperty({
         description: "ID del estado inicial de la publicación.",
-        example: 1,
+        example: 1
     })
     @IsInt()
     @Min(1)

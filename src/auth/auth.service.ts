@@ -1,9 +1,9 @@
 import {
     BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
+    UnauthorizedException
 } from "@nestjs/common";
 import { RegisterDto } from "./dto/requests/register.dto";
 import { LoginDto } from "./dto/requests/login.dto";
@@ -12,7 +12,11 @@ import { RefreshDto } from "./dto/requests/refresh.dto";
 import { ValidAccessDto } from "./dto/responses/valid-access.dto";
 import { AuthRepository } from "./auth.repository";
 import { AuthUserEntity } from "./entities/auth-user.entity";
-import { ACCESS_TTL, MINIMUM_PASSWORD_LENGTH, REFRESH_TTL } from "../common/constants";
+import {
+    ACCESS_TTL,
+    MINIMUM_PASSWORD_LENGTH,
+    REFRESH_TTL
+} from "../common/constants";
 import { UpdatePasswordDto } from "./dto/requests/update-password.dto";
 import { UserRepository } from "../users/user.repository";
 import { AccessTokenDto } from "./dto/responses/access-token.dto";
@@ -23,17 +27,19 @@ const bcrypt = require("bcrypt");
 export class AuthService {
     constructor(
         private readonly repository: AuthRepository,
-        private readonly user_repository : UserRepository,
+        private readonly user_repository: UserRepository
     ) {}
 
-    async register(
-        dto: RegisterDto
-    ): Promise<ValidAccessDto> {
-        if(await this.repository.findByEmail(dto.email!)){
-            throw new ConflictException("El usuario o correo ya están registrados.");
+    async register(dto: RegisterDto): Promise<ValidAccessDto> {
+        if (await this.repository.findByEmail(dto.email!)) {
+            throw new ConflictException(
+                "El usuario o correo ya están registrados."
+            );
         }
-        if(await this.repository.findByUsername(dto.username!)){
-            throw new ConflictException("El usuario o correo ya están registrados.");
+        if (await this.repository.findByUsername(dto.username!)) {
+            throw new ConflictException(
+                "El usuario o correo ya están registrados."
+            );
         }
         const user = new AuthUserEntity();
         user.username = dto.username;
@@ -42,51 +48,58 @@ export class AuthService {
         user.role_id = 1;
         const auth_user = await this.repository.save(user);
         user.id = auth_user.id;
-        const claims = { sub: user.id!, email: user.email!, role_id: user.role_id! };
+        const claims = {
+            sub: user.id!,
+            email: user.email!,
+            role_id: user.role_id!
+        };
         const access_token = sign({ ...claims, type: "access" }, ACCESS_TTL);
         const refresh_token = sign({ ...claims, type: "refresh" }, REFRESH_TTL);
         return ValidAccessDto.create(access_token, refresh_token);
     }
 
-    async login(
-        dto: LoginDto
-    ):Promise<ValidAccessDto> {
-
+    async login(dto: LoginDto): Promise<ValidAccessDto> {
         let user;
 
-        if(this.isValidEmail(dto.identifier!)){
+        if (this.isValidEmail(dto.identifier!)) {
             user = await this.repository.findByEmail(dto.identifier!);
-
-        } else{
+        } else {
             user = await this.repository.findByUsername(dto.identifier!);
         }
-        if(!user) {
+        if (!user) {
             throw new UnauthorizedException("Credenciales inválidas.");
         }
 
-        const valid_password = await bcrypt.compare(dto.password, user.password_hash);
+        const valid_password = await bcrypt.compare(
+            dto.password,
+            user.password_hash
+        );
 
         if (!valid_password || !user.is_active) {
             throw new UnauthorizedException("Credenciales inválidas.");
         }
 
         const claims = { sub: user.id!, email: user.email! };
-        const access_token = sign({ ...claims, role_id: user.role_id, type: "access" }, ACCESS_TTL);
-        const refresh_token = sign({ ...claims, role_id: user.role_id, type: "refresh" }, REFRESH_TTL);
+        const access_token = sign(
+            { ...claims, role_id: user.role_id, type: "access" },
+            ACCESS_TTL
+        );
+        const refresh_token = sign(
+            { ...claims, role_id: user.role_id, type: "refresh" },
+            REFRESH_TTL
+        );
         return ValidAccessDto.create(access_token, refresh_token);
     }
 
-    async refresh(
-        dto: RefreshDto
-    ): Promise<AccessTokenDto> {
+    async refresh(dto: RefreshDto): Promise<AccessTokenDto> {
         const payload = verify(dto.refresh_token!);
-        if(!payload || payload.type !== "refresh") {
+        if (!payload || payload.type !== "refresh") {
             throw new UnauthorizedException("Refresh token inválido.");
         }
 
         const user = await this.user_repository.findById(payload.sub);
 
-        if(!user || !user.is_active){
+        if (!user || !user.is_active) {
             throw new UnauthorizedException("Refresh token inválido");
         }
 
@@ -97,43 +110,35 @@ export class AuthService {
                 role_id: user.role_id,
                 type: "access"
             },
-            ACCESS_TTL,
+            ACCESS_TTL
         );
         return AccessTokenDto.create(access_token);
     }
 
-
-    async updatePassword(
-        id: string,
-        dto: UpdatePasswordDto
-    ): Promise<void> {
-        if(dto.old_password == undefined){
-            throw new BadRequestException(
-                "Falta la contraseña actual."
-            );
+    async updatePassword(id: string, dto: UpdatePasswordDto): Promise<void> {
+        if (dto.old_password == undefined) {
+            throw new BadRequestException("Falta la contraseña actual.");
         }
-        if(dto.new_password == undefined){
-            throw new BadRequestException(
-                "Falta la contraseña nueva."
-            );
+        if (dto.new_password == undefined) {
+            throw new BadRequestException("Falta la contraseña nueva.");
         }
-        if(dto.new_password.length < MINIMUM_PASSWORD_LENGTH){
+        if (dto.new_password.length < MINIMUM_PASSWORD_LENGTH) {
             throw new BadRequestException(
                 "La contraseña debe ser de 8 o más carácteres."
-            )
+            );
         }
 
         const user = await this.user_repository.findByIdWithPassword(id);
-        if(!user){
+        if (!user) {
             throw new NotFoundException("Usuario no encontrado.");
         }
 
         const validPassword = await bcrypt.compare(
             dto.old_password,
-            user.password_hash,
+            user.password_hash
         );
 
-        if(!validPassword){
+        if (!validPassword) {
             throw new UnauthorizedException("Contraseña actual inválida.");
         }
 
@@ -142,14 +147,11 @@ export class AuthService {
         await this.user_repository.updatePasswordById(id, password_hash);
     }
 
-    isValidEmail(
-        email: string
-    ): boolean {
-
+    isValidEmail(email: string): boolean {
         if (email.length === 0 || email.length > 254) {
             return false;
         }
-        if (email !== email.trim()){
+        if (email !== email.trim()) {
             return false;
         }
 

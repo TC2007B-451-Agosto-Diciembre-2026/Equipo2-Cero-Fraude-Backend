@@ -29,28 +29,28 @@ function hmac(data: string): string {
 
 export function sign(
     payload: Omit<JwtPayload, "iat" | "exp">,
-    ttlSeconds: number,
+    ttlSeconds: number
 ): string {
-    const header = b64url({ alg: "HS256", typ: "JWT"});
-    const body = b64url({...payload, iat: now(), exp:now() + ttlSeconds});
+    const header = b64url({ alg: "HS256", typ: "JWT" });
+    const body = b64url({ ...payload, iat: now(), exp: now() + ttlSeconds });
     const signature = hmac(`${header}.${body}`);
     return `${header}.${body}.${signature}`;
 }
 
-export function verify(token: string): JwtPayload | null{
+export function verify(token: string): JwtPayload | null {
     const [header, body, signature] = token.split(".");
-    if(!header || !body || !signature) {
+    if (!header || !body || !signature) {
         return null;
     }
 
-    if(hmac(`${header}.${body}`) !== signature) {
+    if (hmac(`${header}.${body}`) !== signature) {
         return null;
     }
-    try{
+    try {
         const payload = JSON.parse(
-            Buffer.from(body, "base64url").toString(),
+            Buffer.from(body, "base64url").toString()
         ) as JwtPayload;
-        if(payload.exp > now()) {
+        if (payload.exp > now()) {
             return payload;
         }
     } catch {

@@ -1,8 +1,7 @@
-import { UserEntity } from "../../entities/user.entity"
+import { UserEntity } from "../../entities/user.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class ResponseUserDto {
-
     @ApiProperty({
         description: "Identificador del usuario.",
         example: "550e8400-e29b-41d4-a716-446655440000"
@@ -13,7 +12,7 @@ export class ResponseUserDto {
         example: "andres123"
     })
     username: string;
-     @ApiProperty({
+    @ApiProperty({
         description: "Correo del usuario.",
         example: "andres123@correo.com"
     })
@@ -34,7 +33,7 @@ export class ResponseUserDto {
     })
     role_id: number;
 
-    static fromEntity(user : UserEntity){
+    static fromEntity(user: UserEntity) {
         const dto = new ResponseUserDto();
         dto.id = user.id;
         dto.username = user.username;

@@ -51,21 +51,21 @@ export class CatalogueRepository {
     async findRoles(): Promise<UserRoleEntity[]> {
         const [rows] = await this.pool.query<CatalogueRow[]>(
             `SELECT ${STANDARD_COLUMNS}
-            FROM user_role`,
+            FROM user_role`
         );
-        return rows.map(row => this.toUserRoleEntity(row));
+        return rows.map((row) => this.toUserRoleEntity(row));
     }
 
     async findReactions(): Promise<ReactionTypeEntity[]> {
         const [rows] = await this.pool.query<CatalogueRow[]>(
             `SELECT ${STANDARD_COLUMNS}
-            FROM reaction_type`,
+            FROM reaction_type`
         );
-        return rows.map(row => this.toReactionTypeEntity(row));
+        return rows.map((row) => this.toReactionTypeEntity(row));
     }
 
     async createReaction(
-        dto: CreateReactionTypeDto,
+        dto: CreateReactionTypeDto
     ): Promise<ReactionTypeEntity> {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `INSERT INTO reaction_type (name, code)
@@ -77,7 +77,7 @@ export class CatalogueRepository {
             `SELECT ${STANDARD_COLUMNS}
             FROM reaction_type
             WHERE id = ?`,
-            [result.insertId],
+            [result.insertId]
         );
 
         return this.toReactionTypeEntity(rows[0]);
@@ -86,21 +86,21 @@ export class CatalogueRepository {
     async findStates(): Promise<PostStatusEntity[]> {
         const [rows] = await this.pool.query<CatalogueRow[]>(
             `SELECT ${STANDARD_COLUMNS}
-            FROM post_status`,
+            FROM post_status`
         );
-        return rows.map(row => this.toPostStatusEntity(row));
+        return rows.map((row) => this.toPostStatusEntity(row));
     }
 
     async findCategories(): Promise<FraudCategoryEntity[]> {
         const [rows] = await this.pool.query<CatalogueRow[]>(
             `SELECT ${STANDARD_COLUMNS}
-            FROM fraud_category`,
+            FROM fraud_category`
         );
-        return rows.map(row => this.toFraudCategoryEntity(row));
+        return rows.map((row) => this.toFraudCategoryEntity(row));
     }
 
     async createCategory(
-        dto: CreateFraudCategoryDto,
+        dto: CreateFraudCategoryDto
     ): Promise<FraudCategoryEntity> {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `INSERT INTO fraud_category (name, code)
@@ -112,7 +112,7 @@ export class CatalogueRepository {
             `SELECT ${STANDARD_COLUMNS}
             FROM fraud_category
             WHERE id = ?`,
-            [result.insertId],
+            [result.insertId]
         );
 
         return this.toFraudCategoryEntity(rows[0]);
@@ -121,21 +121,21 @@ export class CatalogueRepository {
     async findAuditActions(): Promise<AuditActionEntity[]> {
         const [rows] = await this.pool.query<CatalogueRow[]>(
             `SELECT ${STANDARD_COLUMNS}
-            FROM audit_action`,
+            FROM audit_action`
         );
-        return rows.map(row => this.toAuditActionEntity(row));
+        return rows.map((row) => this.toAuditActionEntity(row));
     }
 
     async findReportReasons(): Promise<ReportReasonEntity[]> {
         const [rows] = await this.pool.query<CatalogueRow[]>(
             `SELECT ${STANDARD_COLUMNS}
-            FROM report_reason`,
+            FROM report_reason`
         );
-        return rows.map(row => this.toReportReasonEntity(row));
+        return rows.map((row) => this.toReportReasonEntity(row));
     }
 
     async createReportReason(
-        dto: CreateReportReasonDto,
+        dto: CreateReportReasonDto
     ): Promise<ReportReasonEntity> {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `INSERT INTO report_reason (name, code)
@@ -147,7 +147,7 @@ export class CatalogueRepository {
             `SELECT ${STANDARD_COLUMNS}
             FROM report_reason
             WHERE id = ?`,
-            [result.insertId],
+            [result.insertId]
         );
 
         return this.toReportReasonEntity(rows[0]);
@@ -156,14 +156,12 @@ export class CatalogueRepository {
     async findTypes(): Promise<FraudTypeEntity[]> {
         const [rows] = await this.pool.query<CatalogueRow[]>(
             `SELECT ${STANDARD_COLUMNS}
-            FROM fraud_type`,
+            FROM fraud_type`
         );
-        return rows.map(row => this.toFraudTypeEntity(row));
+        return rows.map((row) => this.toFraudTypeEntity(row));
     }
 
-    async createType(
-        dto: CreateFraudTypeDto,
-    ): Promise<FraudTypeEntity> {
+    async createType(dto: CreateFraudTypeDto): Promise<FraudTypeEntity> {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `INSERT INTO fraud_type (name, code)
             VALUES (?, ?)`,
@@ -174,7 +172,7 @@ export class CatalogueRepository {
             `SELECT ${STANDARD_COLUMNS}
             FROM fraud_type
             WHERE id = ?`,
-            [result.insertId],
+            [result.insertId]
         );
 
         return this.toFraudTypeEntity(rows[0]);
@@ -183,21 +181,21 @@ export class CatalogueRepository {
     async findModifiedFields(): Promise<ModifiedFieldEntity[]> {
         const [rows] = await this.pool.query<CatalogueRow[]>(
             `SELECT ${STANDARD_COLUMNS}
-            FROM modified_field`,
+            FROM modified_field`
         );
-        return rows.map(row => this.toModifiedFieldEntity(row));
+        return rows.map((row) => this.toModifiedFieldEntity(row));
     }
 
     async findEvidenceTypes(): Promise<EvidenceTypeEntity[]> {
         const [rows] = await this.pool.query<EvidenceTypeRow[]>(
             `SELECT ${EVIDENCE_TYPE_COLUMNS}
-            FROM evidence_type`,
+            FROM evidence_type`
         );
-        return rows.map(row => this.toEvidenceTypeEntity(row));
+        return rows.map((row) => this.toEvidenceTypeEntity(row));
     }
 
     async createEvidenceType(
-        dto: CreateEvidenceTypeDto,
+        dto: CreateEvidenceTypeDto
     ): Promise<EvidenceTypeEntity> {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `INSERT INTO evidence_type (name)
@@ -209,7 +207,7 @@ export class CatalogueRepository {
             `SELECT ${EVIDENCE_TYPE_COLUMNS}
             FROM evidence_type
             WHERE id = ?`,
-            [result.insertId],
+            [result.insertId]
         );
 
         return this.toEvidenceTypeEntity(rows[0]);
@@ -218,14 +216,12 @@ export class CatalogueRepository {
     async findAuthorities(): Promise<AuthorityEntity[]> {
         const [rows] = await this.pool.query<AuthorityRow[]>(
             `SELECT ${AUTHORITY_COLUMNS}
-            FROM authority`,
+            FROM authority`
         );
-        return rows.map(row => this.toAuthorityEntity(row));
+        return rows.map((row) => this.toAuthorityEntity(row));
     }
 
-    async createAuthority(
-        dto: CreateAuthorityDto,
-    ): Promise<AuthorityEntity> {
+    async createAuthority(dto: CreateAuthorityDto): Promise<AuthorityEntity> {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `INSERT INTO authority (name, code, description)
             VALUES (?, ?, ?)`,
@@ -236,7 +232,7 @@ export class CatalogueRepository {
             `SELECT ${AUTHORITY_COLUMNS}
             FROM authority
             WHERE id = ?`,
-            [result.insertId],
+            [result.insertId]
         );
 
         return this.toAuthorityEntity(rows[0]);
@@ -244,7 +240,7 @@ export class CatalogueRepository {
 
     async updateAuthority(
         id: number,
-        dto: UpdateAuthorityDto,
+        dto: UpdateAuthorityDto
     ): Promise<AuthorityEntity | null> {
         const fields: string[] = [];
         const values: (string | number)[] = [];
@@ -265,14 +261,14 @@ export class CatalogueRepository {
             `UPDATE authority
             SET ${fields.join(", ")}
             WHERE id = ?`,
-            values,
+            values
         );
 
         const [rows] = await this.pool.query<AuthorityRow[]>(
             `SELECT ${AUTHORITY_COLUMNS}
             FROM authority
             WHERE id = ?`,
-            [id],
+            [id]
         );
 
         if (rows.length === 0) {
@@ -281,7 +277,6 @@ export class CatalogueRepository {
 
         return this.toAuthorityEntity(rows[0]);
     }
-
 
     private toUserRoleEntity(row: CatalogueRow): UserRoleEntity {
         const entity = new UserRoleEntity();
@@ -383,4 +378,3 @@ export class CatalogueRepository {
         return entity;
     }
 }
-

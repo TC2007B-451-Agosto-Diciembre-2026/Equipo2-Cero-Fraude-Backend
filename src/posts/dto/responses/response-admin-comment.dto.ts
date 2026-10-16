@@ -2,12 +2,12 @@ import { ApiProperty } from "@nestjs/swagger";
 import { ResponseCommentDto } from "./response-comment.dto";
 import { CommentEntity } from "../../entities/comment.entity";
 
-export class ResponseAdminCommentDto extends ResponseCommentDto{
+export class ResponseAdminCommentDto extends ResponseCommentDto {
     @ApiProperty({
         example: "2026-09-29T20:30:00.000Z",
-        description: "Fecha de creación del comentario.",
+        description: "Fecha de creación del comentario."
     })
-    is_visible: boolean
+    is_visible: boolean;
 
     static fromEntity(
         comment: CommentEntity,

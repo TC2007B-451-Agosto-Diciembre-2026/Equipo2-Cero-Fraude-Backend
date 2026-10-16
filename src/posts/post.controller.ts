@@ -1,7 +1,32 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+    UseGuards
+} from "@nestjs/common";
+import {
+    ApiBearerAuth,
+    ApiCreatedResponse,
+    ApiOperation,
+    ApiParam,
+    ApiResponse,
+    ApiTags
+} from "@nestjs/swagger";
 import { AuthGuard } from "../auth/auth.guard";
-import { ApiBadRequestResponse, ApiConflictResponse, ApiForbiddenResponse, ApiUnauthorizedResponse, ApiNotFoundResponse, ApiNoContentResponse } from "../common/api-responses";
+import {
+    ApiBadRequestResponse,
+    ApiConflictResponse,
+    ApiForbiddenResponse,
+    ApiUnauthorizedResponse,
+    ApiNotFoundResponse,
+    ApiNoContentResponse
+} from "../common/api-responses";
 import { FindPostsDto } from "./dto/requests/find-posts.dto";
 import { CurrentUser } from "../auth/current-user.decorator";
 import type { JwtPayload } from "../auth/jwt";
@@ -37,21 +62,22 @@ export class PostController {
     @ApiResponse({
         status: 200,
         description: "Página de publicaciones.",
-        type: ResponsePostsDto,
+        type: ResponsePostsDto
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
     findAll(
         @Query() query: FindPostsDto,
         @CurrentUser() user: JwtPayload
-    ): Promise<ResponsePostsDto>{
+    ): Promise<ResponsePostsDto> {
         return this.service.findAll(query, user.role_id);
     }
 
     @Get("me")
     @ApiOperation({
         summary: "Obtener mis publicaciones",
-        description: "Obtener una página de publicaciones de fraude del usuario solicitante."
+        description:
+            "Obtener una página de publicaciones de fraude del usuario solicitante."
     })
     @ApiResponse({
         status: 200,
@@ -111,7 +137,7 @@ export class PostController {
     createPost(
         @CurrentUser() user: JwtPayload,
         @Body() dto: CreatePostDto
-    ): Promise<ResponseDetailedPostDto>{
+    ): Promise<ResponseDetailedPostDto> {
         return this.service.createPost(dto, user.sub);
     }
 
@@ -140,7 +166,7 @@ export class PostController {
         @Param("postId", ParseIntPipe) postId: number,
         @CurrentUser() user: JwtPayload,
         @Body() dto: UpdatePostDto
-    ): Promise<ResponseDetailedPostDto>{
+    ): Promise<ResponseDetailedPostDto> {
         return this.service.updatePost(postId, dto, user.sub, user.role_id);
     }
 
@@ -200,9 +226,12 @@ export class PostController {
         @Param("evidenceId", ParseIntPipe) evidence_id: number,
         @Body() dto: UpdatePostEvidenceDto
     ): Promise<ResponseEvidenceDto | null> {
-        return this.service.updatePostEvidence(postId, evidence_id, dto.is_visible);
+        return this.service.updatePostEvidence(
+            postId,
+            evidence_id,
+            dto.is_visible
+        );
     }
-
 
     @Delete(":postId/evidences/:evidenceId")
     @ApiOperation({
@@ -231,23 +260,29 @@ export class PostController {
         @Param("evidenceId", ParseIntPipe) evidence_id: number,
         @CurrentUser() user: JwtPayload
     ): Promise<void> {
-        return this.service.deletePostEvidence(postId, evidence_id, user.sub, user.role_id);
+        return this.service.deletePostEvidence(
+            postId,
+            evidence_id,
+            user.sub,
+            user.role_id
+        );
     }
 
     @Post(":postId/comments")
     @ApiOperation({
         summary: "Crear un comentario en una publicación",
-        description: "Permite a un administrador agregar un comentario público a una publicación publicada o validada.",
+        description:
+            "Permite a un administrador agregar un comentario público a una publicación publicada o validada."
     })
     @ApiParam({
         name: "postId",
         description: "ID de la publicación",
         type: Number,
-        example: 4,
+        example: 4
     })
     @ApiCreatedResponse({
         description: "Comentario creado correctamente",
-        type: ResponseCommentDto,
+        type: ResponseCommentDto
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
@@ -259,7 +294,7 @@ export class PostController {
         @Param("postId", ParseIntPipe) postId: number,
         @Body() dto: CreateCommentDto,
         @CurrentUser() user: JwtPayload
-    ): Promise<ResponseCommentDto>{
+    ): Promise<ResponseCommentDto> {
         return this.service.createComment(postId, user.sub, dto);
     }
 
@@ -296,6 +331,10 @@ export class PostController {
         @Param("commentId", ParseIntPipe) comment_id: number,
         @Body() dto: UpdateCommentDto
     ): Promise<ResponseCommentDto | null> {
-        return this.service.updatePostComment(postId, comment_id, dto.is_visible);
+        return this.service.updatePostComment(
+            postId,
+            comment_id,
+            dto.is_visible
+        );
     }
 }

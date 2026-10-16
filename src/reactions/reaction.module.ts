@@ -8,6 +8,6 @@ import { ReactionRepository } from "./reaction.repository";
     imports: [DatabaseModule],
     controllers: [ReactionController],
     providers: [ReactionService, ReactionRepository],
-    exports: [ReactionRepository],
+    exports: [ReactionRepository]
 })
 export class ReactionModule {}

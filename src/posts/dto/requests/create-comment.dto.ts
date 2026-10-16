@@ -4,8 +4,9 @@ import { IsNotEmpty, IsString, MaxLength, Matches } from "class-validator";
 export class CreateCommentDto {
     @ApiProperty({
         example: "Se recomienda verificar la identidad del vendedor.",
-        description: "Contenido del comentario público realizado por un administrador.",
-        maxLength: 1000,
+        description:
+            "Contenido del comentario público realizado por un administrador.",
+        maxLength: 1000
     })
     @IsString()
     @IsNotEmpty()

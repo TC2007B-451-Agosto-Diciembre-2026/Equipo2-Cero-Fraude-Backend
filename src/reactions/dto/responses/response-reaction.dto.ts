@@ -4,17 +4,17 @@ import { ReactionEntity } from "../../entities/reaction.entity";
 export class ResponseReactionDto {
     @ApiProperty({
         example: 1,
-        description: "Identificador de la publicación.",
+        description: "Identificador de la publicación."
     })
     post: number;
     @ApiProperty({
         example: 1,
-        description: "Identificador del tipo de reacción.",
+        description: "Identificador del tipo de reacción."
     })
     reaction: number;
     @ApiProperty({
         example: "550e8400-e29b-41d4-a716-446655440000",
-        description: "Identificador del usuario que reaccionó.",
+        description: "Identificador del usuario que reaccionó."
     })
     user: string;
 

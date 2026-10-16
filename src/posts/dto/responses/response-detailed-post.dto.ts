@@ -9,42 +9,43 @@ import { ResponseReactionSummaryDto } from "../../../reactions/dto/responses/res
 export class ResponseDetailedPostDto extends ResponsePostDto {
     @ApiProperty({
         description: "Nombre del vendedor asociado a la publicación.",
-        example: "Vendedor Ejemplo",
+        example: "Vendedor Ejemplo"
     })
     seller_name: string | null;
 
     @ApiProperty({
         description: "Producto asociado a la publicación.",
-        example: "iPhone 17 Pro",
+        example: "iPhone 17 Pro"
     })
     product: string | null;
 
     @ApiProperty({
         description: "Número telefónico asociado a la publicación.",
-        example: "8111234567",
+        example: "8111234567"
     })
     phone_number: string | null;
 
     @ApiProperty({
         description: "URL asociada a la publicación.",
-        example: "https://ejemplo.com",
+        example: "https://ejemplo.com"
     })
     url: string | null;
 
     @ApiProperty({
         description: "Plataforma donde ocurrió el incidente.",
-        example: "Marketplace",
+        example: "Marketplace"
     })
     platform: string | null;
 
     @ApiProperty({
         description: "Correo electrónico asociado al posible fraude.",
-        example: "fraude@ejemplo.com",
+        example: "fraude@ejemplo.com"
     })
     fraudulent_email: string | null;
 
     @ApiProperty({
-        description: "Cantidad de reacciones de la publicación y reacción del usuario autenticado.",
+        description:
+            "Cantidad de reacciones de la publicación y reacción del usuario autenticado.",
         type: ResponseReactionSummaryDto
     })
     reactions: ResponseReactionSummaryDto;
@@ -71,10 +72,7 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
         post: PostEntity,
         baseUrl: string
     ): ResponseDetailedPostDto {
-        const publicDto = ResponsePostDto.fromEntity(
-            post,
-            baseUrl
-        );
+        const publicDto = ResponsePostDto.fromEntity(post, baseUrl);
         const dto = new ResponseDetailedPostDto();
 
         Object.assign(dto, publicDto);
@@ -86,20 +84,14 @@ export class ResponseDetailedPostDto extends ResponsePostDto {
         dto.platform = post.platform;
         dto.fraudulent_email = post.fraudulent_email;
         dto.reactions = ResponseReactionSummaryDto.fromEntity(post.reactions);
-        dto.evidences = (post.evidences ?? []).map(
-            evidence => ResponseEvidenceDto.fromEntity(
-                evidence,
-                baseUrl
-            )
+        dto.evidences = (post.evidences ?? []).map((evidence) =>
+            ResponseEvidenceDto.fromEntity(evidence, baseUrl)
         );
-        dto.comments = (post.comments ?? []).map(
-            comment => ResponseCommentDto.fromEntity(
-                comment,
-                baseUrl
-            )
+        dto.comments = (post.comments ?? []).map((comment) =>
+            ResponseCommentDto.fromEntity(comment, baseUrl)
         );
         dto.authorities = (post.authorities ?? []).map(
-            authority => authority.id
+            (authority) => authority.id
         );
         return dto;
     }

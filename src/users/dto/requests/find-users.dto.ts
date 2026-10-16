@@ -5,13 +5,13 @@ import {
     IsDateString,
     IsInt,
     IsOptional,
-    Min,
+    Min
 } from "class-validator";
 
 export class FindUsersDto {
     @ApiPropertyOptional({
         description: "Página de resultados. Comienza en 1.",
-        example: 1,
+        example: 1
     })
     @IsOptional()
     @Type(() => Number)
@@ -21,7 +21,7 @@ export class FindUsersDto {
 
     @ApiPropertyOptional({
         description: "Filtra por estado de la cuenta.",
-        example: true,
+        example: true
     })
     @IsOptional()
     @Transform(({ value }) => {
@@ -34,7 +34,7 @@ export class FindUsersDto {
 
     @ApiPropertyOptional({
         description: "Filtra por identificador de rol.",
-        example: 1,
+        example: 1
     })
     @IsOptional()
     @Type(() => Number)
@@ -44,7 +44,7 @@ export class FindUsersDto {
 
     @ApiPropertyOptional({
         description: "Fecha inicial en formato ISO 8601.",
-        example: "2026-09-01T00:00:00.000Z",
+        example: "2026-09-01T00:00:00.000Z"
     })
     @IsOptional()
     @IsDateString()
@@ -52,7 +52,7 @@ export class FindUsersDto {
 
     @ApiPropertyOptional({
         description: "Fecha final en formato ISO 8601.",
-        example: "2026-09-27T23:59:59.999Z",
+        example: "2026-09-27T23:59:59.999Z"
     })
     @IsOptional()
     @IsDateString()

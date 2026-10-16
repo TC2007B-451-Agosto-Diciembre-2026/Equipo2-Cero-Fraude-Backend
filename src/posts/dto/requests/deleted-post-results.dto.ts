@@ -1,3 +1,3 @@
-export class DeletedPostResult{
+export class DeletedPostResult {
     evidence_paths: string[];
 }

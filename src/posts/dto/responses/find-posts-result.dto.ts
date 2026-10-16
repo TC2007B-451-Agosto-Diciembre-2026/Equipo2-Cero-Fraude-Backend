@@ -1,6 +1,6 @@
 import { PostEntity } from "../../entities/post.entity";
 
 export interface FindPostsResult {
-    posts: PostEntity [];
+    posts: PostEntity[];
     total: number;
 }

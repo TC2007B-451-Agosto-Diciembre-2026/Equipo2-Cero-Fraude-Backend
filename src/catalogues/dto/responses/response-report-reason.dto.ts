@@ -4,19 +4,19 @@ import { ReportReasonEntity } from "../../entities/report-reason.entity";
 export class ResponseReportReasonDto {
     @ApiProperty({
         description: "Identificador de la razón de reporte.",
-        example: 1,
+        example: 1
     })
     id!: number;
 
     @ApiProperty({
         description: "Nombre de la razón de reporte.",
-        example: "Información incorrecta",
+        example: "Información incorrecta"
     })
     name!: string;
 
     @ApiProperty({
         description: "Código de la razón de reporte.",
-        example: "FALSE_INFO",
+        example: "FALSE_INFO"
     })
     code!: string;
 

@@ -4,19 +4,19 @@ import { ModifiedFieldEntity } from "../../entities/modified-field.entity";
 export class ResponseModifiedFieldDto {
     @ApiProperty({
         description: "Identificador del campo modificado.",
-        example: 1,
+        example: 1
     })
     id!: number;
 
     @ApiProperty({
         description: "Nombre del campo modificado.",
-        example: "Título",
+        example: "Título"
     })
     name!: string;
 
     @ApiProperty({
         description: "Código del campo modificado.",
-        example: "TITLE",
+        example: "TITLE"
     })
     code!: string;
 

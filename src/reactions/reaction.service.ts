@@ -2,7 +2,7 @@ import {
     BadRequestException,
     ForbiddenException,
     Injectable,
-    NotFoundException,
+    NotFoundException
 } from "@nestjs/common";
 import { ReactionRepository } from "./reaction.repository";
 import { ResponseReactionDto } from "./dto/responses/response-reaction.dto";
@@ -14,7 +14,7 @@ export class ReactionService {
 
     async findByPost(
         post_id: number,
-        user_id: string,
+        user_id: string
     ): Promise<ResponseReactionSummaryDto> {
         const post = await this.repository.findPostForReaction(post_id);
         if (!post) {
@@ -29,7 +29,7 @@ export class ReactionService {
     async react(
         post_id: number,
         reaction_type_id: number,
-        user_id: string,
+        user_id: string
     ): Promise<ResponseReactionDto> {
         const post = await this.repository.findPostForReaction(post_id);
         if (!post) {
@@ -38,7 +38,7 @@ export class ReactionService {
 
         if (post.author_id === user_id) {
             throw new ForbiddenException(
-                "No puedes reaccionar a tu propia publicación.",
+                "No puedes reaccionar a tu propia publicación."
             );
         }
 
@@ -51,7 +51,7 @@ export class ReactionService {
         const reaction = await this.repository.upsert(
             user_id,
             post_id,
-            reaction_type_id,
+            reaction_type_id
         );
 
         return ResponseReactionDto.fromEntity(reaction);

@@ -4,19 +4,19 @@ import { AuditActionEntity } from "../../entities/audit-action.entity";
 export class ResponseAuditActionDto {
     @ApiProperty({
         description: "Identificador de la acción de auditoría.",
-        example: 1,
+        example: 1
     })
     id!: number;
 
     @ApiProperty({
         description: "Nombre de la acción de auditoría.",
-        example: "Editar",
+        example: "Editar"
     })
     name!: string;
 
     @ApiProperty({
         description: "Código de la acción de auditoría.",
-        example: "UPDATE",
+        example: "UPDATE"
     })
     code!: string;
 

@@ -8,14 +8,14 @@ import {
     ParseIntPipe,
     Post,
     Query,
-    UseGuards,
+    UseGuards
 } from "@nestjs/common";
 import {
     ApiBearerAuth,
     ApiOperation,
     ApiParam,
     ApiResponse,
-    ApiTags,
+    ApiTags
 } from "@nestjs/swagger";
 import { ReportService } from "./report.service";
 import { AuthGuard } from "../auth/auth.guard";
@@ -31,7 +31,7 @@ import {
     ApiForbiddenResponse,
     ApiNoContentResponse,
     ApiNotFoundResponse,
-    ApiUnauthorizedResponse,
+    ApiUnauthorizedResponse
 } from "../common/api-responses";
 import { RolesGuard } from "../auth/roles.guard";
 import { Roles } from "../auth/roles.decorator";
@@ -47,18 +47,18 @@ export class ReportController {
     @Post("posts/:postId/reports")
     @ApiOperation({
         summary: "Crear un reporte",
-        description: "Crea un reporte sobre una publicación de fraude.",
+        description: "Crea un reporte sobre una publicación de fraude."
     })
     @ApiParam({
         name: "postId",
         description: "ID de la publicación que se desea reportar.",
         type: Number,
-        example: 4,
+        example: 4
     })
     @ApiResponse({
         status: 201,
         description: "Reporte creado correctamente.",
-        type: ResponseReportDto,
+        type: ResponseReportDto
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
@@ -68,7 +68,7 @@ export class ReportController {
     create(
         @Param("postId", ParseIntPipe) postId: number,
         @CurrentUser() user: JwtPayload,
-        @Body() dto: CreateReportDto,
+        @Body() dto: CreateReportDto
     ): Promise<ResponseReportDto> {
         return this.service.create(postId, user.sub, dto);
     }
@@ -77,12 +77,12 @@ export class ReportController {
     @ApiOperation({
         summary: "Obtener reportes",
         description:
-            "Obtiene una página de los reportes realizados sobre publicaciones.",
+            "Obtiene una página de los reportes realizados sobre publicaciones."
     })
     @ApiResponse({
         status: 200,
         description: "Página de reportes.",
-        type: ResponseReportsDto,
+        type: ResponseReportsDto
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
@@ -97,18 +97,18 @@ export class ReportController {
     @ApiOperation({
         summary: "Obtener reportes de una publicación",
         description:
-            "Obtiene una página de los reportes realizados sobre una publicación.",
+            "Obtiene una página de los reportes realizados sobre una publicación."
     })
     @ApiParam({
         name: "postId",
         description: "ID de la publicación.",
         type: Number,
-        example: 4,
+        example: 4
     })
     @ApiResponse({
         status: 200,
         description: "Página de reportes de la publicación.",
-        type: ResponseReportsDto,
+        type: ResponseReportsDto
     })
     @ApiBadRequestResponse()
     @ApiUnauthorizedResponse()
@@ -118,7 +118,7 @@ export class ReportController {
     @Roles(ADMIN_ROLE_ID)
     findByPost(
         @Param("postId", ParseIntPipe) postId: number,
-        @Query() query: FindReportsDto,
+        @Query() query: FindReportsDto
     ): Promise<ResponseReportsDto> {
         return this.service.findByPost(postId, query);
     }
@@ -127,19 +127,19 @@ export class ReportController {
     @HttpCode(204)
     @ApiOperation({
         summary: "Eliminar un reporte",
-        description: "Elimina un reporte de una publicación.",
+        description: "Elimina un reporte de una publicación."
     })
     @ApiParam({
         name: "postId",
         description: "ID de la publicación.",
         type: Number,
-        example: 4,
+        example: 4
     })
     @ApiParam({
         name: "reportId",
         description: "ID del reporte.",
         type: Number,
-        example: 63,
+        example: 63
     })
     @ApiNoContentResponse()
     @ApiBadRequestResponse()
@@ -150,7 +150,7 @@ export class ReportController {
     @Roles(ADMIN_ROLE_ID)
     delete(
         @Param("postId", ParseIntPipe) postId: number,
-        @Param("reportId", ParseIntPipe) reportId: number,
+        @Param("reportId", ParseIntPipe) reportId: number
     ): Promise<void> {
         return this.service.delete(postId, reportId);
     }

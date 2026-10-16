@@ -4,17 +4,27 @@ import {
     Post,
     UploadedFile,
     UseGuards,
-    UseInterceptors,
+    UseInterceptors
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiBody,
+    ApiConsumes,
+    ApiOperation,
+    ApiResponse,
+    ApiTags
+} from "@nestjs/swagger";
 import { AuthGuard } from "../auth/auth.guard";
 import { diskStorage } from "multer";
 import { EvidenceService } from "./evidence.service";
 import { CurrentUser } from "../auth/current-user.decorator";
 import type { JwtPayload } from "../auth/jwt";
 import { ResponseDetailedEvidenceDto } from "./dto/response-detailed-evidence.dto";
-import { ApiBadRequestResponse, ApiUnauthorizedResponse } from "../common/api-responses";
+import {
+    ApiBadRequestResponse,
+    ApiUnauthorizedResponse
+} from "../common/api-responses";
 
 @ApiTags("evidences")
 @Controller("evidences")
@@ -26,11 +36,10 @@ export class EvidenceController {
     @Post()
     @ApiOperation({
         summary: "Crear una evidencia",
-        description: "Crear una evidencia que inicialmente no está asociada a una publicación."
+        description:
+            "Crear una evidencia que inicialmente no está asociada a una publicación."
     })
-    @UseInterceptors(
-        FileInterceptor("file")
-    )
+    @UseInterceptors(FileInterceptor("file"))
     @ApiConsumes("multipart/form-data")
     @ApiBody({
         schema: {
@@ -50,8 +59,8 @@ export class EvidenceController {
         @UploadedFile() file: Express.Multer.File,
         @CurrentUser() user: JwtPayload
     ): Promise<ResponseDetailedEvidenceDto> {
-        if(!file) {
-            throw new BadRequestException("No se ha enviado un archivo")
+        if (!file) {
+            throw new BadRequestException("No se ha enviado un archivo");
         }
         return this.service.create(user.sub, file);
     }

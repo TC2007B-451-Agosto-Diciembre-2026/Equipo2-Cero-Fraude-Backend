@@ -4,26 +4,26 @@ import { AuthorityEntity } from "../../entities/authority.entity";
 export class ResponseAuthorityDto {
     @ApiProperty({
         description: "Identificador de la autoridad.",
-        example: 1,
+        example: 1
     })
     id!: number;
 
     @ApiProperty({
         description: "Nombre de la autoridad.",
-        example: "CONDUSEF",
+        example: "CONDUSEF"
     })
     name!: string;
 
     @ApiProperty({
         description: "Código de la autoridad.",
-        example: "CONDUSEF",
+        example: "CONDUSEF"
     })
     code!: string;
 
     @ApiProperty({
         description: "Descripción de la autoridad.",
         example:
-            "Brinda orientación y apoyo en asuntos relacionados con productos, servicios e instituciones financieras.",
+            "Brinda orientación y apoyo en asuntos relacionados con productos, servicios e instituciones financieras."
     })
     description!: string;
 

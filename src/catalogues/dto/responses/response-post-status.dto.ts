@@ -4,19 +4,19 @@ import { PostStatusEntity } from "../../entities/post-status.entity";
 export class ResponsePostStatusDto {
     @ApiProperty({
         description: "Identificador del estado.",
-        example: 1,
+        example: 1
     })
     id!: number;
 
     @ApiProperty({
         description: "Nombre del estado.",
-        example: "Borrador",
+        example: "Borrador"
     })
     name!: string;
 
     @ApiProperty({
         description: "Código del estado.",
-        example: "DRAFT",
+        example: "DRAFT"
     })
     code!: string;
 

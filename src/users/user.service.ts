@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException
+} from "@nestjs/common";
 import { UserRepository } from "./user.repository";
 import { ResponseUserDto } from "./dto/responses/response-user.dto";
 import { UpdateUserDto } from "./dto/requests/update-user.dto";
@@ -10,15 +14,14 @@ import { handleDuplicateError } from "../common/error-handler";
 
 @Injectable()
 export class UserService {
-    constructor(private readonly repository : UserRepository) {}
+    constructor(private readonly repository: UserRepository) {}
 
-    async findAll(
-        query: FindUsersDto
-    ): Promise<ResponseUsersDto> {
-
-        if(query.initial_date && query.final_date){
-            if(query.initial_date > query.final_date){
-                throw new BadRequestException("El rango de fecha solicitado es inválido.");
+    async findAll(query: FindUsersDto): Promise<ResponseUsersDto> {
+        if (query.initial_date && query.final_date) {
+            if (query.initial_date > query.final_date) {
+                throw new BadRequestException(
+                    "El rango de fecha solicitado es inválido."
+                );
             }
         }
 
@@ -28,20 +31,16 @@ export class UserService {
         const total_pages = Math.ceil(result.total / PAGE_SIZE);
 
         return {
-            data: result.users.map(
-                user => ResponseUserDto.fromEntity(user)
-            ),
+            data: result.users.map((user) => ResponseUserDto.fromEntity(user)),
             page: page,
             total_pages: total_pages,
             total: result.total
         };
     }
 
-    async findById(
-        id: string
-    ): Promise<ResponseUserDto> {
+    async findById(id: string): Promise<ResponseUserDto> {
         const user = await this.repository.findById(id);
-        if(!user){
+        if (!user) {
             throw new NotFoundException("Usuario no encontrado");
         }
 
@@ -52,31 +51,26 @@ export class UserService {
         id: string,
         dto: UpdateMeDto
     ): Promise<ResponseUserDto | null> {
-        if(dto.username === undefined){
+        if (dto.username === undefined) {
             throw new BadRequestException("Al menos un campo requerido.");
         }
-        try{
-            const user = await this.repository.updateById(
-                id,
-                { username: dto.username }
-            );
-            if(!user) {
+        try {
+            const user = await this.repository.updateById(id, {
+                username: dto.username
+            });
+            if (!user) {
                 throw new NotFoundException("Usuario no encontrado");
             }
             return ResponseUserDto.fromEntity(user);
-
-        }catch (error) {
+        } catch (error) {
             handleDuplicateError(error);
         }
 
         return null;
     }
 
-    async updateById(
-        id: string,
-        dto: UpdateUserDto
-    ): Promise<ResponseUserDto> {
-        if(dto.is_active === undefined && dto.role_id === undefined){
+    async updateById(id: string, dto: UpdateUserDto): Promise<ResponseUserDto> {
+        if (dto.is_active === undefined && dto.role_id === undefined) {
             throw new BadRequestException("Al menos un campo requerido.");
         }
 
@@ -85,7 +79,7 @@ export class UserService {
             is_active: dto.is_active
         });
 
-        if(!user) {
+        if (!user) {
             throw new NotFoundException("Usuario no encontrado");
         }
 

@@ -11,11 +11,19 @@ import { ReportModule } from "./reports/report.module";
 import { ReactionModule } from "./reactions/reaction.module";
 
 @Module({
-    imports: [ConfigModule.forRoot({
-        isGlobal: true,
-    }),
-    AuthModule, CataloguesModule ,UserModule, PostModule ,EvidenceModule ,ReportModule ,ReactionModule],
-// temporal
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true
+        }),
+        AuthModule,
+        CataloguesModule,
+        UserModule,
+        PostModule,
+        EvidenceModule,
+        ReportModule,
+        ReactionModule
+    ],
+    // temporal
     controllers: [AppController],
     providers: [AppService]
 })

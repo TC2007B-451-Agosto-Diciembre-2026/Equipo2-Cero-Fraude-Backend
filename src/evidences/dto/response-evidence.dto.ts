@@ -4,27 +4,28 @@ import { EvidenceEntity } from "../entities/evidence.entity";
 export class ResponseEvidenceDto {
     @ApiProperty({
         example: 1,
-        description: "Identificador de la evidencia.",
+        description: "Identificador de la evidencia."
     })
     id: number;
 
     @ApiProperty({
-        example: "http://localhost:3000/uploads/550e8400-e29b-41d4-a716-446655440000.pdf",
-        description: "Url de la evidencia guardada.",
+        example:
+            "http://localhost:3000/uploads/550e8400-e29b-41d4-a716-446655440000.pdf",
+        description: "Url de la evidencia guardada."
     })
     url: string;
 
     @ApiProperty({
         example: 1,
         description: "Identificador del tipo de la evidencia.",
-        nullable: true,
+        nullable: true
     })
     evidence_type_id: number;
 
     @ApiProperty({
         example: null,
         description: "Identificador de la publicación asociada a la evidencia.",
-        nullable: true,
+        nullable: true
     })
     post_id: number | null;
 

@@ -4,19 +4,19 @@ import { ReactionTypeEntity } from "../../entities/reaction-type.entity";
 export class ResponseReactionTypeDto {
     @ApiProperty({
         description: "Identificador de la reacción.",
-        example: 1,
+        example: 1
     })
     id!: number;
 
     @ApiProperty({
         description: "Nombre de la reacción.",
-        example: "like",
+        example: "like"
     })
     name!: string;
 
     @ApiProperty({
         description: "Código de la reacción.",
-        example: "LIKE",
+        example: "LIKE"
     })
     code!: string;
 

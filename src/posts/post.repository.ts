@@ -1,7 +1,22 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    ForbiddenException,
+    Inject,
+    Injectable,
+    NotFoundException
+} from "@nestjs/common";
 import type { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { DB_POOL } from "../database/database.module";
-import { ADMIN_ROLE_ID, DRAFT_STATUS_ID, PAGE_SIZE, PUBLISHED_STATUS_ID, REJECTED_STATUS_ID, UPLOADED_STATUS_ID, USER_ROLE_ID, VALIDATED_STATUS_ID } from "../common/constants";
+import {
+    ADMIN_ROLE_ID,
+    DRAFT_STATUS_ID,
+    PAGE_SIZE,
+    PUBLISHED_STATUS_ID,
+    REJECTED_STATUS_ID,
+    UPLOADED_STATUS_ID,
+    USER_ROLE_ID,
+    VALIDATED_STATUS_ID
+} from "../common/constants";
 import { FindPostsResult } from "./dto/responses/find-posts-result.dto";
 import { CreatePostDto } from "./dto/requests/create-post.dto";
 import { PostEntity } from "./entities/post.entity";
@@ -19,36 +34,36 @@ const POST_COLUMNS =
     "fp.id, fp.title, fp.description, fp.status_id," +
     "fp.is_fraud, fp.published_at, fp.category_id";
 const DETAILED_POST_COLUMNS =
-    "fp.id, fp.title, fp.description, fp.seller_name,"+
-    "fp.product, fp.phone_number, fp.url, fp.platform,"+
-    "fp.fraudulent_email, fp.status_id, fp.is_fraud,"+
+    "fp.id, fp.title, fp.description, fp.seller_name," +
+    "fp.product, fp.phone_number, fp.url, fp.platform," +
+    "fp.fraudulent_email, fp.status_id, fp.is_fraud," +
     "fp.published_at, fp.category_id";
 
 const USER_COLUMN = "u.username AS author";
 
 const TEXT_COLUMNS =
-    "fp.title, fp.seller_name, fp.product, fp.phone_number,"+
+    "fp.title, fp.seller_name, fp.product, fp.phone_number," +
     "fp.url, fp.platform, fp.fraudulent_email";
 
-const ADMIN_POST_DETAILED_COLUMNS = DETAILED_POST_COLUMNS + ", fp.is_anonymous, fp.deleted_at";
+const ADMIN_POST_DETAILED_COLUMNS =
+    DETAILED_POST_COLUMNS + ", fp.is_anonymous, fp.deleted_at";
 
 const EVIDENCE_COLUMNS =
-    "e.id, e.owner_id, e.is_visible, e.storage_path,"+
-    "e.created_at, e.evidence_type_id, e.post_id"
+    "e.id, e.owner_id, e.is_visible, e.storage_path," +
+    "e.created_at, e.evidence_type_id, e.post_id";
 
 const POST_TYPE_COLUMNS = "pf.post_id, pf.fraud_type_id";
 
 const CREATE_COLUMNS =
     "title, description, seller_name, product, phone_number, url," +
-    "platform, fraudulent_email, status_id, is_anonymous,"+
+    "platform, fraudulent_email, status_id, is_anonymous," +
     "author_id, category_id";
 
-const AUTHORITY_COLUMNS =
-    "a.id, a.name, a.code, a.description"
+const AUTHORITY_COLUMNS = "a.id, a.name, a.code, a.description";
 
 const COMMENT_COLUMNS =
-    "pc.id, pc.is_visible, pc.content, pc.created_at, pc.updated_at,"+
-    "pc.author_id, pc.post_id, "
+    "pc.id, pc.is_visible, pc.content, pc.created_at, pc.updated_at," +
+    "pc.author_id, pc.post_id, ";
 
 interface PostRow extends RowDataPacket {
     id: number;
@@ -117,7 +132,7 @@ interface CommentRow extends RowDataPacket {
 }
 
 @Injectable()
-export class PostRepository{
+export class PostRepository {
     constructor(
         @Inject(DB_POOL) private readonly pool: Pool,
         private readonly reaction_repository: ReactionRepository
@@ -125,11 +140,9 @@ export class PostRepository{
 
     async findAll(
         query: DerivedFindPostsDto,
-        status_condition: string,
+        status_condition: string
     ): Promise<FindPostsResult> {
-        const conditions: string[] = [
-            status_condition
-        ];
+        const conditions: string[] = [status_condition];
         const values: (number | string)[] = [];
 
         const page = query.page ?? 1;
@@ -137,18 +150,18 @@ export class PostRepository{
 
         let where = "";
 
-        if(query.text !== undefined){
-            conditions.push(`CONCAT_WS(" ", ${TEXT_COLUMNS}) LIKE ?`)
+        if (query.text !== undefined) {
+            conditions.push(`CONCAT_WS(" ", ${TEXT_COLUMNS}) LIKE ?`);
             values.push(`%${query.text}%`);
         }
 
-        if(query.category !== undefined && query.category.length > 0){
+        if (query.category !== undefined && query.category.length > 0) {
             const placeholders = query.category.map(() => "?").join(", ");
             conditions.push("fp.category_id IN (" + placeholders + ")");
             values.push(...query.category);
         }
 
-        if(query.type !== undefined && query.type.length > 0){
+        if (query.type !== undefined && query.type.length > 0) {
             const placeholders = query.type.map(() => "?").join(", ");
             conditions.push(
                 `EXISTS (
@@ -160,18 +173,18 @@ export class PostRepository{
             );
             values.push(...query.type);
         }
-        if(query.status_id !== undefined && query.status_id.length > 0){
+        if (query.status_id !== undefined && query.status_id.length > 0) {
             const placeholders = query.status_id.map(() => "?").join(", ");
             conditions.push("fp.status_id IN (" + placeholders + ")");
             values.push(...query.status_id);
         }
 
-        if(query.role_id !== undefined && query.role_id === USER_ROLE_ID){
+        if (query.role_id !== undefined && query.role_id === USER_ROLE_ID) {
             conditions.push("fp.deleted_at IS NULL");
         }
 
         let COLUMNS = POST_COLUMNS;
-        if(query.role_id !== undefined && query.role_id === ADMIN_ROLE_ID){
+        if (query.role_id !== undefined && query.role_id === ADMIN_ROLE_ID) {
             COLUMNS += ", " + USER_COLUMN;
         }
 
@@ -180,8 +193,8 @@ export class PostRepository{
             values.push(query.user_id);
         }
 
-        if(conditions.length > 0){
-            where += ` WHERE ${conditions.join(" AND ")}`
+        if (conditions.length > 0) {
+            where += ` WHERE ${conditions.join(" AND ")}`;
         }
 
         const [countRows] = await this.pool.query<CountRow[]>(
@@ -190,7 +203,7 @@ export class PostRepository{
             FROM fraud_post fp
             ${where}
             `,
-            values,
+            values
         );
 
         const total = countRows[0].total;
@@ -206,15 +219,15 @@ export class PostRepository{
             LIMIT ?
             OFFSET ?
             `,
-            pageValues,
+            pageValues
         );
 
-        const postIds = rows.map(row => row.id);
+        const postIds = rows.map((row) => row.id);
 
         if (postIds.length === 0) {
             return {
                 posts: [],
-                total,
+                total
             };
         }
 
@@ -226,7 +239,7 @@ export class PostRepository{
             FROM post_fraud_type pf
             WHERE pf.post_id IN (${placeholders})
             `,
-            postIds,
+            postIds
         );
 
         const typesByPost = new Map<number, number[]>();
@@ -237,13 +250,10 @@ export class PostRepository{
             typesByPost.set(row.post_id, types);
         }
         return {
-            posts: rows.map(row =>
-                this.toPostEntity(
-                    row,
-                    typesByPost.get(row.id) ?? []
-                )
+            posts: rows.map((row) =>
+                this.toPostEntity(row, typesByPost.get(row.id) ?? [])
             ),
-            total,
+            total
         };
     }
 
@@ -251,9 +261,7 @@ export class PostRepository{
         post_id: number,
         user_id: string | null = null
     ): Promise<PostEntity | null> {
-
         const COLUMNS = ADMIN_POST_DETAILED_COLUMNS + ", " + USER_COLUMN;
-
 
         const [rows] = await this.pool.query<AdminPostRow[]>(
             `
@@ -265,17 +273,17 @@ export class PostRepository{
             `,
             [post_id, DRAFT_STATUS_ID]
         );
-        if(rows.length === 0){
+        if (rows.length === 0) {
             return null;
         }
 
-         const [typeRows] = await this.pool.query<FraudTypeIdRow[]>(
+        const [typeRows] = await this.pool.query<FraudTypeIdRow[]>(
             `
             SELECT fraud_type_id
             FROM post_fraud_type
             WHERE post_id = ?
             `,
-            [post_id],
+            [post_id]
         );
 
         const [evidenceRows] = await this.pool.query<EvidenceRow[]>(
@@ -284,7 +292,7 @@ export class PostRepository{
             FROM post_evidence e
             WHERE e.post_id = ?
             `,
-            [post_id],
+            [post_id]
         );
 
         const [commentRows] = await this.pool.query<CommentRow[]>(
@@ -297,17 +305,16 @@ export class PostRepository{
             ORDER BY pc.created_at ASC, pc.id ASC
             `,
             [post_id]
-        )
+        );
 
         const post = this.toAdminPostEntity(rows[0]);
-        post.types = typeRows.map(row => row.fraud_type_id);
-        post.evidences = evidenceRows.map(row =>
-            this.toEvidenceEntity(row)
+        post.types = typeRows.map((row) => row.fraud_type_id);
+        post.evidences = evidenceRows.map((row) => this.toEvidenceEntity(row));
+        post.comments = commentRows.map((row) => this.toCommentEntity(row));
+        post.reactions = await this.reaction_repository.findSummary(
+            post_id,
+            user_id
         );
-        post.comments = commentRows.map(row =>
-            this.toCommentEntity(row)
-        );
-        post.reactions = await this.reaction_repository.findSummary(post_id, user_id);
 
         if (post.status_id === VALIDATED_STATUS_ID) {
             const [authorityRows] = await this.pool.query<AuthorityRow[]>(
@@ -319,13 +326,12 @@ export class PostRepository{
                 WHERE pa.post_id = ?
                 ORDER BY pa.priority ASC
                 `,
-                [post_id],
+                [post_id]
             );
 
-            post.authorities = authorityRows.map(row =>
+            post.authorities = authorityRows.map((row) =>
                 this.toAuthorityEntity(row)
             );
-
         } else if (post.status_id === PUBLISHED_STATUS_ID) {
             const [authorityRows] = await this.pool.query<AuthorityRow[]>(
                 `
@@ -338,10 +344,10 @@ export class PostRepository{
                 WHERE pft.post_id = ?
                 ORDER BY a.name
                 `,
-                [post_id],
+                [post_id]
             );
 
-            post.authorities = authorityRows.map(row =>
+            post.authorities = authorityRows.map((row) =>
                 this.toAuthorityEntity(row)
             );
         }
@@ -353,7 +359,8 @@ export class PostRepository{
         post_id: number,
         user_id: string
     ): Promise<PostEntity | null> {
-        const COLUMNS = DETAILED_POST_COLUMNS + ", fp.is_anonymous, " + USER_COLUMN;
+        const COLUMNS =
+            DETAILED_POST_COLUMNS + ", fp.is_anonymous, " + USER_COLUMN;
         const [rows] = await this.pool.query<DetailedPostRow[]>(
             `
             SELECT ${COLUMNS}
@@ -369,17 +376,17 @@ export class PostRepository{
             `,
             [post_id, user_id]
         );
-        if(rows.length === 0){
+        if (rows.length === 0) {
             return null;
         }
 
-         const [typeRows] = await this.pool.query<FraudTypeIdRow[]>(
+        const [typeRows] = await this.pool.query<FraudTypeIdRow[]>(
             `
             SELECT fraud_type_id
             FROM post_fraud_type
             WHERE post_id = ?
             `,
-            [post_id],
+            [post_id]
         );
 
         const [evidenceRows] = await this.pool.query<EvidenceRow[]>(
@@ -389,7 +396,7 @@ export class PostRepository{
             WHERE e.post_id = ?
             AND e.is_visible = true
             `,
-            [post_id],
+            [post_id]
         );
 
         const [commentRows] = await this.pool.query<CommentRow[]>(
@@ -402,7 +409,7 @@ export class PostRepository{
             ORDER BY pc.created_at ASC, pc.id ASC
             `,
             [post_id]
-        )
+        );
 
         const [authorityRows] = await this.pool.query<AuthorityRow[]>(
             `
@@ -414,37 +421,32 @@ export class PostRepository{
             AND ? = ${VALIDATED_STATUS_ID}
             ORDER BY pa.priority ASC
             `,
-            [post_id, rows[0].status_id],
+            [post_id, rows[0].status_id]
         );
 
         const post = this.toDetailedPostEntity(rows[0]);
-        if(rows[0].is_anonymous){
+        if (rows[0].is_anonymous) {
             post.author = null;
         }
 
-        post.types = typeRows.map(row => row.fraud_type_id);
-        post.evidences = evidenceRows.map(row =>
-            this.toEvidenceEntity(row)
+        post.types = typeRows.map((row) => row.fraud_type_id);
+        post.evidences = evidenceRows.map((row) => this.toEvidenceEntity(row));
+        post.comments = commentRows.map((row) => this.toCommentEntity(row));
+        post.reactions = await this.reaction_repository.findSummary(
+            post_id,
+            user_id
         );
-        post.comments = commentRows.map(row =>
-            this.toCommentEntity(row)
-        );
-        post.reactions = await this.reaction_repository.findSummary(post_id, user_id);
-        post.authorities = authorityRows.map(row =>
+        post.authorities = authorityRows.map((row) =>
             this.toAuthorityEntity(row)
         );
 
         return post;
     }
 
-    async create(
-        dto: CreatePostDto,
-        user_id: string
-    ): Promise<PostEntity>{
-
+    async create(dto: CreatePostDto, user_id: string): Promise<PostEntity> {
         const connection = await this.pool.getConnection();
 
-        try{
+        try {
             await connection.beginTransaction();
             const [result] = await connection.execute<ResultSetHeader>(
                 `INSERT INTO fraud_post (${CREATE_COLUMNS})
@@ -461,16 +463,13 @@ export class PostRepository{
                     dto.status_id,
                     dto.is_anonymous ?? false,
                     user_id,
-                    dto.category ?? null,
+                    dto.category ?? null
                 ]
             );
             const post_id = result.insertId;
 
             if (dto.types !== undefined && dto.types.length > 0) {
-                const values = dto.types.map(type_id => [
-                    post_id,
-                    type_id,
-                ]);
+                const values = dto.types.map((type_id) => [post_id, type_id]);
 
                 await connection.query(
                     `
@@ -493,22 +492,21 @@ export class PostRepository{
                     AND id IN (?)
                     `,
                     [user_id, dto.evidences]
-                )
+                );
 
                 const found_ids = new Set(
-                    evidences.map(evidence => evidence.id),
+                    evidences.map((evidence) => evidence.id)
                 );
 
                 const invalid_ids = dto.evidences.filter(
-                    evidence_id => !found_ids.has(evidence_id),
+                    (evidence_id) => !found_ids.has(evidence_id)
                 );
 
                 if (invalid_ids.length > 0) {
                     throw new ForbiddenException(
-                        `Las evidencias [${invalid_ids.join(", ")}] no existen o no pertenecen al usuario.`,
+                        `Las evidencias [${invalid_ids.join(", ")}] no existen o no pertenecen al usuario.`
                     );
                 }
-
 
                 await connection.query(
                     `
@@ -518,17 +516,17 @@ export class PostRepository{
                     AND post_id IS NULL
                     AND owner_id = ?
                     `,
-                    [post_id, dto.evidences, user_id],
+                    [post_id, dto.evidences, user_id]
                 );
             }
             await connection.commit();
             const post = await this.findVisibleToUser(post_id, user_id);
-            if(post === null){
-               throw new Error("La publicación creada no pudo recuperarse.")
+            if (post === null) {
+                throw new Error("La publicación creada no pudo recuperarse.");
             }
 
             return post;
-        } catch(error) {
+        } catch (error) {
             await connection.rollback();
             throw error;
         } finally {
@@ -548,7 +546,7 @@ export class PostRepository{
             await connection.beginTransaction();
 
             const fields: string[] = [];
-            const values: (boolean | string | number) [] = [];
+            const values: (boolean | string | number)[] = [];
 
             if (dto.title !== undefined) {
                 fields.push("title = ?");
@@ -653,7 +651,7 @@ export class PostRepository{
                 if (dto.types.length > 0) {
                     const values = dto.types.flatMap((type_id) => [
                         post_id,
-                        type_id,
+                        type_id
                     ]);
 
                     const placeholders = dto.types
@@ -674,9 +672,9 @@ export class PostRepository{
                         .map(() => "?")
                         .join(", ");
 
-                    const queryValues:  (boolean | string | number)[] = [
+                    const queryValues: (boolean | string | number)[] = [
                         ...dto.evidences,
-                        post_id,
+                        post_id
                     ];
 
                     let ownerCondition = "";
@@ -728,10 +726,7 @@ export class PostRepository{
                         SET post_id = ?
                         WHERE id IN (${placeholders})
                         `,
-                        [
-                            post_id,
-                            ...dto.evidences,
-                        ]
+                        [post_id, ...dto.evidences]
                     );
                 }
             }
@@ -751,10 +746,10 @@ export class PostRepository{
                         dto.authorities
                     );
 
-                    if (rows.length !== dto.authorities.length){
+                    if (rows.length !== dto.authorities.length) {
                         throw new BadRequestException(
                             "Una o más autoridades no existen."
-                        )
+                        );
                     }
                 }
 
@@ -766,12 +761,14 @@ export class PostRepository{
                     [post_id]
                 );
 
-                if(dto.authorities.length > 0){
-                    const values = dto.authorities.flatMap((authority_id, index) => [
-                        post_id,
-                        authority_id,
-                        index + 1
-                    ]);
+                if (dto.authorities.length > 0) {
+                    const values = dto.authorities.flatMap(
+                        (authority_id, index) => [
+                            post_id,
+                            authority_id,
+                            index + 1
+                        ]
+                    );
 
                     const placeholders = dto.authorities
                         .map(() => "(?, ?, ?)")
@@ -818,9 +815,7 @@ export class PostRepository{
         }
     }
 
-    async deleteByAdmin(
-        post_id: number
-    ): Promise<DeletedPostResult | null> {
+    async deleteByAdmin(post_id: number): Promise<DeletedPostResult | null> {
         const [evidenceRows] = await this.pool.query<EvidenceRow[]>(
             `
             SELECT ${EVIDENCE_COLUMNS}
@@ -836,7 +831,7 @@ export class PostRepository{
             )
             `,
             [post_id]
-        )
+        );
 
         const [postRows] = await this.pool.query<PostRow[]>(
             `
@@ -851,9 +846,9 @@ export class PostRepository{
             )
             AND fp.deleted_at IS NULL
             `,
-            [post_id],
+            [post_id]
         );
-        if(postRows.length === 0){
+        if (postRows.length === 0) {
             return null;
         }
         await this.pool.query(
@@ -862,24 +857,24 @@ export class PostRepository{
             SET fp.deleted_at = NOW()
             WHERE id = ?
             `,
-            [post_id],
-        )
-         await this.pool.query(
+            [post_id]
+        );
+        await this.pool.query(
             `
             DELETE FROM post_evidence e
             WHERE e.post_id = ?
             `,
-            [post_id],
-        )
+            [post_id]
+        );
         return {
-            evidence_paths: evidenceRows.map(row => row.storage_path)
+            evidence_paths: evidenceRows.map((row) => row.storage_path)
         };
     }
 
     async deleteByUser(
         post_id: number,
         user_id: string
-    ): Promise<DeletedPostResult | null>{
+    ): Promise<DeletedPostResult | null> {
         const [rows] = await this.pool.query<PostRow[]>(
             `
             SELECT ${POST_COLUMNS}
@@ -894,14 +889,14 @@ export class PostRepository{
             )
             AND fp.deleted_at IS NULL
             `,
-            [post_id, user_id],
+            [post_id, user_id]
         );
-        if(rows.length === 0){
+        if (rows.length === 0) {
             return null;
         }
 
-        if(rows[0].status_id !== DRAFT_STATUS_ID){
-            return await this.deleteByAdmin(post_id)
+        if (rows[0].status_id !== DRAFT_STATUS_ID) {
+            return await this.deleteByAdmin(post_id);
         }
 
         const [evidenceRows] = await this.pool.query<EvidenceRow[]>(
@@ -916,26 +911,26 @@ export class PostRepository{
             )
             `,
             [post_id]
-        )
+        );
 
         await this.pool.query(
             `
             DELETE FROM fraud_post fp
             WHERE id IN (?)
             `,
-            [post_id],
-        )
+            [post_id]
+        );
 
         await this.pool.query(
             `
             DELETE FROM post_evidence e
             WHERE e.post_id IN (?)
             `,
-            [post_id],
-        )
+            [post_id]
+        );
 
         return {
-            evidence_paths: evidenceRows.map(row => row.storage_path)
+            evidence_paths: evidenceRows.map((row) => row.storage_path)
         };
     }
 
@@ -943,7 +938,7 @@ export class PostRepository{
         post_id: number,
         evidence_id: number,
         is_visible: boolean
-    ): Promise<EvidenceEntity | null>{
+    ): Promise<EvidenceEntity | null> {
         const [rows] = await this.pool.query<EvidenceRow[]>(
             `
             SELECT ${EVIDENCE_COLUMNS}
@@ -954,10 +949,12 @@ export class PostRepository{
             AND e.post_id = ?
             AND fp.status_id IN (${UPLOADED_STATUS_ID}, ${PUBLISHED_STATUS_ID}, ${VALIDATED_STATUS_ID})
             `,
-            [evidence_id, post_id],
+            [evidence_id, post_id]
         );
-        if(rows.length === 0){
-            throw new NotFoundException("La evidencia no existe o su acceso no está permitido todavía.")
+        if (rows.length === 0) {
+            throw new NotFoundException(
+                "La evidencia no existe o su acceso no está permitido todavía."
+            );
         }
         await this.pool.execute<ResultSetHeader>(
             `
@@ -965,8 +962,8 @@ export class PostRepository{
             SET e.is_visible = ?
             WHERE id IN (?)
             `,
-            [is_visible, evidence_id],
-        )
+            [is_visible, evidence_id]
+        );
         rows[0].is_visible = is_visible;
         return this.toEvidenceEntity(rows[0]);
     }
@@ -975,7 +972,7 @@ export class PostRepository{
         post_id: number,
         evidence_id: number
     ): Promise<DeletedEvidenceResult | null> {
-       const [rows] = await this.pool.query<EvidenceRow[]>(
+        const [rows] = await this.pool.query<EvidenceRow[]>(
             `
             SELECT ${EVIDENCE_COLUMNS}
             FROM post_evidence e
@@ -989,9 +986,9 @@ export class PostRepository{
                 ${VALIDATED_STATUS_ID},
                 ${REJECTED_STATUS_ID}
             )`,
-            [evidence_id, post_id],
+            [evidence_id, post_id]
         );
-        if(rows.length === 0){
+        if (rows.length === 0) {
             return null;
         }
         await this.pool.query(
@@ -999,10 +996,10 @@ export class PostRepository{
             DELETE FROM post_evidence e
             WHERE id = ?
             `,
-            [evidence_id],
-        )
+            [evidence_id]
+        );
         return {
-            storage_path: rows[0].storage_path,
+            storage_path: rows[0].storage_path
         };
     }
 
@@ -1010,7 +1007,7 @@ export class PostRepository{
         post_id: number,
         evidence_id: number,
         user_id: string
-    ): Promise<DeletedEvidenceResult | null>{
+    ): Promise<DeletedEvidenceResult | null> {
         const [rows] = await this.pool.query<EvidenceRow[]>(
             `
             SELECT ${EVIDENCE_COLUMNS}
@@ -1024,7 +1021,7 @@ export class PostRepository{
             `,
             [evidence_id, post_id, user_id]
         );
-        if(rows.length === 0){
+        if (rows.length === 0) {
             return null;
         }
 
@@ -1033,11 +1030,11 @@ export class PostRepository{
             DELETE FROM post_evidence e
             WHERE id IN (?)
             `,
-            [evidence_id],
-        )
+            [evidence_id]
+        );
         return {
             storage_path: rows[0].storage_path
-        }
+        };
     }
 
     async createComment(
@@ -1084,11 +1081,13 @@ export class PostRepository{
             JOIN user u ON pc.author_id = u.id
             WHERE pc.id = ?
             `,
-            [comment_id],
+            [comment_id]
         );
 
-        if(rows.length === 0){
-            throw new NotFoundException("El comentario no existe o su acceso no está permitido.")
+        if (rows.length === 0) {
+            throw new NotFoundException(
+                "El comentario no existe o su acceso no está permitido."
+            );
         }
         await this.pool.execute<ResultSetHeader>(
             `
@@ -1096,16 +1095,13 @@ export class PostRepository{
             SET is_visible = ?, updated_at = CURRENT_TIMESTAMP
             WHERE id = ? AND post_id = ?
             `,
-            [is_visible, comment_id, post_id],
-        )
+            [is_visible, comment_id, post_id]
+        );
         rows[0].is_visible = is_visible;
         return this.toCommentEntity(rows[0]);
     }
 
-    private toPostEntity(
-        row: PostRow,
-        types: number[] = []
-    ): PostEntity {
+    private toPostEntity(row: PostRow, types: number[] = []): PostEntity {
         const post = new PostEntity();
 
         post.id = row.id;
@@ -1194,11 +1190,11 @@ export class PostRepository{
     private toAuthorityEntity(row: AuthorityRow): AuthorityEntity {
         const entity = new AuthorityEntity();
 
-        entity.id = row.id
-        entity.name = row.name
-        entity.code = row.code
-        entity.description = row.description
+        entity.id = row.id;
+        entity.name = row.name;
+        entity.code = row.code;
+        entity.description = row.description;
 
-        return entity
+        return entity;
     }
 }

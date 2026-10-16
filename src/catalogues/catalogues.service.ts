@@ -2,7 +2,7 @@ import {
     BadRequestException,
     ConflictException,
     Injectable,
-    NotFoundException,
+    NotFoundException
 } from "@nestjs/common";
 
 import { CatalogueRepository } from "./catalogues.repository";
@@ -102,9 +102,7 @@ export class CataloguesService {
         return types.map(ResponseFraudTypeDto.fromEntity);
     }
 
-    async createType(
-        dto: CreateFraudTypeDto
-    ): Promise<ResponseFraudTypeDto> {
+    async createType(dto: CreateFraudTypeDto): Promise<ResponseFraudTypeDto> {
         try {
             const type = await this.repository.createType(dto);
             return ResponseFraudTypeDto.fromEntity(type);
@@ -157,7 +155,7 @@ export class CataloguesService {
         id: number,
         dto: UpdateAuthorityDto
     ): Promise<ResponseAuthorityDto> {
-        if(dto.name === undefined && dto.description === undefined){
+        if (dto.name === undefined && dto.description === undefined) {
             throw new BadRequestException("Al menos un campo requerido.");
         }
 

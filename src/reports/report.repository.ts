@@ -5,7 +5,7 @@ import { ReportEntity } from "./entities/report.entity";
 import {
     PAGE_SIZE,
     PUBLISHED_STATUS_ID,
-    VALIDATED_STATUS_ID,
+    VALIDATED_STATUS_ID
 } from "../common/constants";
 
 const COLUMNS =
@@ -42,7 +42,7 @@ export class ReportRepository {
     constructor(@Inject(DB_POOL) private readonly pool: Pool) {}
 
     async findPostForReport(
-        post_id: number,
+        post_id: number
     ): Promise<{ author_id: string } | null> {
         const [rows] = await this.pool.query<PostAuthorRow[]>(
             `
@@ -52,7 +52,7 @@ export class ReportRepository {
             AND status_id IN (${PUBLISHED_STATUS_ID}, ${VALIDATED_STATUS_ID})
             AND deleted_at IS NULL
             `,
-            [post_id],
+            [post_id]
         );
 
         return rows.length > 0 ? { author_id: rows[0].author_id } : null;
@@ -65,7 +65,7 @@ export class ReportRepository {
             FROM report_reason
             WHERE id = ?
             `,
-            [report_reason_id],
+            [report_reason_id]
         );
 
         return rows.length > 0;
@@ -75,14 +75,14 @@ export class ReportRepository {
         details: string | null,
         report_reason_id: number,
         reporter_id: string,
-        post_id: number,
+        post_id: number
     ): Promise<ReportEntity> {
         const [result] = await this.pool.execute<ResultSetHeader>(
             `
             INSERT INTO post_report (details, report_reason_id, reporter_id, post_id)
             VALUES (?, ?, ?, ?)
             `,
-            [details, report_reason_id, reporter_id, post_id],
+            [details, report_reason_id, reporter_id, post_id]
         );
 
         const report = await this.findById(result.insertId);
@@ -97,7 +97,7 @@ export class ReportRepository {
             FROM post_report
             WHERE id = ?
             `,
-            [id],
+            [id]
         );
 
         return rows.length > 0 ? toEntity(rows[0]) : null;
@@ -120,7 +120,7 @@ export class ReportRepository {
             FROM post_report
             ${where}
             `,
-            values,
+            values
         );
 
         const [rows] = await this.pool.query<ReportRow[]>(
@@ -132,12 +132,12 @@ export class ReportRepository {
             LIMIT ?
             OFFSET ?
             `,
-            [...values, PAGE_SIZE, offset],
+            [...values, PAGE_SIZE, offset]
         );
 
         return {
             reports: rows.map(toEntity),
-            total: countRows[0].total,
+            total: countRows[0].total
         };
     }
 
@@ -148,7 +148,7 @@ export class ReportRepository {
             FROM fraud_post
             WHERE id = ?
             `,
-            [post_id],
+            [post_id]
         );
 
         return rows.length > 0;
@@ -161,7 +161,7 @@ export class ReportRepository {
             WHERE id = ?
             AND post_id = ?
             `,
-            [report_id, post_id],
+            [report_id, post_id]
         );
 
         return result.affectedRows > 0;

@@ -6,14 +6,14 @@ import {
     UseGuards,
     Param,
     Body,
-    ParseIntPipe,
+    ParseIntPipe
 } from "@nestjs/common";
 import {
     ApiBearerAuth,
     ApiOperation,
     ApiParam,
     ApiResponse,
-    ApiTags,
+    ApiTags
 } from "@nestjs/swagger";
 
 import { AuthGuard } from "../auth/auth.guard";
@@ -25,7 +25,7 @@ import {
     ApiConflictResponse,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
-    ApiUnauthorizedResponse,
+    ApiUnauthorizedResponse
 } from "../common/api-responses";
 
 import { CataloguesService } from "./catalogues.service";
@@ -108,7 +108,7 @@ export class CataloguesController {
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createReaction(
-        @Body() dto: CreateReactionTypeDto,
+        @Body() dto: CreateReactionTypeDto
     ): Promise<ResponseReactionTypeDto> {
         return this.service.createReaction(dto);
     }
@@ -116,7 +116,8 @@ export class CataloguesController {
     @Get("states")
     @ApiOperation({
         summary: "Obtener estados de publicación",
-        description: "Obtiene la lista de estados disponibles para las publicaciones."
+        description:
+            "Obtiene la lista de estados disponibles para las publicaciones."
     })
     @ApiResponse({
         status: 200,
@@ -162,7 +163,7 @@ export class CataloguesController {
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createCategory(
-        @Body() dto: CreateFraudCategoryDto,
+        @Body() dto: CreateFraudCategoryDto
     ): Promise<ResponseFraudCategoryDto> {
         return this.service.createCategory(dto);
     }
@@ -170,7 +171,8 @@ export class CataloguesController {
     @Get("audit-actions")
     @ApiOperation({
         summary: "Obtener acciones de auditoría",
-        description: "Obtiene la lista de acciones disponibles para los registros de auditoría."
+        description:
+            "Obtiene la lista de acciones disponibles para los registros de auditoría."
     })
     @ApiResponse({
         status: 200,
@@ -189,7 +191,8 @@ export class CataloguesController {
     @Get("report-reasons")
     @ApiOperation({
         summary: "Obtener motivos de reporte",
-        description: "Obtiene la lista de motivos disponibles para reportar publicaciones."
+        description:
+            "Obtiene la lista de motivos disponibles para reportar publicaciones."
     })
     @ApiResponse({
         status: 200,
@@ -219,7 +222,7 @@ export class CataloguesController {
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createReportReason(
-        @Body() dto: CreateReportReasonDto,
+        @Body() dto: CreateReportReasonDto
     ): Promise<ResponseReportReasonDto> {
         return this.service.createReportReason(dto);
     }
@@ -256,16 +259,15 @@ export class CataloguesController {
     @ApiConflictResponse()
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
-    createType(
-        @Body() dto: CreateFraudTypeDto,
-    ): Promise<ResponseFraudTypeDto> {
+    createType(@Body() dto: CreateFraudTypeDto): Promise<ResponseFraudTypeDto> {
         return this.service.createType(dto);
     }
 
     @Get("modified-fields")
     @ApiOperation({
         summary: "Obtener campos modificables",
-        description: "Obtiene la lista de campos disponibles para los registros de auditoría."
+        description:
+            "Obtiene la lista de campos disponibles para los registros de auditoría."
     })
     @ApiResponse({
         status: 200,
@@ -314,7 +316,7 @@ export class CataloguesController {
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createEvidenceType(
-        @Body() dto: CreateEvidenceTypeDto,
+        @Body() dto: CreateEvidenceTypeDto
     ): Promise<ResponseEvidenceTypeDto> {
         return this.service.createEvidenceType(dto);
     }
@@ -354,7 +356,7 @@ export class CataloguesController {
     @UseGuards(RolesGuard)
     @Roles(ADMIN_ROLE_ID)
     createAuthority(
-        @Body() dto: CreateAuthorityDto,
+        @Body() dto: CreateAuthorityDto
     ): Promise<ResponseAuthorityDto> {
         return this.service.createAuthority(dto);
     }
@@ -384,7 +386,7 @@ export class CataloguesController {
     @Roles(ADMIN_ROLE_ID)
     updateAuthority(
         @Param("authorityId", ParseIntPipe) authorityId: number,
-        @Body() dto: UpdateAuthorityDto,
+        @Body() dto: UpdateAuthorityDto
     ): Promise<ResponseAuthorityDto> {
         return this.service.updateAuthority(authorityId, dto);
     }

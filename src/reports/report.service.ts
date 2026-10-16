@@ -2,7 +2,7 @@ import {
     BadRequestException,
     ForbiddenException,
     Injectable,
-    NotFoundException,
+    NotFoundException
 } from "@nestjs/common";
 import { ReportRepository } from "./report.repository";
 import { CreateReportDto } from "./dto/requests/create-report.dto";
@@ -19,7 +19,7 @@ export class ReportService {
     async create(
         post_id: number,
         user_id: string,
-        dto: CreateReportDto,
+        dto: CreateReportDto
     ): Promise<ResponseReportDto> {
         const post = await this.repository.findPostForReport(post_id);
         if (!post) {
@@ -28,12 +28,12 @@ export class ReportService {
 
         if (post.author_id === user_id) {
             throw new ForbiddenException(
-                "No puedes reportar tu propia publicación.",
+                "No puedes reportar tu propia publicación."
             );
         }
 
         const reasonExists = await this.repository.reportReasonExists(
-            dto.report_reason,
+            dto.report_reason
         );
         if (!reasonExists) {
             throw new BadRequestException("La razón de reporte no existe.");
@@ -44,7 +44,7 @@ export class ReportService {
                 dto.information || null,
                 dto.report_reason,
                 user_id,
-                post_id,
+                post_id
             );
 
             return ResponseReportDto.fromEntity(report);
@@ -60,7 +60,7 @@ export class ReportService {
 
     async findByPost(
         post_id: number,
-        query: FindReportsDto,
+        query: FindReportsDto
     ): Promise<ResponseReportsDto> {
         const postExists = await this.repository.postExists(post_id);
         if (!postExists) {
@@ -79,17 +79,17 @@ export class ReportService {
 
     private async findPage(
         page: number,
-        post_id?: number,
+        post_id?: number
     ): Promise<ResponseReportsDto> {
         const result = await this.repository.findAll(page, post_id);
 
         return {
             data: result.reports.map((report) =>
-                ResponseReportDto.fromEntity(report),
+                ResponseReportDto.fromEntity(report)
             ),
             page: page,
             total_pages: Math.ceil(result.total / PAGE_SIZE),
-            total: result.total,
+            total: result.total
         };
     }
 }

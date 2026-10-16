@@ -18,27 +18,18 @@ export class ResponseAdminPostDto extends ResponseDetailedPostDto {
     })
     deleted_at: string | null;
 
-    static fromEntity(
-        post: PostEntity,
-        baseUrl: string
-    ): ResponseAdminPostDto {
+    static fromEntity(post: PostEntity, baseUrl: string): ResponseAdminPostDto {
         const publicDto = ResponseDetailedPostDto.fromEntity(post, baseUrl);
         const dto = new ResponseAdminPostDto();
 
         Object.assign(dto, publicDto);
 
-        dto.evidences = (post.evidences ?? []).map(
-            evidence => ResponseAdminEvidenceDto.fromEntity(
-                evidence,
-                baseUrl
-            )
+        dto.evidences = (post.evidences ?? []).map((evidence) =>
+            ResponseAdminEvidenceDto.fromEntity(evidence, baseUrl)
         );
 
-        dto.comments = (post.comments ?? []).map(
-            comment => ResponseAdminCommentDto.fromEntity(
-                comment,
-                baseUrl
-            )
+        dto.comments = (post.comments ?? []).map((comment) =>
+            ResponseAdminCommentDto.fromEntity(comment, baseUrl)
         );
 
         dto.is_anonymous = post.is_anonymous;

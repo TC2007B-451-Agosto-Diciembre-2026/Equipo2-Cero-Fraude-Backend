@@ -15,7 +15,8 @@ interface EvidenceRow extends RowDataPacket {
     post_id: number | null;
 }
 
-const COLUMNS = "id, owner_id, is_visible, storage_path, created_at, expires_at, deleted_at, evidence_type_id, post_id";
+const COLUMNS =
+    "id, owner_id, is_visible, storage_path, created_at, expires_at, deleted_at, evidence_type_id, post_id";
 
 @Injectable()
 export class EvidenceRepository {
@@ -41,16 +42,14 @@ export class EvidenceRepository {
         );
         const evidence = await this.findById(result.insertId);
 
-        if(!evidence) {
-            throw new Error("La evidencia fue creada pero no pudo obtenerse.")
+        if (!evidence) {
+            throw new Error("La evidencia fue creada pero no pudo obtenerse.");
         }
 
         return evidence;
     }
 
-    async findById(
-        id: number
-    ): Promise<EvidenceEntity | null> {
+    async findById(id: number): Promise<EvidenceEntity | null> {
         const [rows] = await this.pool.execute<EvidenceRow[]>(
             `
             SELECT ${COLUMNS}
@@ -58,7 +57,7 @@ export class EvidenceRepository {
             WHERE id = ?
             AND deleted_at IS NULL
             `,
-            [id],
+            [id]
         );
 
         return rows.length > 0 ? this.toEntity(rows[0]) : null;

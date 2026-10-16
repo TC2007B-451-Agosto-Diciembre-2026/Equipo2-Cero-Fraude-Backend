@@ -2,12 +2,12 @@ import { ApiProperty } from "@nestjs/swagger";
 import { EvidenceEntity } from "../entities/evidence.entity";
 import { ResponseDetailedEvidenceDto } from "./response-detailed-evidence.dto";
 
-export class ResponseAdminEvidenceDto extends ResponseDetailedEvidenceDto{
+export class ResponseAdminEvidenceDto extends ResponseDetailedEvidenceDto {
     @ApiProperty({
         example: "2026-09-29T20:30:00.000Z",
-        description: "Fecha de creación de la evidencia.",
+        description: "Fecha de creación de la evidencia."
     })
-    is_visible: boolean
+    is_visible: boolean;
 
     static fromEntity(
         evidence: EvidenceEntity,
