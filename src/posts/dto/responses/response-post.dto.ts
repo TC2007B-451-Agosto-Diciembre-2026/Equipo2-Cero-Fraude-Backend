@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { PostEntity } from "../../entities/post.entity";
-import { FindPostRow } from "./find-post-row.dto";
 
 export class ResponsePostDto {
     @ApiProperty({
@@ -57,7 +56,7 @@ export class ResponsePostDto {
     })
     types: number[];
 
-    static fromEntity(post: PostEntity, baseUrl: string): ResponsePostDto {
+    static fromEntity(post: PostEntity, _baseUrl: string): ResponsePostDto {
         const dto = new ResponsePostDto();
 
         dto.id = post.id;

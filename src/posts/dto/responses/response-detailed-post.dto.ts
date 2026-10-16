@@ -3,7 +3,6 @@ import { PostEntity } from "../../entities/post.entity";
 import { ResponsePostDto } from "./response-post.dto";
 import { ResponseEvidenceDto } from "../../../evidences/dto/response-evidence.dto";
 import { ResponseCommentDto } from "./response-comment.dto";
-import { getBaseUrl } from "../../../common/network";
 import { ResponseReactionSummaryDto } from "../../../reactions/dto/responses/response-reaction-summary.dto";
 
 export class ResponseDetailedPostDto extends ResponsePostDto {

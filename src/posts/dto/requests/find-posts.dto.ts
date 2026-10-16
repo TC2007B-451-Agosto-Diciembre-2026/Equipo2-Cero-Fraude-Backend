@@ -9,7 +9,7 @@ import {
     MinLength
 } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { Transform, Type } from "class-transformer";
+import { Type } from "class-transformer";
 import { ToArray } from "../../../common/to-array";
 
 export class FindPostsDto {

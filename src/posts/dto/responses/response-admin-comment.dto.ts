@@ -11,7 +11,7 @@ export class ResponseAdminCommentDto extends ResponseCommentDto {
 
     static fromEntity(
         comment: CommentEntity,
-        baseUrl: string
+        _baseUrl: string
     ): ResponseAdminCommentDto {
         const dto = new ResponseAdminCommentDto();
 

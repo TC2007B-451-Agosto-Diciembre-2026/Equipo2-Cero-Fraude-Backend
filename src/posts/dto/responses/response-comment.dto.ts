@@ -35,7 +35,7 @@ export class ResponseCommentDto {
 
     static fromEntity(
         comment: CommentEntity,
-        baseUrl: string
+        _baseUrl: string
     ): ResponseCommentDto {
         const dto = new ResponseCommentDto();
 

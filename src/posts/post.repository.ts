@@ -799,8 +799,6 @@ export class PostRepository {
                 return null;
             }
 
-            const post = this.toAdminPostEntity(rows[0]);
-
             await connection.commit();
 
             if (user_role === ADMIN_ROLE_ID) {

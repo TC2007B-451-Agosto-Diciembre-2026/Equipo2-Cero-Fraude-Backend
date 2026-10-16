@@ -35,7 +35,6 @@ import { PostService } from "./post.service";
 import { ResponseDetailedPostDto } from "./dto/responses/response-detailed-post.dto";
 import { FindMyPostsDto } from "./dto/requests/find-my-posts.dto";
 import { CreatePostDto } from "./dto/requests/create-post.dto";
-import { ResponsePostDto } from "./dto/responses/response-post.dto";
 import { ResponseAdminPostDto } from "./dto/responses/response-admin-post.dto";
 import { RolesGuard } from "../auth/roles.guard";
 import { Roles } from "../auth/roles.decorator";
