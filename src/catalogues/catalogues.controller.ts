@@ -333,7 +333,6 @@ export class CataloguesController {
     @ApiUnauthorizedResponse()
     @ApiForbiddenResponse()
     @UseGuards(RolesGuard)
-    @Roles(ADMIN_ROLE_ID)
     findAuthorities(): Promise<ResponseAuthorityDto[]> {
         return this.service.findAuthorities();
     }
