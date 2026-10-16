@@ -2053,9 +2053,9 @@ Si la publicación no tiene reacciones:
 
 La misma información se incluye en el campo `reactions` de [GET /posts/:postId](#63-obtener-una-publicación).
 
-* 400 Bad Request: `postId` no es un número.
+* 400 Bad Request
 * 401 Unauthorized
-* 404 Not Found: la publicación no existe o no es visible para el usuario.
+* 404 Not Found
 
 ### 10.2. Crear o cambiar una reacción
 
@@ -2086,10 +2086,10 @@ Crear una reacción a una publicación o reemplazar la reacción existente del u
 
 Si el usuario ya tenía una reacción sobre la publicación, la respuesta contiene la nueva reacción.
 
-* 400 Bad Request: `postId` o `reactionId` no es un número, o la reacción no existe.
+* 400 Bad Request
 * 401 Unauthorized
-* 403 Forbidden: la publicación pertenece al usuario autenticado.
-* 404 Not Found: la publicación no existe o no es visible para el usuario.
+* 403 Forbidden
+* 404 Not Found
 
 ### 10.3. Eliminar una reacción
 
@@ -2108,9 +2108,9 @@ Borrar la reacción del usuario a una publicación.
 ##### Respuestas
 
 * 204 No Content
-* 400 Bad Request: `postId` no es un número.
+* 400 Bad Request
 * 401 Unauthorized
-* 404 Not Found: la publicación no existe, no es visible para el usuario o el usuario no tiene una reacción sobre ella.
+* 404 Not Found
 
 ## 11. Auditoría
 
