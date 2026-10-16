@@ -11,7 +11,17 @@ db = mysql.connector.connect(
 
 cursor = db.cursor()
 
-for file in ["database/schema.sql", "database/seed.sql", "database/development.sql", "database/development-evidences.sql", "database/development-post-types.sql", "database/development-reports.sql", "database/development-reactions.sql"]:
+for file in [
+    "database/schema.sql",
+    "database/seed.sql",
+    "database/development.sql",
+    "database/development-evidences.sql",
+    "database/development-post-types.sql",
+    "database/development-reports.sql",
+    "database/development-reactions.sql",
+    "database/development-comments.sql",
+    "database/development-authorities.sql"
+    ]:
     print(f"Running {file}...")
 
     with open(file, "r", encoding="utf-8") as f:
